@@ -51,25 +51,24 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // ==========================================
-        // ⚙️ PANEL DE CONFIGURACIÓN DE COLUMNAS ⚙️
-        // La columna A es 0, B es 1, C es 2, D es 3...
+        // ⚙️ PANEL ADAPTADO A TUS CAPTURAS ⚙️
+        // Al estar la Columna A vacía, el código empieza a contar desde la B (B=0, C=1, D=2...)
         // ==========================================
 
-        // Columnas en pestaña SECTORES
-        const C_SEC_ESC = 0; // Col A: ID Escuela
-        const C_SEC_NOM = 1; // Col B: Nombre Sector
-        const C_SEC_VIA = 2; // Col C: Vías
-        const C_SEC_GRA = 3; // Col D: Grados
-        const C_SEC_FOT = 4; // Col E: Foto
+        // Pestaña SECTORES (Foto 1)
+        const C_SEC_ESC = 0; // Columna B (ID_escuela)
+        const C_SEC_NOM = 1; // Columna C (Nombre_sector)
+        const C_SEC_VIA = 2; // Columna D (Vias)
+        const C_SEC_GRA = 3; // Columna E (Grados)
+        const C_SEC_FOT = 4; // Columna F (Foto_sector)
 
-        // Columnas en pestaña VIAS (Basado en la foto 5 que me enviaste)
-        const C_VIA_ESC = 0; // Col A: ID Escuela
-        // Ignoramos la Columna B porque es un nombre de texto que te ayuda a ti, pero para el código usamos el ID (Col C)
-        const C_VIA_SEC = 2; // Col C: ID Sector (Número del sector)
-        const C_VIA_NUM = 3; // Col D: Número de vía
-        const C_VIA_NOM = 4; // Col E: Nombre de la vía
-        const C_VIA_GRA = 5; // Col F: Grado
-        const C_VIA_FOT = 6; // Col G: Foto Croquis
+        // Pestaña VIAS (Foto 5)
+        const C_VIA_ESC = 0; // Columna B (Id_Escuelas)
+        const C_VIA_SEC = 2; // Columna D (Id_sector) -> ¡USAMOS ESTE PARA VINCULAR!
+        const C_VIA_NUM = 3; // Columna E (Numero)
+        const C_VIA_NOM = 4; // Columna F (Nombre)
+        const C_VIA_GRA = 5; // Columna G (grado)
+        const C_VIA_FOT = 6; // Columna H (Foto_Croquis)
 
         // ==========================================
 
@@ -118,10 +117,11 @@
                     jsonVia = JSON.parse(txtVia.substring(txtVia.indexOf('{'), txtVia.lastIndexOf('}') + 1));
                 }
 
-                // 1. Procesar Escuelas (A=0, B=1, C=2, D=3, E=4)
-                jsonEsc.table.rows.forEach((fila, index) => {
-                    if (index === 0 && fila.c[1] && fila.c[1].v.toString().toLowerCase().includes('nombre')) return;
-                    if (!fila.c || fila.c.length < 4) return;
+                // 1. Procesar Escuelas 
+                jsonEsc.table.rows.forEach(fila => {
+                    if (!fila.c) return;
+                    let c0 = fila.c[0] ? fila.c[0].v.toString().toLowerCase() : '';
+                    if (c0.includes('id') || c0.includes('nombre')) return; // Saltar cabecera
                     
                     const id = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
                     const nombre = fila.c[1] ? fila.c[1].v.toString() : '';
@@ -134,36 +134,50 @@
                     }
                 });
 
-                // 2. Procesar Sectores usando panel de configuración
+                // 2. Procesar Sectores
                 let contadoresPorEscuela = {};
-                jsonSec.table.rows.forEach((fila, index) => {
-                    if (index === 0 && fila.c[C_SEC_NOM] && fila.c[C_SEC_NOM].v.toString().toLowerCase().includes('nombre')) return; 
+                jsonSec.table.rows.forEach(fila => {
                     if (!fila.c) return;
+                    
+                    // Saltar cabecera
+                    let nomSec = fila.c[C_SEC_NOM] ? fila.c[C_SEC_NOM].v.toString() : '';
+                    if (nomSec.toLowerCase().includes('nombre')) return;
 
                     const idEscuela = fila.c[C_SEC_ESC] ? parseInt(fila.c[C_SEC_ESC].v) : NaN;
-                    const nombreSector = fila.c[C_SEC_NOM] ? fila.c[C_SEC_NOM].v.toString() : '';
+                    const nombreSector = nomSec.trim();
                     const vias = fila.c[C_SEC_VIA] ? fila.c[C_SEC_VIA].v.toString() : '0';
                     const grados = fila.c[C_SEC_GRA] ? (fila.c[C_SEC_GRA].f || fila.c[C_SEC_GRA].v || '').toString() : '';
                     const fotoSector = fila.c[C_SEC_FOT] ? fila.c[C_SEC_FOT].v.toString() : '';
 
                     if (nombreSector && !isNaN(idEscuela)) {
+                        // Generamos el 1, 2, 3... basándonos en el orden (como lo tienes en la pestaña Vías)
                         if (!contadoresPorEscuela[idEscuela]) contadoresPorEscuela[idEscuela] = 1;
                         const idSectorAutogenerado = contadoresPorEscuela[idEscuela]++;
-                        database.sectores.push({ idEscuela, idSector: idSectorAutogenerado, nombreSector, vias, grados, fotoSector: transformarEnlaceDrive(fotoSector) });
+                        
+                        database.sectores.push({ 
+                            idEscuela, 
+                            idSector: idSectorAutogenerado, 
+                            nombreSector, 
+                            vias, 
+                            grados, 
+                            fotoSector: transformarEnlaceDrive(fotoSector) 
+                        });
                     }
                 });
 
-                // 3. Procesar Vías usando panel de configuración (VINCULACIÓN POR NÚMERO, NUNCA POR NOMBRE)
+                // 3. Procesar Vías 
                 if (jsonVia && jsonVia.table && jsonVia.table.rows) {
-                    jsonVia.table.rows.forEach((fila, index) => {
-                        // Saltamos si lee la palabra "nombre" en la cabecera
-                        if (index === 0 && fila.c[C_VIA_NOM] && fila.c[C_VIA_NOM].v.toString().toLowerCase().includes('nombre')) return;
+                    jsonVia.table.rows.forEach(fila => {
                         if (!fila.c) return;
+                        
+                        // Saltar cabecera
+                        let nomVia = fila.c[C_VIA_NOM] ? fila.c[C_VIA_NOM].v.toString() : '';
+                        if (nomVia.toLowerCase().includes('nombre')) return;
 
                         const idEscuela = fila.c[C_VIA_ESC] ? parseInt(fila.c[C_VIA_ESC].v) : NaN;
                         const idSector = fila.c[C_VIA_SEC] ? parseInt(fila.c[C_VIA_SEC].v) : NaN;
                         const numero = fila.c[C_VIA_NUM] ? fila.c[C_VIA_NUM].v.toString() : '';
-                        const nombreVia = fila.c[C_VIA_NOM] ? fila.c[C_VIA_NOM].v.toString() : '';
+                        const nombreVia = nomVia;
                         const grado = fila.c[C_VIA_GRA] ? (fila.c[C_VIA_GRA].f || fila.c[C_VIA_GRA].v || '').toString() : '';
                         const fotoCroquis = fila.c[C_VIA_FOT] ? fila.c[C_VIA_FOT].v.toString() : '';
 
@@ -173,7 +187,7 @@
                     });
                 }
 
-                // Generar Marcadores del Mapa
+                // Generar Marcadores
                 database.escuelas.forEach(escuela => {
                     const customIcon = L.divIcon({
                         className: 'custom-div-icon',
@@ -191,7 +205,7 @@
                 mostrarInicio();
 
             } catch (error) {
-                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar los datos desde Google Sheets.';
+                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar los datos. Revisa la conexión.';
                 console.error(error);
             }
         }
@@ -278,29 +292,4 @@
                     const storageKey = `encadenada-${escuelaActualId}-${sector.idSector}-${via.numero}`;
                     const checked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
 
-                    html += `
-                        <div class="via-item">
-                            <div class="via-detalles">
-                                <div class="via-numero">${via.numero}.</div>
-                                <div class="via-nombre">${via.nombreVia}</div>
-                                <div class="via-grado">${via.grado}</div>
-                            </div>
-                            <div class="via-check">
-                                <input type="checkbox" ${checked} onchange="guardarEncade('${storageKey}', this.checked)">
-                            </div>
-                        </div>`;
-                });
-            }
-
-            contenedor.innerHTML = html;
-            window.scrollTo({ top: map.offsetHeight, behavior: 'smooth' });
-        }
-
-        function guardarEncade(key, valor) {
-            localStorage.setItem(key, valor);
-        }
-
-        inicializar();
-    </script>
-</body>
-</html>
+                    html
