@@ -78,6 +78,19 @@
             return urlDrive;
         }
 
+        // Lector inteligente de columnas
+        function getIndex(cols, keywords, exclude = []) {
+            for (let i = 0; i < cols.length; i++) {
+                if (cols[i] && cols[i].label) {
+                    const lbl = cols[i].label.toLowerCase().trim();
+                    const hasKey = keywords.some(k => lbl.includes(k));
+                    const hasExc = exclude.some(e => lbl.includes(e));
+                    if (hasKey && !hasExc) return i;
+                }
+            }
+            return -1;
+        }
+
         async function inicializar() {
             try {
                 const [resEsc, resSec, resVia] = await Promise.all([
@@ -90,187 +103,32 @@
 
                 const jsonEsc = JSON.parse(txtEsc.substring(txtEsc.indexOf('{'), txtEsc.lastIndexOf('}') + 1));
                 const jsonSec = JSON.parse(txtSec.substring(txtSec.indexOf('{'), txtSec.lastIndexOf('}') + 1));
-                
                 let jsonVia = null;
                 if (txtVia && txtVia.includes('{')) {
                     jsonVia = JSON.parse(txtVia.substring(txtVia.indexOf('{'), txtVia.lastIndexOf('}') + 1));
                 }
 
-                // 1. Escuelas (A=ID, B=Nombre, C=Lat, D=Lng, E=Foto)
-                jsonEsc.table.rows.forEach(fila => {
-                    if (!fila.c || fila.c.length < 4) return;
-                    const id = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
-                    const nombre = fila.c[1] ? fila.c[1].v.toString() : '';
-                    const lat = fila.c[2] ? parseFloat((fila.c[2].f || fila.c[2].v).toString().replace(',', '.')) : NaN;
-                    const lng = fila.c[3] ? parseFloat((fila.c[3].f || fila.c[3].v).toString().replace(',', '.')) : NaN;
-                    const foto = fila.c[4] ? fila.c[4].v.toString() : '';
+                // 1. Procesar Escuelas
+                const iEscId = getIndex(jsonEsc.table.cols, ['id']);
+                const iEscNom = getIndex(jsonEsc.table.cols, ['nombre']);
+                const iEscLat = getIndex(jsonEsc.table.cols, ['lat']);
+                const iEscLng = getIndex(jsonEsc.table.cols, ['long', 'lng']);
+                const iEscFoto = getIndex(jsonEsc.table.cols, ['foto']);
 
-                    if (nombre && !isNaN(id) && !isNaN(lat) && !isNaN(lng) && !nombre.toLowerCase().includes('nombre')) {
+                jsonEsc.table.rows.forEach(fila => {
+                    if (!fila.c) return;
+                    const id = iEscId >= 0 && fila.c[iEscId] ? parseInt(fila.c[iEscId].v) : NaN;
+                    const nombre = iEscNom >= 0 && fila.c[iEscNom] ? fila.c[iEscNom].v.toString() : '';
+                    const lat = iEscLat >= 0 && fila.c[iEscLat] ? parseFloat((fila.c[iEscLat].f || fila.c[iEscLat].v).toString().replace(',', '.')) : NaN;
+                    const lng = iEscLng >= 0 && fila.c[iEscLng] ? parseFloat((fila.c[iEscLng].f || fila.c[iEscLng].v).toString().replace(',', '.')) : NaN;
+                    const foto = iEscFoto >= 0 && fila.c[iEscFoto] ? fila.c[iEscFoto].v.toString() : '';
+
+                    if (nombre && !isNaN(id) && !isNaN(lat) && !isNaN(lng)) {
                         database.escuelas.push({ id, nombre, lat, lng, foto: transformarEnlaceDrive(foto) });
                     }
                 });
 
-                // 2. Sectores (A=ID_escuela, B=ID_sector, C=Nombre_sector, D=Vias, E=Grados, F=Foto)
-                jsonSec.table.rows.forEach(fila => {
-                    if (!fila.c || fila.c.length < 3) return;
-                    const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
-                    const idSector = fila.c[1] ? parseInt(fila.c[1].v) : NaN;
-                    const nombreSector = fila.c[2] ? fila.c[2].v.toString() : '';
-                    const vias = fila.c[3] ? fila.c[3].v.toString() : '0';
-                    const grados = fila.c[4] ? (fila.c[4].f || fila.c[4].v || '').toString() : '';
-                    const fotoSector = fila.c[5] ? fila.c[5].v.toString() : '';
-
-                    if (nombreSector && !isNaN(idEscuela) && !isNaN(idSector) && !nombreSector.toLowerCase().includes('sector')) {
-                        database.sectores.push({ idEscuela, idSector, nombreSector, vias, grados, fotoSector: transformarEnlaceDrive(fotoSector) });
-                    }
-                });
-
-                // 3. Vías (A=ID_escuela, B=Nombre_sector, C=ID_sector, D=Numero, E=Nombre, F=Grado, G=Foto)
-                if (jsonVia && jsonVia.table && jsonVia.table.rows) {
-                    jsonVia.table.rows.forEach(fila => {
-                        if (!fila.c || fila.c.length < 6) return;
-                        
-                        const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
-                        const idSector = fila.c[2] ? parseInt(fila.c[2].v) : NaN; // Columna C
-                        const numero = fila.c[3] ? fila.c[3].v.toString() : '';    // Columna D
-                        const nombreVia = fila.c[4] ? fila.c[4].v.toString() : ''; // Columna E
-                        const grado = fila.c[5] ? (fila.c[5].f || fila.c[5].v || '').toString() : ''; // Columna F
-                        const fotoCroquis = fila.c[6] ? fila.c[6].v.toString() : ''; // Columna G
-
-                        if (nombreVia && !isNaN(idEscuela) && !isNaN(idSector) && !nombreVia.toLowerCase().includes('nombre')) {
-                            database.vias.push({ idEscuela, idSector, numero, nombreVia, grado, fotoCroquis: transformarEnlaceDrive(fotoCroquis) });
-                        }
-                    });
-                }
-
-                // Marcadores Mapa
-                database.escuelas.forEach(escuela => {
-                    const customIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div class="marker-pin">${escuela.id}</div>`,
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 15]
-                    });
-
-                    const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
-                    marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
-                    marker.on('click', () => seleccionarEscuela(escuela.id));
-                    marcadores[escuela.id] = marker;
-                });
-
-                mostrarInicio();
-
-            } catch (error) {
-                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar los datos de las pestañas.';
-                console.error(error);
-            }
-        }
-
-        function mostrarInicio() {
-            escuelaActualId = null;
-            map.setView([43.18, -5.98], 11);
-            const contenedor = document.getElementById('contenido-dinamico');
-            
-            let html = `<div class="section-title">Escuelas de escalada</div>`;
-            database.escuelas.forEach(escuela => {
-                html += `
-                    <div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})">
-                        <div class="badge">${escuela.id}</div>
-                        <div class="escuela-name">${escuela.nombre}</div>
-                    </div>`;
-            });
-            contenedor.innerHTML = html;
-        }
-
-        function seleccionarEscuela(id) {
-            escuelaActualId = id;
-            const escuela = database.escuelas.find(e => e.id === id);
-            if (!escuela) return;
-
-            map.setView([escuela.lat, escuela.lng], 13);
-            if (marcadores[id]) marcadores[id].openPopup();
-
-            const contenedor = document.getElementById('contenido-dinamico');
-            let html = `
-                <button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button>
-                <div class="section-title">${escuela.nombre}</div>
-            `;
-
-            if (escuela.foto) {
-                html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela" onerror="this.style.display='none'">`;
-            }
-
-            html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
-            const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
-
-            if (sectoresFiltrados.length === 0) {
-                html += `<p style="color:#777; font-style:italic;">No se encontraron sectores asignados.</p>`;
-            } else {
-                sectoresFiltrados.forEach(sector => {
-                    html += `
-                        <div class="sector-card" onclick="verSector(${sector.idSector})">
-                            <div class="sector-header">${sector.idSector}. ${sector.nombreSector}</div>
-                            <div class="sector-info">
-                                <div>Vías: <span class="info-tag">${sector.vias}</span></div>
-                                <div>Rango: <span class="info-tag">${sector.grados || 'S/G'}</span></div>
-                            </div>
-                        </div>`;
-                });
-            }
-            contenedor.innerHTML = html;
-            window.scrollTo({ top: map.offsetHeight, behavior: 'smooth' });
-        }
-
-        function verSector(idSector) {
-            const sector = database.sectores.find(s => s.idEscuela === escuelaActualId && s.idSector === idSector);
-            if (!sector) return;
-
-            const contenedor = document.getElementById('contenido-dinamico');
-            let html = `
-                <button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">← Atrás</button>
-                <div class="section-title">${sector.nombreSector}</div>
-            `;
-
-            const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
-            
-            if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) {
-                html += `<img src="${viasFiltradas[0].fotoCroquis}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
-            } else if (sector.fotoSector) {
-                html += `<img src="${sector.fotoSector}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
-            }
-
-            html += `<div class="section-title" style="font-size:1rem;">Vías del sector</div>`;
-
-            if (viasFiltradas.length === 0) {
-                html += `<p style="color:#777; font-style:italic;">Aún no hay vías registradas para este sector.</p>`;
-            } else {
-                viasFiltradas.forEach((via, index) => {
-                    const storageKey = `encadenada-${escuelaActualId}-${sector.idSector}-${via.numero}`;
-                    const checked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
-
-                    html += `
-                        <div class="via-item">
-                            <div class="via-detalles">
-                                <div class="via-numero">${via.numero}.</div>
-                                <div class="via-nombre">${via.nombreVia}</div>
-                                <div class="via-grado">${via.grado}</div>
-                            </div>
-                            <div class="via-check">
-                                <input type="checkbox" ${checked} onchange="guardarEncade('${storageKey}', this.checked)">
-                            </div>
-                        </div>`;
-                });
-            }
-
-            contenedor.innerHTML = html;
-            window.scrollTo({ top: map.offsetHeight, behavior: 'smooth' });
-        }
-
-        function guardarEncade(key, valor) {
-            localStorage.setItem(key, valor);
-        }
-
-        inicializar();
-    </script>
-</body>
-</html>
+                // 2. Procesar Sectores
+                const iSecEsc = getIndex(jsonSec.table.cols, ['escuela']);
+                const iSecNom = getIndex(jsonSec.table.cols, ['nombre']);
+                const iSecVias = getIndex(json
