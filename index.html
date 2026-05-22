@@ -30,22 +30,21 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([43.36, -5.85], 9);
+        const map = L.map('map').setView([43.18, -5.98], 11);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap &copy; CARTO'
         }).addTo(map);
 
         const sheetId = '13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA';
-        // Usamos la API de visualización de Google para obtener JSON directo sin problemas de comas o puntos y comas
-        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+        // Forzamos la lectura de la pestaña "Escuelas" vía JSON
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Escuelas&tqx=out:json`;
 
         async function cargarDatos() {
             try {
                 const response = await fetch(url);
                 let text = await response.text();
                 
-                // Limpiar la envoltura de la respuesta de Google para quedarnos solo con el JSON puro
                 const inicio = text.indexOf('{');
                 const fin = text.lastIndexOf('}') + 1;
                 const jsonPuro = JSON.parse(text.substring(inicio, fin));
@@ -53,7 +52,6 @@
                 const filas = jsonPuro.table.rows;
                 const columnas = jsonPuro.table.cols;
                 
-                // Detectar las posiciones de las columnas buscando por su nombre real
                 let idxId = 0, idxNombre = 1, idxLat = 2, idxLng = 3;
                 
                 columnas.forEach((col, index) => {
@@ -62,7 +60,7 @@
                         if (label.includes('id')) idxId = index;
                         if (label.includes('nom')) idxNombre = index;
                         if (label.includes('lat')) idxLat = index;
-                        if (label.includes('lon')) idxLng = index;
+                        if (label.includes('lon')) idxLng = index; // Busca "Longitud"
                     }
                 });
 
@@ -70,7 +68,8 @@
                 listaContenedor.innerHTML = ''; 
 
                 filas.forEach((fila) => {
-                    // Google Sheets guarda los valores de las celdas en la propiedad .v
+                    if (!fila.c || !fila.c[idxNombre]) return;
+                    
                     const id = fila.c[idxId] ? fila.c[idxId].v : '';
                     const nombre = fila.c[idxNombre] ? fila.c[idxNombre].v : '';
                     const latRaw = fila.c[idxLat] ? fila.c[idxLat].v : '';
@@ -96,7 +95,7 @@
                         item.innerHTML = `<div class="badge">${id}</div><div class="escuela-name">${nombre}</div>`;
                         
                         item.onclick = () => {
-                            map.setView([numLat, numLng], 13);
+                            map.setView([numLat, numLng], 14);
                             marker.openPopup();
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         };
@@ -105,12 +104,11 @@
                 });
 
                 if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'No se encontraron filas válidas. Revisa que las columnas del Excel se llamen exactamente: ID_Escuela, Nombre, Latitud, Longitud';
+                    listaContenedor.innerHTML = 'Columnas leídas, pero los números de Latitud/Longitud no son válidos. Comprueba que no tengan puntos de miles.';
                 }
 
             } catch (error) {
-                console.error(error);
-                document.getElementById('indice-escuelas').innerHTML = 'Error al procesar los datos de Google Sheets.';
+                document.getElementById('indice-escuelas').innerHTML = 'Error al procesar los datos.';
             }
         }
         cargarDatos();
