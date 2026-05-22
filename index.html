@@ -30,14 +30,15 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Centramos el mapa en Asturias
         const map = L.map('map').setView([43.18, -5.98], 11);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap &copy; CARTO'
         }).addTo(map);
 
-        // Tu enlace real configurado para leer la pestaña de Escuelas
-        const url = `https://docs.google.com/spreadsheets/d/13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA/gviz/tq?sheet=Escuelas&tqx=out:json`;
+        const sheetId = '13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA';
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Escuelas&tqx=out:json`;
 
         async function cargarDatos() {
             try {
@@ -51,7 +52,6 @@
                 const filas = jsonPuro.table.rows;
                 const columnas = jsonPuro.table.cols;
                 
-                // Mapeo flexible de columnas para tu documento real
                 let idxId = 0, idxNombre = 1, idxLat = 2, idxLng = 3;
                 
                 columnas.forEach((col, index) => {
@@ -70,15 +70,12 @@
                 filas.forEach((fila) => {
                     if (!fila.c) return;
                     
-                    // Extraemos los valores de las celdas de tu Google Sheets
                     const id = fila.c[idxId] ? fila.c[idxId].v : '';
                     const nombre = fila.c[idxNombre] ? fila.c[idxNombre].v : '';
-                    const latRaw = fila.c[idxLat] ? fila.c[idxLat].v : '';
-                    const lngRaw = fila.c[idxLng] ? fila.c[idxLng].v : '';
                     
-                    // Convertimos a número limpio
-                    const numLat = parseFloat(latRaw);
-                    const numLng = parseFloat(lngRaw);
+                    // Leemos directamente el valor numérico que viene de tu Excel limpio
+                    const numLat = fila.c[idxLat] ? parseFloat(fila.c[idxLat].v) : NaN;
+                    const numLng = fila.c[idxLng] ? parseFloat(fila.c[idxLng].v) : NaN;
 
                     if (nombre && !isNaN(numLat) && !isNaN(numLng)) {
                         const customIcon = L.divIcon({
@@ -106,7 +103,7 @@
                 });
 
                 if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'Conexión establecida, pero los datos de las celdas no son números válidos. Revisa las coordenadas de tu Excel.';
+                    listaContenedor.innerHTML = 'No se han podido pintar marcadores. Comprueba las coordenadas.';
                 }
 
             } catch (error) {
