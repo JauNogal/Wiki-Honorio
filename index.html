@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WIKI-HONORIO</title>
+    <title>Wiki-Honorio</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -40,7 +40,7 @@
 </head>
 <body>
 
-    <header onclick="mostrarInicio()">WIKI-HONORIO</header>
+    <header onclick="mostrarInicio()">Wiki-Honorio</header>
     <div id="map"></div>
     
     <div class="container" id="contenido-dinamico">
@@ -78,7 +78,6 @@
             return urlDrive;
         }
 
-        // Lector inteligente de columnas
         function getIndex(cols, keywords, exclude = []) {
             for (let i = 0; i < cols.length; i++) {
                 if (cols[i] && cols[i].label) {
@@ -131,4 +130,123 @@
                 // 2. Procesar Sectores
                 const iSecEsc = getIndex(jsonSec.table.cols, ['escuela']);
                 const iSecNom = getIndex(jsonSec.table.cols, ['nombre']);
-                const iSecVias = getIndex(json
+                const iSecVias = getIndex(jsonSec.table.cols, ['via', 'vía']);
+                const iSecGrad = getIndex(jsonSec.table.cols, ['grado']);
+                const iSecFoto = getIndex(jsonSec.table.cols, ['foto']);
+
+                let contadoresPorEscuela = {};
+                jsonSec.table.rows.forEach(fila => {
+                    if (!fila.c) return;
+                    const idEscuela = iSecEsc >= 0 && fila.c[iSecEsc] ? parseInt(fila.c[iSecEsc].v) : NaN;
+                    const nombreSector = iSecNom >= 0 && fila.c[iSecNom] ? fila.c[iSecNom].v.toString() : '';
+                    const vias = iSecVias >= 0 && fila.c[iSecVias] ? fila.c[iSecVias].v.toString() : '0';
+                    const grados = iSecGrad >= 0 && fila.c[iSecGrad] ? (fila.c[iSecGrad].f || fila.c[iSecGrad].v || '').toString() : '';
+                    const fotoSector = iSecFoto >= 0 && fila.c[iSecFoto] ? fila.c[iSecFoto].v.toString() : '';
+
+                    if (nombreSector && !isNaN(idEscuela)) {
+                        if (!contadoresPorEscuela[idEscuela]) contadoresPorEscuela[idEscuela] = 1;
+                        const idSectorAutogenerado = contadoresPorEscuela[idEscuela]++;
+                        database.sectores.push({ idEscuela, idSector: idSectorAutogenerado, nombreSector, vias, grados, fotoSector: transformarEnlaceDrive(fotoSector) });
+                    }
+                });
+
+                // 3. Procesar Vías
+                if (jsonVia && jsonVia.table && jsonVia.table.rows) {
+                    const iViaEsc = getIndex(jsonVia.table.cols, ['escuela']);
+                    const iViaSec = getIndex(jsonVia.table.cols, ['id_sector', 'id sector']);
+                    const iViaNum = getIndex(jsonVia.table.cols, ['numero', 'número', 'num']);
+                    const iViaNom = getIndex(jsonVia.table.cols, ['nombre'], ['sector']);
+                    const iViaGrad = getIndex(jsonVia.table.cols, ['grado']);
+                    const iViaFoto = getIndex(jsonVia.table.cols, ['foto']);
+
+                    jsonVia.table.rows.forEach(fila => {
+                        if (!fila.c) return;
+                        const idEscuela = iViaEsc >= 0 && fila.c[iViaEsc] ? parseInt(fila.c[iViaEsc].v) : NaN;
+                        const idSector = iViaSec >= 0 && fila.c[iViaSec] ? parseInt(fila.c[iViaSec].v) : NaN;
+                        const numero = iViaNum >= 0 && fila.c[iViaNum] ? fila.c[iViaNum].v.toString() : '';
+                        const nombreVia = iViaNom >= 0 && fila.c[iViaNom] ? fila.c[iViaNom].v.toString() : '';
+                        const grado = iViaGrad >= 0 && fila.c[iViaGrad] ? (fila.c[iViaGrad].f || fila.c[iViaGrad].v || '').toString() : '';
+                        const fotoCroquis = iViaFoto >= 0 && fila.c[iViaFoto] ? fila.c[iViaFoto].v.toString() : '';
+
+                        if (nombreVia && !isNaN(idEscuela) && !isNaN(idSector)) {
+                            database.vias.push({ idEscuela, idSector, numero, nombreVia, grado, fotoCroquis: transformarEnlaceDrive(fotoCroquis) });
+                        }
+                    });
+                }
+
+                // Generar Marcadores del Mapa
+                database.escuelas.forEach(escuela => {
+                    const customIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div class="marker-pin">${escuela.id}</div>`,
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15]
+                    });
+
+                    const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
+                    marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
+                    marker.on('click', () => seleccionarEscuela(escuela.id));
+                    marcadores[escuela.id] = marker;
+                });
+
+                mostrarInicio();
+
+            } catch (error) {
+                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar los datos. Revisa la conexión.';
+                console.error(error);
+            }
+        }
+
+        function mostrarInicio() {
+            escuelaActualId = null;
+            map.setView([43.18, -5.98], 11);
+            const contenedor = document.getElementById('contenido-dinamico');
+            
+            let html = `<div class="section-title">Escuelas de escalada</div>`;
+            database.escuelas.forEach(escuela => {
+                html += `
+                    <div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})">
+                        <div class="badge">${escuela.id}</div>
+                        <div class="escuela-name">${escuela.nombre}</div>
+                    </div>`;
+            });
+            contenedor.innerHTML = html;
+        }
+
+        function seleccionarEscuela(id) {
+            escuelaActualId = id;
+            const escuela = database.escuelas.find(e => e.id === id);
+            if (!escuela) return;
+
+            map.setView([escuela.lat, escuela.lng], 13);
+            if (marcadores[id]) marcadores[id].openPopup();
+
+            const contenedor = document.getElementById('contenido-dinamico');
+            let html = `
+                <button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button>
+                <div class="section-title">${escuela.nombre}</div>
+            `;
+
+            if (escuela.foto) {
+                html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela" onerror="this.style.display='none'">`;
+            }
+
+            html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
+            const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
+
+            if (sectoresFiltrados.length === 0) {
+                html += `<p style="color:#777; font-style:italic;">No se encontraron sectores asignados.</p>`;
+            } else {
+                sectoresFiltrados.forEach(sector => {
+                    html += `
+                        <div class="sector-card" onclick="verSector(${sector.idSector})">
+                            <div class="sector-header">${sector.idSector}. ${sector.nombreSector}</div>
+                            <div class="sector-info">
+                                <div>Vías: <span class="info-tag">${sector.vias}</span></div>
+                                <div>Rango: <span class="info-tag">${sector.grados || 'S/G'}</span></div>
+                            </div>
+                        </div>`;
+                });
+            }
+            contenedor.innerHTML = html;
+            window.scrollTo({ top:
