@@ -7,30 +7,46 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #f4f4f9; color: #333; padding-bottom: 30px; }
-        header { background-color: #2c3e50; color: white; text-align: center; padding: 15px; font-size: 1.2rem; font-weight: bold; }
-        #map { height: 50vh; width: 100%; border-bottom: 3px solid #2c3e50; }
-        .list-container { padding: 15px; max-width: 600px; margin: 0 auto; }
-        .list-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-        .escuela-item { display: flex; align-items: center; background: white; padding: 12px; margin-bottom: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }
-        .badge { background-color: #e74c3c; color: white; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 0.9rem; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .escuela-name { font-size: 1rem; font-weight: 600; color: #34495e; }
+        body { background-color: #f4f4f9; color: #333; padding-bottom: 40px; }
+        header { background-color: #2c3e50; color: white; text-align: center; padding: 15px; font-size: 1.2rem; font-weight: bold; cursor: pointer; }
+        #map { height: 45vh; width: 100%; border-bottom: 3px solid #2c3e50; }
+        
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .section-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 12px; color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+        
+        /* Lista de Escuelas Principal */
+        .escuela-item { display: flex; align-items: center; background: white; padding: 12px; margin-bottom: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s; }
+        .escuela-item:hover { transform: translateY(-2px); }
+        .badge { background-color: #e74c3c; color: white; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 0.9rem; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .escuela-name { font-size: 1.1rem; font-weight: 600; color: #34495e; }
+        
+        /* Vista Detalle de la Escuela Seleccionada */
+        .btn-volver { display: inline-block; background-color: #7f8c8d; color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-size: 0.9rem; margin-bottom: 15px; cursor: pointer; font-weight: bold; border: none; }
+        .foto-escuela { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px; background-color: #ddd; display: block; }
+        
+        /* Tarjetas de Sectores */
+        .sector-card { background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #e74c3c; }
+        .sector-header { font-size: 1.1rem; font-weight: bold; color: #2c3e50; margin-bottom: 6px; }
+        .sector-info { font-size: 0.9rem; color: #555; display: flex; gap: 15px; }
+        .info-tag { background: #edf2f7; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+
+        /* Iconos del Mapa */
         .custom-div-icon { display: flex; align-items: center; justify-content: center; }
         .marker-pin { background-color: #e74c3c; color: white; font-weight: bold; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <header>Guía de Escalada: Asturias</header>
+    <header onclick="mostrarInicio()">Guía de Escalada: Asturias</header>
     <div id="map"></div>
-    <div class="list-container">
-        <div class="list-title">Escuelas de escalada</div>
-        <div id="indice-escuelas">Cargando escuelas...</div>
+    
+    <div class="container" id="contenido-dinamico">
+        <div class="section-title">Escuelas de escalada</div>
+        <div id="lista-escuelas">Cargando escuelas...</div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Centrado inicial en la zona de Quirós/Otura
         const map = L.map('map').setView([43.18, -5.98], 11);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -38,74 +54,162 @@
         }).addTo(map);
 
         const sheetId = '13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA';
-        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Escuelas&tqx=out:json`;
+        
+        // Enlaces para descargar ambas pestañas del Excel
+        const urlEscuelas = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Escuelas&tqx=out:json`;
+        const urlSectores = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Sectores&tqx=out:json`;
 
-        async function cargarDatos() {
+        let database = { escuelas: [], sectores: [] };
+        let marcadores = {};
+
+        // Función mágica para convertir enlaces de Drive compartidos en imágenes directas de entorno web
+        function transformarEnlaceDrive(urlDrive) {
+            if (!urlDrive) return '';
+            if (urlDrive.includes('drive.google.com')) {
+                const parts = urlDrive.split('/d/');
+                if (parts.length > 1) {
+                    const id = parts[1].split('/')[0];
+                    return `https://lh3.googleusercontent.com/d/${id}`;
+                }
+            }
+            return urlDrive;
+        }
+
+        async function inicializar() {
             try {
-                const response = await fetch(url);
-                let text = await response.text();
+                // 1. Descargar datos de Escuelas
+                const resEscuelas = await fetch(urlEscuelas);
+                let txtEscuelas = await resEscuelas.text();
+                const jsonEscuelas = JSON.parse(txtEscuelas.substring(txtEscuelas.indexOf('{'), txtEscuelas.lastIndexOf('}') + 1));
                 
-                const inicio = text.indexOf('{');
-                const fin = text.lastIndexOf('}') + 1;
-                const jsonPuro = JSON.parse(text.substring(inicio, fin));
-                
-                const filas = jsonPuro.table.rows;
-                const listaContenedor = document.getElementById('indice-escuelas');
-                listaContenedor.innerHTML = ''; 
+                // 2. Descargar datos de Sectores
+                const resSectores = await fetch(urlSectores);
+                let txtSectores = await resSectores.text();
+                const jsonSectores = JSON.parse(txtSectores.substring(txtSectores.indexOf('{'), txtSectores.lastIndexOf('}') + 1));
 
-                filas.forEach((fila) => {
-                    if (!fila.c || fila.c.length < 4) return;
-                    
-                    // Ir directo a la posición de las columnas de tu Excel real:
-                    // Columna A (0) = ID, Columna B (1) = Nombre, Columna C (2) = Latitud, Columna D (3) = Longitud
-                    const id = fila.c[0] ? (fila.c[0].v || '').toString() : '';
-                    const nombre = fila.c[1] ? (fila.c[1].v || '').toString() : '';
-                    
-                    // Saltamos cualquier problema de formato de celda extrayendo el texto puro visible (.f) o el valor (.v)
-                    const latTexto = fila.c[2] ? (fila.c[2].f || fila.c[2].v || '').toString() : '';
-                    const lngTexto = fila.c[3] ? (fila.c[3].f || fila.c[3].v || '').toString() : '';
-                    
-                    // Forzar conversión limpia a decimales
-                    const numLat = parseFloat(latTexto.replace(',', '.'));
-                    const numLng = parseFloat(lngTexto.replace(',', '.'));
+                // Procesar Escuelas
+                jsonEscuelas.table.rows.forEach(fila => {
+                    if (!fila.c || fila.c.length < 5) return;
+                    const id = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
+                    const nombre = fila.c[1] ? fila.c[1].v.toString() : '';
+                    const lat = fila.c[2] ? parseFloat((fila.c[2].f || fila.c[2].v).toString().replace(',', '.')) : NaN;
+                    const lng = fila.c[3] ? parseFloat((fila.c[3].f || fila.c[3].v).toString().replace(',', '.')) : NaN;
+                    const foto = fila.c[4] ? fila.c[4].v.toString() : '';
 
-                    // Evitar meter la fila de la cabecera del Excel
-                    if (nombre && nombre.toLowerCase().includes('nombre')) return;
-
-                    if (nombre && !isNaN(numLat) && !isNaN(numLng)) {
-                        const customIcon = L.divIcon({
-                            className: 'custom-div-icon',
-                            html: `<div class="marker-pin">${id}</div>`,
-                            iconSize: [30, 30],
-                            iconAnchor: [15, 15]
-                        });
-
-                        const marker = L.marker([numLat, numLng], { icon: customIcon })
-                            .addTo(map)
-                            .bindPopup(`<b>${id}. ${nombre}</b>`);
-                        
-                        const item = document.createElement('div');
-                        item.className = 'escuela-item';
-                        item.innerHTML = `<div class="badge">${id}</div><div class="escuela-name">${nombre}</div>`;
-                        
-                        item.onclick = () => {
-                            map.setView([numLat, numLng], 14);
-                            marker.openPopup();
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        };
-                        listaContenedor.appendChild(item);
+                    if (nombre && !isNaN(id) && !isNaN(lat) && !isNaN(lng) && !nombre.toLowerCase().includes('nombre')) {
+                        database.escuelas.push({ id, nombre, lat, lng, foto: transformarEnlaceDrive(foto) });
                     }
                 });
 
-                if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'No se pudieron cargar marcadores. Comprueba el formato de las coordenadas.';
-                }
+                // Procesar Sectores
+                jsonSectores.table.rows.forEach(fila => {
+                    if (!fila.c || fila.c.length < 4) return;
+                    const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
+                    const nombreSector = fila.c[1] ? fila.c[1].v.toString() : '';
+                    const vias = fila.c[2] ? fila.c[2].v.toString() : '0';
+                    const grados = fila.c[3] ? (fila.c[3].f || fila.c[3].v || '').toString() : '';
+
+                    if (nombreSector && !isNaN(idEscuela) && !nombreSector.toLowerCase().includes('sector')) {
+                        database.sectores.push({ idEscuela, nombreSector, vias, grados });
+                    }
+                });
+
+                // Pintar los marcadores en el mapa
+                database.escuelas.forEach(escuela => {
+                    const customIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div class="marker-pin">${escuela.id}</div>`,
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15]
+                    });
+
+                    const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon })
+                        .addTo(map)
+                        .bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
+                    
+                    // Al hacer clic en el globo del mapa, abre sus sectores
+                    marker.on('click', () => {
+                        seleccionarEscuela(escuela.id);
+                    });
+
+                    marcadores[escuela.id] = marker;
+                });
+
+                mostrarInicio();
 
             } catch (error) {
-                document.getElementById('indice-escuelas').innerHTML = 'Error al conectar con las escuelas.';
+                document.getElementById('lista-escuelas').innerHTML = 'Error al sincronizar con Google Sheets.';
+                console.error(error);
             }
         }
-        cargarDatos();
+
+        // Muestra la pantalla de inicio con todas las escuelas listadas
+        function mostrarInicio() {
+            map.setView([43.18, -5.98], 11);
+            const contenedor = document.getElementById('contenido-dinamico');
+            
+            let html = `<div class="section-title">Escuelas de escalada</div><div id="lista-escuelas">`;
+            
+            database.escuelas.forEach(escuela => {
+                html += `
+                    <div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})">
+                        <div class="badge">${escuela.id}</div>
+                        <div class="escuela-name">${escuela.nombre}</div>
+                    </div>`;
+            });
+            
+            html += `</div>`;
+            contenedor.innerHTML = html;
+        }
+
+        // Muestra la foto de la escuela y filtra sus sectores correspondientes
+        function seleccionarEscuela(id) {
+            const escuela = database.escuelas.find(e => e.id === id);
+            if (!escuela) return;
+
+            // Enfocar mapa y abrir globo
+            map.setView([escuela.lat, escuela.lng], 13);
+            if (marcadores[id]) marcadores[id].openPopup();
+
+            const contenedor = document.getElementById('contenido-dinamico');
+            
+            // Construir el encabezado del detalle
+            let html = `
+                <button class="btn-volver" onclick="mostrarInicio()">← Volver al índice</button>
+                <div class="section-title">${escuela.nombre}</div>
+            `;
+
+            // Si hay foto guardada, la pinta. Si no, no muestra recuadro roto
+            if (escuela.foto) {
+                html += `<img src="${escuela.foto}" class="foto-escuela" alt="Foto de ${escuela.nombre}" onerror="this.style.display='none'">`;
+            }
+
+            html += `<div class="section-title" style="font-size:1rem; margin-top:15px;">Sectores disponibles</div>`;
+
+            // Filtrar sectores vinculados a esta escuela
+            const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
+
+            if (sectoresFiltrados.length === 0) {
+                html += `<p style="color:#777; font-style:italic;">No hay sectores registrados para esta escuela todavía.</p>`;
+            } else {
+                sectoresFiltrados.forEach(sector => {
+                    html += `
+                        <div class="sector-card">
+                            <div class="sector-header">${sector.nombreSector}</div>
+                            <div class="sector-info">
+                                <div>Vías: <span class="info-tag">${sector.vias}</span></div>
+                                <div>Grados: <span class="info-tag">${sector.grados || 'S/G'}</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            contenedor.innerHTML = html;
+            window.scrollTo({ top: map.offsetHeight, behavior: 'smooth' });
+        }
+
+        inicializar();
     </script>
 </body>
 </html>
