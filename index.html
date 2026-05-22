@@ -30,6 +30,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Centrado inicial en la zona de Quirós/Otura
         const map = L.map('map').setView([43.18, -5.98], 11);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -49,36 +50,27 @@
                 const jsonPuro = JSON.parse(text.substring(inicio, fin));
                 
                 const filas = jsonPuro.table.rows;
-                const columnas = jsonPuro.table.cols;
-                
-                let idxId = 0, idxNombre = 1, idxLat = 2, idxLng = 3;
-                
-                columnas.forEach((col, index) => {
-                    if (col.label) {
-                        const label = col.label.toLowerCase().trim();
-                        if (label.includes('id')) idxId = index;
-                        if (label.includes('nom')) idxNombre = index;
-                        if (label.includes('lat')) idxLat = index;
-                        if (label.includes('long') || label.includes('alt')) idxLng = index;
-                    }
-                });
-
                 const listaContenedor = document.getElementById('indice-escuelas');
                 listaContenedor.innerHTML = ''; 
 
                 filas.forEach((fila) => {
-                    if (!fila.c) return;
+                    if (!fila.c || fila.c.length < 4) return;
                     
-                    const id = fila.c[idxId] ? fila.c[idxId].v : '';
-                    const nombre = fila.c[idxNombre] ? fila.c[idxNombre].v : '';
+                    // Ir directo a la posición de las columnas de tu Excel real:
+                    // Columna A (0) = ID, Columna B (1) = Nombre, Columna C (2) = Latitud, Columna D (3) = Longitud
+                    const id = fila.c[0] ? (fila.c[0].v || '').toString() : '';
+                    const nombre = fila.c[1] ? (fila.c[1].v || '').toString() : '';
                     
-                    // SOLUCIÓN CLAVE: Google Sheets envía las coordenadas formateadas en la propiedad .f (formato visual) en vez de .v
-                    // Cogemos la propiedad de texto y la forzamos a convertirse en número puro pase lo que pase
-                    const latTexto = fila.c[idxLat] ? (fila.c[idxLat].f || fila.c[idxLat].v).toString() : '';
-                    const lngTexto = fila.c[idxLng] ? (fila.c[idxLng].f || fila.c[idxLng].v).toString() : '';
+                    // Saltamos cualquier problema de formato de celda extrayendo el texto puro visible (.f) o el valor (.v)
+                    const latTexto = fila.c[2] ? (fila.c[2].f || fila.c[2].v || '').toString() : '';
+                    const lngTexto = fila.c[3] ? (fila.c[3].f || fila.c[3].v || '').toString() : '';
                     
+                    // Forzar conversión limpia a decimales
                     const numLat = parseFloat(latTexto.replace(',', '.'));
                     const numLng = parseFloat(lngTexto.replace(',', '.'));
+
+                    // Evitar meter la fila de la cabecera del Excel
+                    if (nombre && nombre.toLowerCase().includes('nombre')) return;
 
                     if (nombre && !isNaN(numLat) && !isNaN(numLng)) {
                         const customIcon = L.divIcon({
@@ -106,11 +98,11 @@
                 });
 
                 if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'No se encontraron escuelas con coordenadas válidas.';
+                    listaContenedor.innerHTML = 'No se pudieron cargar marcadores. Comprueba el formato de las coordenadas.';
                 }
 
             } catch (error) {
-                document.getElementById('indice-escuelas').innerHTML = 'Error de conexión con el documento.';
+                document.getElementById('indice-escuelas').innerHTML = 'Error al conectar con las escuelas.';
             }
         }
         cargarDatos();
