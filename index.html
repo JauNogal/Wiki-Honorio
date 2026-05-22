@@ -30,44 +30,54 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Inicializar mapa centrado en Asturias
         const map = L.map('map').setView([43.36, -5.85], 9);
         
-        // Mapa base de CartoDB (antivuelcos y antibloqueos)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap &copy; CARTO'
         }).addTo(map);
 
         const sheetId = '13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA';
-        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
+        // Usamos la API de visualización de Google para obtener JSON directo sin problemas de comas o puntos y comas
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
 
         async function cargarDatos() {
             try {
                 const response = await fetch(url);
-                const data = await response.text();
+                let text = await response.text();
                 
-                const lineas = data.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-                if (lineas.length === 0) return;
-
-                const separador = lineas[0].includes(';') ? ';' : ',';
-                const cabecera = lineas[0].split(separador).map(h => h.replace(/["']/g, '').trim());
+                // Limpiar la envoltura de la respuesta de Google para quedarnos solo con el JSON puro
+                const inicio = text.indexOf('{');
+                const fin = text.lastIndexOf('}') + 1;
+                const jsonPuro = JSON.parse(text.substring(inicio, fin));
                 
-                // Buscamos las nuevas columnas mapeadas
-                const idxId = cabecera.indexOf('ID_Escuela');
-                const idxNombre = cabecera.indexOf('Nombre');
-                const idxLat = cabecera.indexOf('Latitud');
-                const idxLng = cabecera.indexOf('Longitud');
+                const filas = jsonPuro.table.rows;
+                const columnas = jsonPuro.table.cols;
+                
+                // Detectar las posiciones de las columnas buscando por su nombre real
+                let idxId = 0, idxNombre = 1, idxLat = 2, idxLng = 3;
+                
+                columnas.forEach((col, index) => {
+                    if (col.label) {
+                        const label = col.label.toLowerCase();
+                        if (label.includes('id')) idxId = index;
+                        if (label.includes('nom')) idxNombre = index;
+                        if (label.includes('lat')) idxLat = index;
+                        if (label.includes('lon')) idxLng = index;
+                    }
+                });
 
                 const listaContenedor = document.getElementById('indice-escuelas');
                 listaContenedor.innerHTML = ''; 
 
-                for (let i = 1; i < lineas.length; i++) {
-                    const columnas = lineas[i].split(separador).map(c => c.replace(/["']/g, '').trim());
+                filas.forEach((fila) => {
+                    // Google Sheets guarda los valores de las celdas en la propiedad .v
+                    const id = fila.c[idxId] ? fila.c[idxId].v : '';
+                    const nombre = fila.c[idxNombre] ? fila.c[idxNombre].v : '';
+                    const latRaw = fila.c[idxLat] ? fila.c[idxLat].v : '';
+                    const lngRaw = fila.c[idxLng] ? fila.c[idxLng].v : '';
                     
-                    const id = columnas[idxId];
-                    const nombre = columnas[idxNombre];
-                    const numLat = parseFloat(columnas[idxLat]);
-                    const numLng = parseFloat(columnas[idxLng]);
+                    const numLat = parseFloat(latRaw);
+                    const numLng = parseFloat(lngRaw);
 
                     if (nombre && !isNaN(numLat) && !isNaN(numLng)) {
                         const customIcon = L.divIcon({
@@ -83,30 +93,26 @@
                         
                         const item = document.createElement('div');
                         item.className = 'escuela-item';
-                        item.innerHTML = `
-                            <div class="badge">${id}</div>
-                            <div class="escuela-name">${nombre}</div>
-                        `;
+                        item.innerHTML = `<div class="badge">${id}</div><div class="escuela-name">${nombre}</div>`;
                         
                         item.onclick = () => {
                             map.setView([numLat, numLng], 13);
                             marker.openPopup();
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         };
-                        
                         listaContenedor.appendChild(item);
                     }
-                }
+                });
 
                 if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'No se han podido cargar las escuelas. Asegúrate de que las columnas del Excel se llamen exactamente: ID_Escuela, Nombre, Latitud, Longitud';
+                    listaContenedor.innerHTML = 'No se encontraron filas válidas. Revisa que las columnas del Excel se llamen exactamente: ID_Escuela, Nombre, Latitud, Longitud';
                 }
 
             } catch (error) {
-                document.getElementById('indice-escuelas').innerHTML = 'Error al conectar con los datos.';
+                console.error(error);
+                document.getElementById('indice-escuelas').innerHTML = 'Error al procesar los datos de Google Sheets.';
             }
         }
-
         cargarDatos();
     </script>
 </body>
