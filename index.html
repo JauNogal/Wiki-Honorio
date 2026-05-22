@@ -14,34 +14,26 @@
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         .section-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 12px; color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
         
-        /* Botones */
         .btn-volver { display: inline-block; background-color: #7f8c8d; color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-size: 0.9rem; margin-bottom: 15px; cursor: pointer; font-weight: bold; border: none; margin-right: 10px; }
         
-        /* Lista de Escuelas */
         .escuela-item { display: flex; align-items: center; background: white; padding: 12px; margin-bottom: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }
         .badge { background-color: #e74c3c; color: white; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 0.9rem; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .escuela-name { font-size: 1.1rem; font-weight: 600; color: #34495e; }
         
-        /* Fotos */
-        .foto-guia { width: 100%; max-height: 300px; object-fit: contain; background-color: #222; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px; display: block; }
+        .foto-guia { width: 100%; max-height: 300px; object-fit: cover; background-color: #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px; display: block; }
         
-        /* Tarjetas de Sectores e Índices */
         .sector-card { background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #e74c3c; cursor: pointer; }
         .sector-header { font-size: 1.1rem; font-weight: bold; color: #2c3e50; margin-bottom: 6px; }
         .sector-info { font-size: 0.9rem; color: #555; display: flex; gap: 15px; }
         .info-tag { background: #edf2f7; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
 
-        /* Tabla / Lista de Vías */
         .via-item { display: flex; align-items: center; justify-content: space-between; background: white; padding: 12px 15px; margin-bottom: 6px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .via-detalles { display: flex; align-items: center; gap: 15px; font-size: 1rem; }
         .via-numero { font-weight: bold; color: #e74c3c; min-width: 20px; }
         .via-nombre { font-weight: 600; color: #2c3e50; }
         .via-grado { background: #edf2f7; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
-        
-        /* Checkbox de encadenado */
         .via-check input { width: 20px; height: 20px; cursor: pointer; accent-color: #2ecc71; }
 
-        /* Iconos del Mapa */
         .custom-div-icon { display: flex; align-items: center; justify-content: center; }
         .marker-pin { background-color: #e74c3c; color: white; font-weight: bold; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); font-size: 0.9rem; }
     </style>
@@ -61,7 +53,7 @@
         const map = L.map('map').setView([43.18, -5.98], 11);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap © CARTO'
+            attribution: '© OpenStreetMap'
         }).addTo(map);
 
         const sheetId = '13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA';
@@ -80,7 +72,7 @@
                 const parts = urlDrive.split('/d/');
                 if (parts.length > 1) {
                     const id = parts[1].split('/')[0];
-                    return `http://googleusercontent.com/profile/picture/2{id}`;
+                    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
                 }
             }
             return urlDrive;
@@ -89,18 +81,22 @@
         async function inicializar() {
             try {
                 const [resEsc, resSec, resVia] = await Promise.all([
-                    fetch(urlEscuelas), fetch(urlSectores), fetch(urlVias)
+                    fetch(urlEscuelas), fetch(urlSectores), fetch(urlVias).catch(() => null)
                 ]);
                 
                 let txtEsc = await resEsc.text();
                 let txtSec = await resSec.text();
-                let txtVia = await resVia.text();
+                let txtVia = resVia ? await resVia.text() : null;
 
                 const jsonEsc = JSON.parse(txtEsc.substring(txtEsc.indexOf('{'), txtEsc.lastIndexOf('}') + 1));
                 const jsonSec = JSON.parse(txtSec.substring(txtSec.indexOf('{'), txtSec.lastIndexOf('}') + 1));
-                const jsonVia = JSON.parse(txtVia.substring(txtVia.indexOf('{'), txtVia.lastIndexOf('}') + 1));
+                
+                let jsonVia = null;
+                if (txtVia && txtVia.includes('{')) {
+                    jsonVia = JSON.parse(txtVia.substring(txtVia.indexOf('{'), txtVia.lastIndexOf('}') + 1));
+                }
 
-                // 1. Procesar Escuelas
+                // 1. Escuelas
                 jsonEsc.table.rows.forEach(fila => {
                     if (!fila.c || fila.c.length < 4) return;
                     const id = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
@@ -114,36 +110,53 @@
                     }
                 });
 
-                // 2. Procesar Sectores (Numeración individualizada por escuela)
+                // 2. Sectores (Numeración Automática)
+                let contadoresPorEscuela = {};
+                
                 jsonSec.table.rows.forEach(fila => {
-                    if (!fila.c || fila.c.length < 4) return;
+                    if (!fila.c || fila.c.length < 2) return;
                     const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
-                    const idSector = fila.c[1] ? parseInt(fila.c[1].v) : NaN; // Tu número 1 al 15
-                    const nombreSector = fila.c[2] ? fila.c[2].v.toString() : '';
-                    const vias = fila.c[3] ? fila.c[3].v.toString() : '0';
-                    const grados = fila.c[4] ? (fila.c[4].f || fila.c[4].v || '').toString() : '';
+                    const nombreSector = fila.c[1] ? fila.c[1].v.toString() : '';
+                    const vias = fila.c[2] ? fila.c[2].v.toString() : '0';
+                    const grados = fila.c[3] ? (fila.c[3].f || fila.c[3].v || '').toString() : '';
+                    const fotoSector = fila.c[4] ? fila.c[4].v.toString() : '';
 
-                    if (nombreSector && !isNaN(idEscuela) && !isNaN(idSector) && !nombreSector.toLowerCase().includes('sector')) {
-                        database.sectores.push({ idEscuela, idSector, nombreSector, vias, grados });
+                    if (nombreSector && !isNaN(idEscuela) && !nombreSector.toLowerCase().includes('sector')) {
+                        if (!contadoresPorEscuela[idEscuela]) contadoresPorEscuela[idEscuela] = 1;
+                        const idSectorAutogenerado = contadoresPorEscuela[idEscuela]++;
+
+                        database.sectores.push({ 
+                            idEscuela, 
+                            idSector: idSectorAutogenerado, 
+                            nombreSector, 
+                            vias, 
+                            grados,
+                            fotoSector: transformarEnlaceDrive(fotoSector)
+                        });
                     }
                 });
 
-                // 3. Procesar Vías (Filtra usando ID_Escuela e ID_Sector)
-                jsonVia.table.rows.forEach(fila => {
-                    if (!fila.c || fila.c.length < 5) return;
-                    const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
-                    const idSector = fila.c[1] ? parseInt(fila.c[1].v) : NaN;
-                    const numero = fila.c[2] ? fila.c[2].v.toString() : '';
-                    const nombreVia = fila.c[3] ? fila.c[3].v.toString() : '';
-                    const grado = fila.c[4] ? (fila.c[4].f || fila.c[4].v || '').toString() : '';
-                    const fotoCroquis = fila.c[5] ? fila.c[5].v.toString() : '';
+                // 3. Vías (Adaptado a tu última captura de Excel con 7 columnas)
+                if (jsonVia && jsonVia.table && jsonVia.table.rows) {
+                    jsonVia.table.rows.forEach(fila => {
+                        // Ahora necesitamos comprobar que hay al menos 6 o 7 columnas
+                        if (!fila.c || fila.c.length < 5) return;
+                        
+                        const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;     // Columna A
+                        // OMITIMOS fila.c[1] porque es la Columna B (Nombre_sector en texto)
+                        const idSector = fila.c[2] ? parseInt(fila.c[2].v) : NaN;      // Columna C
+                        const numero = fila.c[3] ? fila.c[3].v.toString() : '';        // Columna D
+                        const nombreVia = fila.c[4] ? fila.c[4].v.toString() : '';     // Columna E
+                        const grado = fila.c[5] ? (fila.c[5].f || fila.c[5].v || '').toString() : ''; // Columna F
+                        const fotoCroquis = fila.c[6] ? fila.c[6].v.toString() : '';   // Columna G
 
-                    if (nombreVia && !isNaN(idEscuela) && !isNaN(idSector) && !nombreVia.toLowerCase().includes('nombre')) {
-                        database.vias.push({ idEscuela, idSector, numero, nombreVia, grado, fotoCroquis: transformarEnlaceDrive(fotoCroquis) });
-                    }
-                });
+                        if (nombreVia && !isNaN(idEscuela) && !isNaN(idSector) && !nombreVia.toLowerCase().includes('nombre')) {
+                            database.vias.push({ idEscuela, idSector, numero, nombreVia, grado, fotoCroquis: transformarEnlaceDrive(fotoCroquis) });
+                        }
+                    });
+                }
 
-                // Crear Marcadores
+                // Marcadores Mapa
                 database.escuelas.forEach(escuela => {
                     const customIcon = L.divIcon({
                         className: 'custom-div-icon',
@@ -161,7 +174,7 @@
                 mostrarInicio();
 
             } catch (error) {
-                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar las pestañas del Excel.';
+                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar las pestañas.';
                 console.error(error);
             }
         }
@@ -174,7 +187,7 @@
             let html = `<div class="section-title">Escuelas de escalada</div>`;
             database.escuelas.forEach(escuela => {
                 html += `
-                    <div class="escuela-item" style="cursor:pointer;" onclick="seleccionarEscuela(${escuela.id})">
+                    <div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})">
                         <div class="badge">${escuela.id}</div>
                         <div class="escuela-name">${escuela.nombre}</div>
                     </div>`;
@@ -209,7 +222,7 @@
                 sectoresFiltrados.forEach(sector => {
                     html += `
                         <div class="sector-card" onclick="verSector(${sector.idSector})">
-                            <div class="sector-header">${sector.nombreSector}</div>
+                            <div class="sector-header">${sector.idSector}. ${sector.nombreSector}</div>
                             <div class="sector-info">
                                 <div>Vías: <span class="info-tag">${sector.vias}</span></div>
                                 <div>Rango: <span class="info-tag">${sector.grados || 'S/G'}</span></div>
@@ -222,30 +235,31 @@
         }
 
         function verSector(idSector) {
-            // Busca el sector que corresponda a la escuela actual y al id de sector pulsado
             const sector = database.sectores.find(s => s.idEscuela === escuelaActualId && s.idSector === idSector);
             if (!sector) return;
 
             const contenedor = document.getElementById('contenido-dinamico');
             let html = `
-                <button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">← Sectores</button>
+                <button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">← Atrás</button>
                 <div class="section-title">${sector.nombreSector}</div>
             `;
 
-            // Filtra las vías que coincidan TANTO en escuela como en sector
+            // Muestra el croquis de la pared de la primera vía de este sector si existe
             const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
             
             if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) {
                 html += `<img src="${viasFiltradas[0].fotoCroquis}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
+            } else if (sector.fotoSector) {
+                html += `<img src="${sector.fotoSector}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
             }
 
             html += `<div class="section-title" style="font-size:1rem;">Vías del sector</div>`;
 
             if (viasFiltradas.length === 0) {
-                html += `<p style="color:#777; font-style:italic;">No hay vías registradas en este sector.</p>`;
+                html += `<p style="color:#777; font-style:italic;">Aún no hay vías subidas para este sector.</p>`;
             } else {
                 viasFiltradas.forEach((via, index) => {
-                    const storageKey = `encadenada-${escuelaActualId}-${sector.idSector}-${index}`;
+                    const storageKey = `encadenada-${escuelaActualId}-${sector.idSector}-${via.numero}`;
                     const checked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
 
                     html += `
@@ -273,4 +287,3 @@
         inicializar();
     </script>
 </body>
-</html>
