@@ -36,9 +36,8 @@
             attribution: '&copy; OpenStreetMap &copy; CARTO'
         }).addTo(map);
 
-        const sheetId = '13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA';
-        // Forzamos la lectura de la pestaña "Escuelas" vía JSON
-        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Escuelas&tqx=out:json`;
+        // Tu enlace real configurado para leer la pestaña de Escuelas
+        const url = `https://docs.google.com/spreadsheets/d/13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA/gviz/tq?sheet=Escuelas&tqx=out:json`;
 
         async function cargarDatos() {
             try {
@@ -52,15 +51,16 @@
                 const filas = jsonPuro.table.rows;
                 const columnas = jsonPuro.table.cols;
                 
+                // Mapeo flexible de columnas para tu documento real
                 let idxId = 0, idxNombre = 1, idxLat = 2, idxLng = 3;
                 
                 columnas.forEach((col, index) => {
                     if (col.label) {
-                        const label = col.label.toLowerCase();
+                        const label = col.label.toLowerCase().trim();
                         if (label.includes('id')) idxId = index;
                         if (label.includes('nom')) idxNombre = index;
                         if (label.includes('lat')) idxLat = index;
-                        if (label.includes('lon')) idxLng = index; // Busca "Longitud"
+                        if (label.includes('long') || label.includes('alt')) idxLng = index;
                     }
                 });
 
@@ -68,13 +68,15 @@
                 listaContenedor.innerHTML = ''; 
 
                 filas.forEach((fila) => {
-                    if (!fila.c || !fila.c[idxNombre]) return;
+                    if (!fila.c) return;
                     
+                    // Extraemos los valores de las celdas de tu Google Sheets
                     const id = fila.c[idxId] ? fila.c[idxId].v : '';
                     const nombre = fila.c[idxNombre] ? fila.c[idxNombre].v : '';
                     const latRaw = fila.c[idxLat] ? fila.c[idxLat].v : '';
                     const lngRaw = fila.c[idxLng] ? fila.c[idxLng].v : '';
                     
+                    // Convertimos a número limpio
                     const numLat = parseFloat(latRaw);
                     const numLng = parseFloat(lngRaw);
 
@@ -104,11 +106,11 @@
                 });
 
                 if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'Columnas leídas, pero los números de Latitud/Longitud no son válidos. Comprueba que no tengan puntos de miles.';
+                    listaContenedor.innerHTML = 'Conexión establecida, pero los datos de las celdas no son números válidos. Revisa las coordenadas de tu Excel.';
                 }
 
             } catch (error) {
-                document.getElementById('indice-escuelas').innerHTML = 'Error al procesar los datos.';
+                document.getElementById('indice-escuelas').innerHTML = 'Error de conexión con el documento.';
             }
         }
         cargarDatos();
