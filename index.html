@@ -96,7 +96,7 @@
                     jsonVia = JSON.parse(txtVia.substring(txtVia.indexOf('{'), txtVia.lastIndexOf('}') + 1));
                 }
 
-                // 1. Escuelas
+                // 1. Escuelas (A=ID, B=Nombre, C=Lat, D=Lng, E=Foto)
                 jsonEsc.table.rows.forEach(fila => {
                     if (!fila.c || fila.c.length < 4) return;
                     const id = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
@@ -110,45 +110,32 @@
                     }
                 });
 
-                // 2. Sectores (Numeración Automática)
-                let contadoresPorEscuela = {};
-                
+                // 2. Sectores (A=ID_escuela, B=ID_sector, C=Nombre_sector, D=Vias, E=Grados, F=Foto)
                 jsonSec.table.rows.forEach(fila => {
-                    if (!fila.c || fila.c.length < 2) return;
+                    if (!fila.c || fila.c.length < 3) return;
                     const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
-                    const nombreSector = fila.c[1] ? fila.c[1].v.toString() : '';
-                    const vias = fila.c[2] ? fila.c[2].v.toString() : '0';
-                    const grados = fila.c[3] ? (fila.c[3].f || fila.c[3].v || '').toString() : '';
-                    const fotoSector = fila.c[4] ? fila.c[4].v.toString() : '';
+                    const idSector = fila.c[1] ? parseInt(fila.c[1].v) : NaN;
+                    const nombreSector = fila.c[2] ? fila.c[2].v.toString() : '';
+                    const vias = fila.c[3] ? fila.c[3].v.toString() : '0';
+                    const grados = fila.c[4] ? (fila.c[4].f || fila.c[4].v || '').toString() : '';
+                    const fotoSector = fila.c[5] ? fila.c[5].v.toString() : '';
 
-                    if (nombreSector && !isNaN(idEscuela) && !nombreSector.toLowerCase().includes('sector')) {
-                        if (!contadoresPorEscuela[idEscuela]) contadoresPorEscuela[idEscuela] = 1;
-                        const idSectorAutogenerado = contadoresPorEscuela[idEscuela]++;
-
-                        database.sectores.push({ 
-                            idEscuela, 
-                            idSector: idSectorAutogenerado, 
-                            nombreSector, 
-                            vias, 
-                            grados,
-                            fotoSector: transformarEnlaceDrive(fotoSector)
-                        });
+                    if (nombreSector && !isNaN(idEscuela) && !isNaN(idSector) && !nombreSector.toLowerCase().includes('sector')) {
+                        database.sectores.push({ idEscuela, idSector, nombreSector, vias, grados, fotoSector: transformarEnlaceDrive(fotoSector) });
                     }
                 });
 
-                // 3. Vías (Adaptado a tu última captura de Excel con 7 columnas)
+                // 3. Vías (A=ID_escuela, B=Nombre_sector, C=ID_sector, D=Numero, E=Nombre, F=Grado, G=Foto)
                 if (jsonVia && jsonVia.table && jsonVia.table.rows) {
                     jsonVia.table.rows.forEach(fila => {
-                        // Ahora necesitamos comprobar que hay al menos 6 o 7 columnas
-                        if (!fila.c || fila.c.length < 5) return;
+                        if (!fila.c || fila.c.length < 6) return;
                         
-                        const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;     // Columna A
-                        // OMITIMOS fila.c[1] porque es la Columna B (Nombre_sector en texto)
-                        const idSector = fila.c[2] ? parseInt(fila.c[2].v) : NaN;      // Columna C
-                        const numero = fila.c[3] ? fila.c[3].v.toString() : '';        // Columna D
-                        const nombreVia = fila.c[4] ? fila.c[4].v.toString() : '';     // Columna E
+                        const idEscuela = fila.c[0] ? parseInt(fila.c[0].v) : NaN;
+                        const idSector = fila.c[2] ? parseInt(fila.c[2].v) : NaN; // Columna C
+                        const numero = fila.c[3] ? fila.c[3].v.toString() : '';    // Columna D
+                        const nombreVia = fila.c[4] ? fila.c[4].v.toString() : ''; // Columna E
                         const grado = fila.c[5] ? (fila.c[5].f || fila.c[5].v || '').toString() : ''; // Columna F
-                        const fotoCroquis = fila.c[6] ? fila.c[6].v.toString() : '';   // Columna G
+                        const fotoCroquis = fila.c[6] ? fila.c[6].v.toString() : ''; // Columna G
 
                         if (nombreVia && !isNaN(idEscuela) && !isNaN(idSector) && !nombreVia.toLowerCase().includes('nombre')) {
                             database.vias.push({ idEscuela, idSector, numero, nombreVia, grado, fotoCroquis: transformarEnlaceDrive(fotoCroquis) });
@@ -174,7 +161,7 @@
                 mostrarInicio();
 
             } catch (error) {
-                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar las pestañas.';
+                document.getElementById('lista-escuelas').innerHTML = 'Error al cargar los datos de las pestañas.';
                 console.error(error);
             }
         }
@@ -217,7 +204,7 @@
             const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
 
             if (sectoresFiltrados.length === 0) {
-                html += `<p style="color:#777; font-style:italic;">No hay sectores aún.</p>`;
+                html += `<p style="color:#777; font-style:italic;">No se encontraron sectores asignados.</p>`;
             } else {
                 sectoresFiltrados.forEach(sector => {
                     html += `
@@ -244,7 +231,6 @@
                 <div class="section-title">${sector.nombreSector}</div>
             `;
 
-            // Muestra el croquis de la pared de la primera vía de este sector si existe
             const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
             
             if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) {
@@ -256,7 +242,7 @@
             html += `<div class="section-title" style="font-size:1rem;">Vías del sector</div>`;
 
             if (viasFiltradas.length === 0) {
-                html += `<p style="color:#777; font-style:italic;">Aún no hay vías subidas para este sector.</p>`;
+                html += `<p style="color:#777; font-style:italic;">Aún no hay vías registradas para este sector.</p>`;
             } else {
                 viasFiltradas.forEach((via, index) => {
                     const storageKey = `encadenada-${escuelaActualId}-${sector.idSector}-${via.numero}`;
@@ -287,3 +273,4 @@
         inicializar();
     </script>
 </body>
+</html>
