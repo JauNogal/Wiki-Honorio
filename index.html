@@ -30,7 +30,6 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Centramos el mapa en Asturias
         const map = L.map('map').setView([43.18, -5.98], 11);
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -73,9 +72,13 @@
                     const id = fila.c[idxId] ? fila.c[idxId].v : '';
                     const nombre = fila.c[idxNombre] ? fila.c[idxNombre].v : '';
                     
-                    // Leemos directamente el valor numérico que viene de tu Excel limpio
-                    const numLat = fila.c[idxLat] ? parseFloat(fila.c[idxLat].v) : NaN;
-                    const numLng = fila.c[idxLng] ? parseFloat(fila.c[idxLng].v) : NaN;
+                    // SOLUCIÓN CLAVE: Google Sheets envía las coordenadas formateadas en la propiedad .f (formato visual) en vez de .v
+                    // Cogemos la propiedad de texto y la forzamos a convertirse en número puro pase lo que pase
+                    const latTexto = fila.c[idxLat] ? (fila.c[idxLat].f || fila.c[idxLat].v).toString() : '';
+                    const lngTexto = fila.c[idxLng] ? (fila.c[idxLng].f || fila.c[idxLng].v).toString() : '';
+                    
+                    const numLat = parseFloat(latTexto.replace(',', '.'));
+                    const numLng = parseFloat(lngTexto.replace(',', '.'));
 
                     if (nombre && !isNaN(numLat) && !isNaN(numLng)) {
                         const customIcon = L.divIcon({
@@ -103,7 +106,7 @@
                 });
 
                 if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'No se han podido pintar marcadores. Comprueba las coordenadas.';
+                    listaContenedor.innerHTML = 'No se encontraron escuelas con coordenadas válidas.';
                 }
 
             } catch (error) {
