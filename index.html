@@ -30,7 +30,6 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Inicializar mapa en Asturias
         const map = L.map('map').setView([43.36, -5.85], 9);
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -45,43 +44,44 @@
                 const response = await fetch(url);
                 const data = await response.text();
                 
-                // Dividimos por filas
-                const lineas = data.split(/\r?\n/);
+                // Dividir limpiando retornos de carro raros
+                const lineas = data.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
                 if (lineas.length === 0) return;
 
-                // Detectar si el separador es coma o punto y coma
+                // Forzamos la detección del separador real de tu CSV
                 const primeraLinea = lineas[0];
                 const separador = primeraLinea.includes(';') ? ';' : ',';
                 
-                // Procesar cabecera limpia
-                const cabecera = primeraLinea.split(separador).map(h => h.trim().replace(/^"|"$/g, ''));
+                // Limpiar cabeceras quitando comillas
+                const cabecera = primeraLinea.split(separador).map(h => h.replace(/["']/g, '').trim());
                 
-                const idxId = cabecera.indexOf('ID_Escuela');
-                const idxNombre = cabecera.indexOf('Nombre');
-                const idxCoordenadas = cabecera.indexOf('Coordenadas');
+                // Buscar posiciones de las columnas
+                const idxId = cabecera.findIndex(h => h.toLowerCase().includes('id'));
+                const idxNombre = cabecera.findIndex(h => h.toLowerCase().includes('nombre'));
+                const idxCoordenadas = cabecera.findIndex(h => h.toLowerCase().includes('coord'));
 
                 const listaContenedor = document.getElementById('indice-escuelas');
                 listaContenedor.innerHTML = ''; 
 
+                let escuelasContadas = 0;
+
                 for (let i = 1; i < lineas.length; i++) {
-                    if (!lineas[i].trim()) continue;
+                    // Separar columnas respetando si los textos llevan comillas
+                    const columnas = lineas[i].split(separador).map(c => c.replace(/["']/g, '').trim());
                     
-                    const columnas = lineas[i].split(separador).map(c => c.trim().replace(/^"|"$/g, ''));
-                    
-                    if (!columnas[idxNombre]) continue;
-
-                    const id = columnas[idxId];
+                    const id = columnas[idxId] || i;
                     const nombre = columnas[idxNombre];
-                    const coordsRaw = columnas[idxCoordenadas]; // Ejemplo: "43.1612, -5.9745" o "43.1612;-5.9745"
+                    const coordsRaw = columnas[idxCoordenadas];
 
-                    if (coordsRaw) {
-                        // Separar la latitud y la longitud internamente sin importar si se usó espacio, coma o punto y coma
+                    if (nombre && coordsRaw) {
+                        // Extraer números ignorando si se separan por espacios, comas o guiones
                         const partesCoords = coordsRaw.split(/[\s,;]+/);
                         const numLat = parseFloat(partesCoords[0]);
                         const numLng = parseFloat(partesCoords[1]);
 
                         if (!isNaN(numLat) && !isNaN(numLng)) {
-                            // Crear la chincheta con el número dentro
+                            escuelasContadas++;
+
                             const customIcon = L.divIcon({
                                 className: 'custom-div-icon',
                                 html: `<div class="marker-pin">${id}</div>`,
@@ -93,7 +93,6 @@
                                 .addTo(map)
                                 .bindPopup(`<b>${id}. ${nombre}</b>`);
                             
-                            // Crear el elemento en el índice inferior
                             const item = document.createElement('div');
                             item.className = 'escuela-item';
                             item.innerHTML = `
@@ -112,13 +111,13 @@
                     }
                 }
 
-                if (listaContenedor.innerHTML === '') {
-                    listaContenedor.innerHTML = 'No se encontraron escuelas válidas en el Excel. Revisa las coordenadas.';
+                if (escuelasContadas === 0) {
+                    listaContenedor.innerHTML = 'Ficheros leídos, pero no se reconocen las coordenadas. Comprueba que el formato en el Excel sea "43.123, -5.123"';
                 }
 
             } catch (error) {
                 console.error(error);
-                document.getElementById('indice-escuelas').innerHTML = 'Error de conexión con la base de datos.';
+                document.getElementById('indice-escuelas').innerHTML = 'Error al conectar con los datos.';
             }
         }
 
