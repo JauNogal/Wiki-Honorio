@@ -51,6 +51,26 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
+    authDomain: "wiki-honorio.firebaseapp.com",
+    projectId: "wiki-honorio",
+    storageBucket: "wiki-honorio.firebasestorage.app",
+    messagingSenderId: "544094917297",
+    appId: "1:544094917297:web:f0e150ce0db1cfd7374890"
+  };
+
+  // Inicializamos Firebase
+  const app = initializeApp(firebaseConfig);
+  
+  // Creamos la conexión a la base de datos y la guardamos para usarla luego
+  window.db = getFirestore(app); 
+</script>
     <script>
         // CONFIGURACIÓN DE COLUMNAS (Ajustado a tus capturas donde la Col A está vacía)
         const C_SEC_ESC = 0, C_SEC_NOM = 1, C_SEC_VIA = 2, C_SEC_GRA = 3, C_SEC_FOT = 4;
