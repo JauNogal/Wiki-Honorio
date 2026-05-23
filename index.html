@@ -60,7 +60,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 
 async function inicializar() {
     try {
-      // 0. IMPORTAMOS LAS HERRAMIENTAS Y CONECTAMOS AQUÍ DENTRO
       const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
       const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
 
@@ -76,16 +75,28 @@ async function inicializar() {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
+      // --- TRADUCTOR AUTOMÁTICO DE GOOGLE DRIVE ---
+      function arreglarEnlaceDrive(url) {
+        if (!url) return '';
+        // Si el enlace es de Drive, extraemos el código secreto y lo convertimos a imagen directa
+        if (url.includes('/file/d/')) {
+          const id = url.split('/file/d/')[1].split('/')[0];
+          return `https://drive.google.com/uc?export=view&id=${id}`;
+        }
+        return url; // Si usas otra web para subir fotos, lo deja tal cual
+      }
+
       // 1. CARGAR ESCUELAS
       const escSnapshot = await getDocs(collection(db, "escuelas"));
       escSnapshot.forEach(doc => {
         let data = doc.data();
+        let fotoRaw = data.foto || data.Foto || '';
         database.escuelas.push({
           id: Number(doc.id), 
           nombre: data.nombre,
           lat: Number(data.lat),
           lng: Number(data.lng),
-          foto: data.foto || data.Foto || '' // Truco para la mayúscula
+          foto: arreglarEnlaceDrive(fotoRaw) // Traducimos el enlace
         });
       });
 
@@ -93,13 +104,17 @@ async function inicializar() {
       const secSnapshot = await getDocs(collection(db, "sectores"));
       secSnapshot.forEach(doc => {
         let data = doc.data();
+        let fotoRaw = data.foto || data.Foto || '';
         database.sectores.push({
           idEscuela: Number(data.id_escuela),
           idSector: Number(doc.id),
+          id: Number(doc.id), 
           nombreSector: data.nombre,
+          nombre: data.nombre, 
           vias: data.vias,
           grados: data.grados,
-          fotoSector: data.foto || data.Foto || ''
+          fotoSector: arreglarEnlaceDrive(fotoRaw),
+          foto: arreglarEnlaceDrive(fotoRaw) // Doble nombre por si el código antiguo lo llamaba así
         });
       });
 
@@ -108,14 +123,16 @@ async function inicializar() {
       viasSnapshot.forEach(doc => {
         let data = doc.data();
         let sectorPadre = database.sectores.find(s => s.idSector === Number(data.id_sector));
+        let notaRaw = data.nota || data.Nota || '';
         
         database.vias.push({
           idEscuela: sectorPadre ? sectorPadre.idEscuela : null,
           idSector: Number(data.id_sector),
           numero: Number(doc.id),
           nombreVia: data.nombre,
+          nombre: data.nombre,
           grado: data.grado,
-          fotoCroquis: data.nota || '' 
+          fotoCroquis: arreglarEnlaceDrive(notaRaw) 
         });
       });
 
@@ -134,6 +151,18 @@ async function inicializar() {
         marcadores[escuela.id] = marker;
       });
 
+      mostrarInicio();
+
+    } catch (error) {
+      console.error("Error conectando a Firebase:", error);
+      document.getElementById('lista-escuelas').innerHTML = `
+        <div class="error-box">
+          <b>⚠️ Problema de conexión con la Base de Datos</b><br><br>
+          ${error.message}
+        </div>
+      `;
+    }
+  }
       mostrarInicio();
 
     } catch (error) {
