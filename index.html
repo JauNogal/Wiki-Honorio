@@ -72,165 +72,88 @@
   window.db = getFirestore(app); 
 </script>
     <script>
-        // CONFIGURACIÓN DE COLUMNAS (Ajustado a tus capturas donde la Col A está vacía)
-        const C_SEC_ESC = 0, C_SEC_NOM = 1, C_SEC_VIA = 2, C_SEC_GRA = 3, C_SEC_FOT = 4;
-        const C_VIA_ESC = 0, C_VIA_SEC = 2, C_VIA_NUM = 3, C_VIA_NOM = 4, C_VIA_GRA = 5, C_VIA_FOT = 6;
+       let database = { escuelas: [], sectores: [], vias: [] };
+  let marcadores = {};
+  let escuelaActualId = null;
 
-        const map = L.map('map').setView([43.18, -5.98], 11);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+  async function inicializar() {
+    try {
+      // Importamos las herramientas para leer de Firebase
+      const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
 
-        const sheetId = '13g5lZ7TSTVIhrktde1FIZq8MfTEvAcMgXCbdCPevDNA';
+      // 1. CARGAR ESCUELAS
+      const escSnapshot = await getDocs(collection(window.db, "escuelas"));
+      escSnapshot.forEach(doc => {
+        let data = doc.data();
+        database.escuelas.push({
+          id: Number(doc.id), 
+          nombre: data.nombre,
+          lat: Number(data.lat),
+          lng: Number(data.lng),
+          foto: data.foto || ''
+        });
+      });
+
+      // 2. CARGAR SECTORES
+      const secSnapshot = await getDocs(collection(window.db, "sectores"));
+      secSnapshot.forEach(doc => {
+        let data = doc.data();
+        database.sectores.push({
+          idEscuela: Number(data.id_escuela),
+          idSector: Number(doc.id),
+          nombreSector: data.nombre,
+          vias: data.vias,
+          grados: data.grados,
+          fotoSector: data.foto || ''
+        });
+      });
+
+      // 3. CARGAR VÍAS
+      const viasSnapshot = await getDocs(collection(window.db, "vias"));
+      viasSnapshot.forEach(doc => {
+        let data = doc.data();
         
-        // Enlaces limpios para no saturar a Google
-        const urlEscuelas = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Escuelas&tqx=out:json`;
-        const urlSectores = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Sectores&tqx=out:json`;
-        const urlVias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Vias&tqx=out:json`;
+        // Magia: Cruzamos los datos para saber a qué escuela pertenece esta vía
+        let sectorPadre = database.sectores.find(s => s.idSector === Number(data.id_sector));
+        let idEscuelaAsignada = sectorPadre ? sectorPadre.idEscuela : null;
 
-        let database = { escuelas: [], sectores: [], vias: [] };
-        let marcadores = {};
-        let escuelaActualId = null;
+        database.vias.push({
+          idEscuela: idEscuelaAsignada,
+          idSector: Number(data.id_sector),
+          numero: Number(doc.id),
+          nombreVia: data.nombre,
+          grado: data.grado,
+          fotoCroquis: data.nota || '' 
+        });
+      });
 
-        // Función para evitar que Google se quede colgado eternamente
-        async function fetchConLimite(url) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 segundos máximo
-            try {
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                return response;
-            } catch (error) {
-                clearTimeout(timeoutId);
-                throw new Error("Google Sheets está tardando demasiado en responder o te ha bloqueado temporalmente por hacer muchas recargas.");
-            }
-        }
+      // 4. GENERAR MARCADORES EN EL MAPA
+      database.escuelas.forEach(escuela => {
+        const customIcon = L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div class="marker-pin">${escuela.id}</div>`,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15]
+        });
 
-        // Lector 100% seguro de celdas
-        function getSafe(fila, index) {
-            if (!fila || !fila.c || !fila.c[index] || fila.c[index] === null || fila.c[index].v === null || fila.c[index].v === undefined) {
-                return '';
-            }
-            return fila.c[index].v.toString().trim();
-        }
+        const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
+        marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
+        marker.on('click', () => seleccionarEscuela(escuela.id));
+        marcadores[escuela.id] = marker;
+      });
 
-        function getSafeNum(fila, index) {
-            let val = getSafe(fila, index).replace(',', '.');
-            return parseFloat(val);
-        }
+      mostrarInicio();
 
-        function transformarEnlaceDrive(urlDrive) {
-            if (!urlDrive) return '';
-            if (urlDrive.includes('drive.google.com')) {
-                const parts = urlDrive.split('/d/');
-                if (parts.length > 1) {
-                    const id = parts[1].split('/')[0];
-                    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
-                }
-            }
-            return urlDrive;
-        }
-
-        async function inicializar() {
-            try {
-                const [resEsc, resSec, resVia] = await Promise.all([
-                    fetchConLimite(urlEscuelas), 
-                    fetchConLimite(urlSectores), 
-                    fetchConLimite(urlVias).catch(() => null)
-                ]);
-                
-                let txtEsc = await resEsc.text();
-                let txtSec = await resSec.text();
-                let txtVia = resVia ? await resVia.text() : null;
-
-                const jsonEsc = JSON.parse(txtEsc.substring(txtEsc.indexOf('{'), txtEsc.lastIndexOf('}') + 1));
-                const jsonSec = JSON.parse(txtSec.substring(txtSec.indexOf('{'), txtSec.lastIndexOf('}') + 1));
-                let jsonVia = null;
-                if (txtVia && txtVia.includes('{')) {
-                    jsonVia = JSON.parse(txtVia.substring(txtVia.indexOf('{'), txtVia.lastIndexOf('}') + 1));
-                }
-
-                // 1. Procesar Escuelas 
-                jsonEsc.table.rows.forEach(fila => {
-                    const nombre = getSafe(fila, 1);
-                    if (nombre.toLowerCase().includes('nombre')) return;
-                    
-                    const id = getSafeNum(fila, 0);
-                    const lat = getSafeNum(fila, 2);
-                    const lng = getSafeNum(fila, 3);
-                    const foto = getSafe(fila, 4);
-
-                    if (nombre && !isNaN(id) && !isNaN(lat) && !isNaN(lng)) {
-                        database.escuelas.push({ id, nombre, lat, lng, foto: transformarEnlaceDrive(foto) });
-                    }
-                });
-
-                // 2. Procesar Sectores
-                let contadoresPorEscuela = {};
-                jsonSec.table.rows.forEach(fila => {
-                    const nombreSector = getSafe(fila, C_SEC_NOM);
-                    if (!nombreSector || nombreSector.toLowerCase().includes('nombre')) return;
-
-                    const idEscuela = getSafeNum(fila, C_SEC_ESC);
-                    const vias = getSafe(fila, C_SEC_VIA) || '0';
-                    const grados = getSafe(fila, C_SEC_GRA);
-                    let celdaGradosF = fila.c && fila.c[C_SEC_GRA] && fila.c[C_SEC_GRA].f ? fila.c[C_SEC_GRA].f.toString().trim() : '';
-                    const gradosFinal = celdaGradosF || grados; 
-                    const fotoSector = getSafe(fila, C_SEC_FOT);
-
-                    if (!isNaN(idEscuela)) {
-                        if (!contadoresPorEscuela[idEscuela]) contadoresPorEscuela[idEscuela] = 1;
-                        const idSectorAutogenerado = contadoresPorEscuela[idEscuela]++;
-                        database.sectores.push({ idEscuela, idSector: idSectorAutogenerado, nombreSector, vias, grados: gradosFinal, fotoSector: transformarEnlaceDrive(fotoSector) });
-                    }
-                });
-
-                // 3. Procesar Vías 
-                if (jsonVia && jsonVia.table && jsonVia.table.rows) {
-                    jsonVia.table.rows.forEach(fila => {
-                        const nombreVia = getSafe(fila, C_VIA_NOM);
-                        if (!nombreVia || nombreVia.toLowerCase().includes('nombre')) return;
-
-                        const idEscuela = getSafeNum(fila, C_VIA_ESC);
-                        const idSector = getSafeNum(fila, C_VIA_SEC);
-                        const numero = getSafe(fila, C_VIA_NUM);
-                        const grado = getSafe(fila, C_VIA_GRA);
-                        let celdaGradosF = fila.c && fila.c[C_VIA_GRA] && fila.c[C_VIA_GRA].f ? fila.c[C_VIA_GRA].f.toString().trim() : '';
-                        const gradosFinal = celdaGradosF || grado;
-                        const fotoCroquis = getSafe(fila, C_VIA_FOT);
-
-                        if (!isNaN(idEscuela) && !isNaN(idSector)) {
-                            database.vias.push({ idEscuela, idSector, numero, nombreVia, grado: gradosFinal, fotoCroquis: transformarEnlaceDrive(fotoCroquis) });
-                        }
-                    });
-                }
-
-                // Generar Marcadores
-                database.escuelas.forEach(escuela => {
-                    const customIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div class="marker-pin">${escuela.id}</div>`,
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 15]
-                    });
-
-                    const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
-                    marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
-                    marker.on('click', () => seleccionarEscuela(escuela.id));
-                    marcadores[escuela.id] = marker;
-                });
-
-                mostrarInicio();
-
-            } catch (error) {
-                // Si falla, ahora pinta un cuadro rojo con la explicación en vez de quedarse colgado
-                document.getElementById('lista-escuelas').innerHTML = `
-                    <div class="error-box">
-                        <b>⚠️ Problema de conexión</b><br><br>
-                        ${error.message}<br><br>
-                        <i>Espera 5 minutos antes de volver a recargar la página.</i>
-                    </div>
-                `;
-            }
-        }
+    } catch (error) {
+      console.error("Error conectando a Firebase:", error);
+      document.getElementById('lista-escuelas').innerHTML = `
+        <div class="error-box">
+          <b>⚠️ Problema de conexión con la Base de Datos</b><br><br>
+          ${error.message}
+        </div>
+      `;
+    }
+  }
 
         function mostrarInicio() {
             escuelaActualId = null;
