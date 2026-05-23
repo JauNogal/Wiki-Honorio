@@ -52,37 +52,32 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
-    authDomain: "wiki-honorio.firebaseapp.com",
-    projectId: "wiki-honorio",
-    storageBucket: "wiki-honorio.firebasestorage.app",
-    messagingSenderId: "544094917297",
-    appId: "1:544094917297:web:f0e150ce0db1cfd7374890"
-  };
-
-  // Inicializamos Firebase
-  const app = initializeApp(firebaseConfig);
-  
-  // Creamos la conexión a la base de datos y la guardamos para usarla luego
-  window.db = getFirestore(app); 
-</script>
     <script>
        let database = { escuelas: [], sectores: [], vias: [] };
   let marcadores = {};
   let escuelaActualId = null;
 
-  async function inicializar() {
+async function inicializar() {
     try {
-      // Importamos las herramientas para leer de Firebase
-      const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+      // 0. IMPORTAMOS LAS HERRAMIENTAS Y CONECTAMOS AQUÍ DENTRO
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+      const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
+        authDomain: "wiki-honorio.firebaseapp.com",
+        projectId: "wiki-honorio",
+        storageBucket: "wiki-honorio.firebasestorage.app",
+        messagingSenderId: "544094917297",
+        appId: "1:544094917297:web:f0e150ce0db1cfd7374890"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
       // 1. CARGAR ESCUELAS
-      const escSnapshot = await getDocs(collection(window.db, "escuelas"));
+      const escSnapshot = await getDocs(collection(db, "escuelas"));
       escSnapshot.forEach(doc => {
         let data = doc.data();
         database.escuelas.push({
@@ -90,12 +85,12 @@
           nombre: data.nombre,
           lat: Number(data.lat),
           lng: Number(data.lng),
-          foto: data.foto || ''
+          foto: data.foto || data.Foto || '' // Truco para la mayúscula
         });
       });
 
       // 2. CARGAR SECTORES
-      const secSnapshot = await getDocs(collection(window.db, "sectores"));
+      const secSnapshot = await getDocs(collection(db, "sectores"));
       secSnapshot.forEach(doc => {
         let data = doc.data();
         database.sectores.push({
@@ -104,21 +99,18 @@
           nombreSector: data.nombre,
           vias: data.vias,
           grados: data.grados,
-          fotoSector: data.foto || ''
+          fotoSector: data.foto || data.Foto || ''
         });
       });
 
       // 3. CARGAR VÍAS
-      const viasSnapshot = await getDocs(collection(window.db, "vias"));
+      const viasSnapshot = await getDocs(collection(db, "vias"));
       viasSnapshot.forEach(doc => {
         let data = doc.data();
-        
-        // Magia: Cruzamos los datos para saber a qué escuela pertenece esta vía
         let sectorPadre = database.sectores.find(s => s.idSector === Number(data.id_sector));
-        let idEscuelaAsignada = sectorPadre ? sectorPadre.idEscuela : null;
-
+        
         database.vias.push({
-          idEscuela: idEscuelaAsignada,
+          idEscuela: sectorPadre ? sectorPadre.idEscuela : null,
           idSector: Number(data.id_sector),
           numero: Number(doc.id),
           nombreVia: data.nombre,
@@ -156,6 +148,7 @@
   }
 
         function mostrarInicio() {
+            document.getElementById('map').style.display = 'block';
             escuelaActualId = null;
             map.setView([43.18, -5.98], 11);
             const contenedor = document.getElementById('contenido-dinamico');
@@ -172,6 +165,7 @@
         }
 
         function seleccionarEscuela(id) {
+            document.getElementById('map').style.display = 'none';
             escuelaActualId = id;
             const escuela = database.escuelas.find(e => e.id === id);
             if (!escuela) return;
