@@ -163,18 +163,7 @@ async function inicializar() {
       `;
     }
   }
-      mostrarInicio();
-
-    } catch (error) {
-      console.error("Error conectando a Firebase:", error);
-      document.getElementById('lista-escuelas').innerHTML = `
-        <div class="error-box">
-          <b>⚠️ Problema de conexión con la Base de Datos</b><br><br>
-          ${error.message}
-        </div>
-      `;
-    }
-  }
+      
 
         function mostrarInicio() {
             document.getElementById('map').style.display = 'block';
