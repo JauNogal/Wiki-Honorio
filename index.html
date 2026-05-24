@@ -213,7 +213,11 @@ async function inicializar() {
                             <div class="sector-header">${sector.idSector}. ${sector.nombreSector}</div>
                             <div class="sector-info">
                                 <div>Nº de Vías: <span class="info-tag">${sector.vias}</span></div>
-                                <div>Rango de grados: <span class="info-tag">${sector.grados || 'S/G'}</span></div>
+                                <div><b>Rango de grados:</b></div>
+<div style="margin-left: 15px;">Hasta 6a: <span class="info-tag">${sector.vias_grupo1 || 0}</span></div>
+<div style="margin-left: 15px;">De 6a+ a 6c+: <span class="info-tag">${sector.vias_grupo2 || 0}</span></div>
+<div style="margin-left: 15px;">De 7a a 7c+: <span class="info-tag">${sector.vias_grupo3 || 0}</span></div>
+<div style="margin-left: 15px;">De 8a en adelante: <span class="info-tag">${sector.vias_grupo4 || 0}</span></div>
                             </div>
                         </div>`;
                 });
