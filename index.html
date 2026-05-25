@@ -276,6 +276,33 @@ async function inicializar() {
         }
 
         inicializar();
+
+        inicializar();
+
+        // Función para cambiar el color del desplegable según el estilo de ascensión
+        function cambiarColorEstado(elemento) {
+            const colores = {
+                'a-vista': '#3CB371',   // Verde marino
+                'a-flash': '#00CED1',   // Azul turquesa
+                '2-pegue': '#FFA500',   // Naranja
+                'trabajado': '#FF6347'  // Rojo
+            };
+            
+            const valor = elemento.value;
+            
+            if (valor && colores[valor]) {
+                elemento.style.backgroundColor = colores[valor];
+                elemento.style.color = 'white'; 
+                elemento.style.border = 'none';
+            } else {
+                elemento.style.backgroundColor = '';
+                elemento.style.color = 'black';
+                elemento.style.border = '1px solid #ccc';
+            }
+        }
+    </script>
+</body>
+</html>
     </script>
 </body>
     
