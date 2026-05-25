@@ -60,6 +60,10 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 
 async function inicializar() {
     try {
+
+        database.escuelas = [];
+        database.sectores = [];
+        database.vias = [];
       const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
       const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
 
