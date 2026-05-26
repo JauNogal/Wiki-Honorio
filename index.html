@@ -212,7 +212,7 @@ async function inicializar() {
                 html += `<p style="color:#777; font-style:italic;">No se encontraron sectores asignados.</p>`;
             } else {
                 sectoresFiltrados.forEach(sector => {
-                    html += `
+                   html += `
                 <div class="sector-card" onclick="verSector(${sector.idSector})">
                     <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
                         <h3 style="margin: 0; font-size: 1.2em; color: #333;">${sector.idSector}. ${sector.nombreSector}</h3>
@@ -220,10 +220,25 @@ async function inicializar() {
                         <span style="font-size: 0.85em; color: #666; white-space: nowrap;">Vías: <span class="info-tag">${sector.vias || 0}</span></span>
                     </div>
 
-                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%;">
-                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 100px; justify-content: center;">
-                            <span style="font-size: 0.8em; color: #555;">Hasta 6a:</span>
-                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo1 || 0}</span>
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; gap: 4px; width: 100%; flex-wrap: nowrap;">
+                        <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                            <span style="font-size: 0.75em; color: #555;">Hasta 6a:</span>
+                            <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo1 || 0}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                            <span style="font-size: 0.75em; color: #555;">6a+-6c+:</span>
+                            <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo2 || 0}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                            <span style="font-size: 0.75em; color: #555;">7a-7c+:</span>
+                            <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo3 || 0}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                            <span style="font-size: 0.75em; color: #555;">≥ de 8a:</span>
+                            <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo4 || 0}</span>
+                        </div>
+                    </div>
+                </div>`;
                         </div>
                         <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 120px; justify-content: center;">
                             <span style="font-size: 0.8em; color: #555;">6a+ a 6c+:</span>
