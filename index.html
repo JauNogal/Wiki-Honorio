@@ -211,8 +211,9 @@ async function inicializar() {
             if (sectoresFiltrados.length === 0) {
                 html += `<p style="color:#777; font-style:italic;">No se encontraron sectores asignados.</p>`;
             } else {
+
                 sectoresFiltrados.forEach(sector => {
-                   html += `
+                html += `
                 <div class="sector-card" onclick="verSector(${sector.idSector})">
                     <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
                         <h3 style="margin: 0; font-size: 1.2em; color: #333;">${sector.idSector}. ${sector.nombreSector}</h3>
@@ -239,22 +240,7 @@ async function inicializar() {
                         </div>
                     </div>
                 </div>`;
-                        </div>
-                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 120px; justify-content: center;">
-                            <span style="font-size: 0.8em; color: #555;">6a+ a 6c+:</span>
-                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo2 || 0}</span>
-                        </div>
-                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 120px; justify-content: center;">
-                            <span style="font-size: 0.8em; color: #555;">7a a 7c+:</span>
-                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo3 || 0}</span>
-                        </div>
-                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 100px; justify-content: center;">
-                            <span style="font-size: 0.8em; color: #555;">≥ de 8a:</span>
-                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo4 || 0}</span>
-                        </div>
-                    </div>
-                </div>`;
-                });
+            });
             }
             contenedor.innerHTML = html;
             window.scrollTo({ top: map.offsetHeight, behavior: 'smooth' });
