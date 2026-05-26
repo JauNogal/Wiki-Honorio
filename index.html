@@ -213,17 +213,32 @@ async function inicializar() {
             } else {
                 sectoresFiltrados.forEach(sector => {
                     html += `
-                        <div class="sector-card" onclick="verSector(${sector.idSector})">
-                            <div class="sector-header">${sector.idSector}. ${sector.nombreSector}</div>
-                            <div class="sector-info">
-                                <div>Nº de Vías: <span class="info-tag">${sector.vias}</span></div>
-                                <div><b>Rango de grados:</b></div>
-<div style="margin-left: 15px;">Hasta 6a: <span class="info-tag">${sector.vias_grupo1 || 0}</span></div>
-<div style="margin-left: 15px;">De 6a+ a 6c+: <span class="info-tag">${sector.vias_grupo2 || 0}</span></div>
-<div style="margin-left: 15px;">De 7a a 7c+: <span class="info-tag">${sector.vias_grupo3 || 0}</span></div>
-<div style="margin-left: 15px;">≥ de 8a: <span class="info-tag">${sector.vias_grupo4 || 0}</span></div>
-                            </div>
-                        </div>`;
+                <div class="sector-card" onclick="verSector(${sector.idSector})">
+                    <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
+                        <h3 style="margin: 0; font-size: 1.2em; color: #333;">${sector.idSector}. ${sector.nombreSector}</h3>
+                        <span style="font-size: 0.85em; font-weight: bold; color: #777; flex-grow: 1; text-align: center;">Rango de grados</span>
+                        <span style="font-size: 0.85em; color: #666; white-space: nowrap;">Vías: <span class="info-tag">${sector.vias || 0}</span></span>
+                    </div>
+
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%;">
+                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 100px; justify-content: center;">
+                            <span style="font-size: 0.8em; color: #555;">Hasta 6a:</span>
+                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo1 || 0}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 120px; justify-content: center;">
+                            <span style="font-size: 0.8em; color: #555;">6a+ a 6c+:</span>
+                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo2 || 0}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 120px; justify-content: center;">
+                            <span style="font-size: 0.8em; color: #555;">7a a 7c+:</span>
+                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo3 || 0}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 4px 8px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 4px; min-width: 100px; justify-content: center;">
+                            <span style="font-size: 0.8em; color: #555;">≥ de 8a:</span>
+                            <span class="info-tag" style="font-weight: bold;">${sector.vias_grupo4 || 0}</span>
+                        </div>
+                    </div>
+                </div>`;
                 });
             }
             contenedor.innerHTML = html;
