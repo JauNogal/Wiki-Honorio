@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiki-Honorio v2.2</title>
+    <title>Wiki-Honorio v2.3</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -93,11 +93,19 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([43.18, -5.98], 11);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+        let map;
         let database = { escuelas: [], sectores: [], vias: [] };
         let marcadores = {};
         let escuelaActualId = null;
+
+        // Esperamos a que la página esté completamente cargada para evitar bloqueos
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof L !== 'undefined') {
+                map = L.map('map').setView([43.18, -5.98], 11);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+            }
+            inicializar();
+        });
 
         async function inicializar() {
             try {
@@ -140,3 +148,200 @@
                         foto: arreglarEnlaceDrive(fotoRaw)
                     });
                 });
+
+                const secSnapshot = await getDocs(collection(db, "sectores"));
+                secSnapshot.forEach(doc => {
+                    let data = doc.data();
+                    let fotoRaw = data.foto || data.Foto || '';
+                    database.sectores.push({
+                        idEscuela: Number(data.id_escuela),
+                        idSector: Number(doc.id),
+                        id: Number(doc.id), 
+                        nombreSector: data.nombre,
+                        nombre: data.nombre, 
+                        vias: data.vias,
+                        grados: data.grados,
+                        fotoSector: arreglarEnlaceDrive(fotoRaw),
+                        foto: arreglarEnlaceDrive(fotoRaw) 
+                    });
+                });
+
+                const viasSnapshot = await getDocs(collection(db, "vias"));
+                viasSnapshot.forEach(doc => {
+                    let data = doc.data();
+                    let sectorPadre = database.sectores.find(s => s.idSector === Number(data.id_sector));
+                    let notaRaw = data.nota || data.Nota || '';
+                    
+                    database.vias.push({
+                        idEscuela: sectorPadre ? sectorPadre.idEscuela : null,
+                        idSector: Number(data.id_sector),
+                        numero: Number(doc.id),
+                        nombreVia: data.nombre,
+                        nombre: data.nombre,
+                        grado: data.grado,
+                        fotoCroquis: arreglarEnlaceDrive(notaRaw) 
+                    });
+                });
+
+                if (map) {
+                    database.escuelas.forEach(escuela => {
+                        const customIcon = L.divIcon({
+                            className: 'custom-div-icon',
+                            html: `<div class="marker-pin">${escuela.id}</div>`,
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 15]
+                        });
+
+                        const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
+                        marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
+                        marker.on('click', () => seleccionarEscuela(escuela.id));
+                        marcadores[escuela.id] = marker;
+                    });
+                }
+
+                mostrarInicio();
+
+            } catch (error) {
+                console.error("Error conectando a Firebase:", error);
+                document.getElementById('lista-escuelas').innerHTML = `
+                    <div class="error-box">
+                        <b>⚠️ Problema de conexión con la Base de Datos</b><br><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // FUNCIONES DEL BUSCADOR
+        function buscarElementos() {
+            const input = document.getElementById('buscadorPrincipal').value.toLowerCase();
+            const cajaResultados = document.getElementById('resultadosBusqueda');
+
+            if (input.length < 2) {
+                cajaResultados.style.display = 'none';
+                return;
+            }
+
+            let resultados = [];
+
+            database.escuelas.forEach(e => {
+                if (e.nombre && e.nombre.toLowerCase().includes(input)) {
+                    resultados.push({ tipo: 'escuela', textoVisible: e.nombre, idEscuela: e.id, idSector: null });
+                }
+            });
+
+            database.sectores.forEach(s => {
+                const nombreSector = s.nombreSector || s.nombre;
+                if (nombreSector && nombreSector.toLowerCase().includes(input)) {
+                    resultados.push({ tipo: 'sector', textoVisible: nombreSector, idEscuela: s.idEscuela, idSector: s.idSector });
+                }
+            });
+
+            database.vias.forEach(v => {
+                const nombreVia = v.nombreVia || v.nombre;
+                if (nombreVia && nombreVia.toLowerCase().includes(input)) {
+                    resultados.push({ tipo: 'vía', textoVisible: nombreVia, idEscuela: v.idEscuela, idSector: v.idSector });
+                }
+            });
+
+            if (resultados.length > 0) {
+                let html = '';
+                resultados.forEach(res => {
+                    html += `
+                        <div style="padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 0.95em; text-align: left;" 
+                             onclick="irDesdeBuscador('${res.tipo}', ${res.idEscuela}, ${res.idSector})">
+                            <span style="font-weight: 500;">${res.textoVisible}</span> 
+                            <span style="color: #999; font-size: 0.85em; margin-left: 4px;">(${res.tipo})</span>
+                        </div>`;
+                });
+                cajaResultados.innerHTML = html;
+                cajaResultados.style.display = 'block';
+            } else {
+                cajaResultados.innerHTML = `<div style="padding: 12px; color: #999; font-size: 0.9em; text-align: center;">Sin resultados</div>`;
+                cajaResultados.style.display = 'block';
+            }
+        }
+
+        function irDesdeBuscador(tipo, idEscuela, idSector) {
+            document.getElementById('buscadorPrincipal').value = '';
+            document.getElementById('resultadosBusqueda').style.display = 'none';
+
+            if (tipo === 'escuela') {
+                seleccionarEscuela(idEscuela);
+            } else if (tipo === 'sector' || tipo === 'vía') {
+                seleccionarEscuela(idEscuela);
+                setTimeout(() => {
+                    verSector(idSector);
+                }, 50); 
+            }
+        }
+
+        function mostrarInicio() {
+            if (map) {
+                document.getElementById('map').style.display = 'block';
+                map.setView([43.18, -5.98], 11);
+            }
+            escuelaActualId = null;
+            const contenedor = document.getElementById('contenido-dinamico');
+            
+            let html = `<div class="section-title">Escuelas de escalada</div>`;
+            database.escuelas.forEach(escuela => {
+                html += `
+                    <div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})">
+                        <div class="badge">${escuela.id}</div>
+                        <div class="escuela-name">${escuela.nombre}</div>
+                    </div>`;
+            });
+            contenedor.innerHTML = html;
+        }
+
+        function seleccionarEscuela(id) {
+            if (map) document.getElementById('map').style.display = 'none';
+            escuelaActualId = id;
+            const escuela = database.escuelas.find(e => e.id === id);
+            if (!escuela) return;
+
+            if (map) {
+                map.setView([escuela.lat, escuela.lng], 13);
+                if (marcadores[id]) marcadores[id].openPopup();
+            }
+
+            const contenedor = document.getElementById('contenido-dinamico');
+            let html = `
+                <button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button>
+                <div class="section-title">${escuela.nombre}</div>
+            `;
+
+            if (escuela.foto) {
+                html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela">`;
+            }
+
+            html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
+            const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
+
+            if (sectoresFiltrados.length === 0) {
+                html += `<p style="color:#777; font-style:italic;">No se encontraron sectores asignados.</p>`;
+            } else {
+                sectoresFiltrados.forEach(sector => {
+                    html += `
+                    <div class="sector-card" onclick="verSector(${sector.idSector})">
+                        <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
+                            <h3 style="margin: 0; font-size: 1.2em; color: #333;">${sector.idSector}. ${sector.nombreSector}</h3>
+                            <span style="font-size: 0.85em; font-weight: bold; color: #777; flex-grow: 1; text-align: center;">Rango de grados</span>
+                            <span style="font-size: 0.85em; color: #666; white-space: nowrap;">Vías: <span class="info-tag">${sector.vias || 0}</span></span>
+                        </div>
+
+                        <div style="display: flex; flex-direction: row; justify-content: space-between; gap: 4px; width: 100%; flex-wrap: nowrap;">
+                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                                <span style="font-size: 0.75em; color: #555;">Hasta 6a:</span>
+                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo1 || 0}</span>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                                <span style="font-size: 0.75em; color: #555;">6a+-6c+:</span>
+                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo2 || 0}</span>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                                <span style="font-size: 0.75em; color: #555;">7a-7c+:</span>
+                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo3 || 0}</span>
+                            </div>
+                            <div style="background
