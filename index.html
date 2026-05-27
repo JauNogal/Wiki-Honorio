@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiki-Honorio v2.3</title>
+    <title>Wiki-Honorio v2.4</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -57,7 +57,7 @@
                     </div>
             </div>
 
-            <div onclick="toggleMenu()" style="font-size: 1.5em; cursor: pointer; line-height: 1;">
+            <div id="btnMenuToggle" onclick="toggleMenu()" style="font-size: 1.5em; cursor: pointer; line-height: 1;">
                 &#9776;
             </div>
         </div>
@@ -93,19 +93,22 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let map;
+        let map = null;
         let database = { escuelas: [], sectores: [], vias: [] };
         let marcadores = {};
         let escuelaActualId = null;
 
-        // Esperamos a que la página esté completamente cargada para evitar bloqueos
-        document.addEventListener("DOMContentLoaded", () => {
+        // INICIALIZACIÓN SEGURA Y DIRECTA
+        try {
             if (typeof L !== 'undefined') {
                 map = L.map('map').setView([43.18, -5.98], 11);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
             }
-            inicializar();
-        });
+        } catch(e) {
+            console.error("Error cargando Leaflet", e);
+        }
+
+        inicializar(); // Arrancamos Firebase directamente
 
         async function inicializar() {
             try {
@@ -344,4 +347,120 @@
                                 <span style="font-size: 0.75em; color: #555;">7a-7c+:</span>
                                 <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo3 || 0}</span>
                             </div>
-                            <div style="background
+                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
+                                <span style="font-size: 0.75em; color: #555;">≥ de 8a:</span>
+                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo4 || 0}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            }
+            contenedor.innerHTML = html;
+            window.scrollTo({ top: map ? map.offsetHeight : 0, behavior: 'smooth' });
+        }
+
+        function verSector(idSector) {
+            const sector = database.sectores.find(s => s.idEscuela === escuelaActualId && s.idSector === idSector);
+            if (!sector) return;
+
+            const contenedor = document.getElementById('contenido-dinamico');
+            let html = `
+                <button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">← Atrás</button>
+                <div class="section-title">${sector.nombreSector}</div>
+            `;
+
+            const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
+            
+            if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) {
+                html += `<img src="${viasFiltradas[0].fotoCroquis}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
+            } else if (sector.fotoSector) {
+                html += `<img src="${sector.fotoSector}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
+            }
+
+            html += `<div class="section-title" style="font-size:1rem;">Vías del sector</div>`;
+
+            if (viasFiltradas.length === 0) {
+                html += `<p style="color:#777; font-style:italic;">Aún no hay vías registradas para este sector.</p>`;
+            } else {
+                viasFiltradas.forEach((via, index) => {
+                    const storageKey = `encadenada-${escuelaActualId}-${sector.idSector}-${via.numero}`;
+                    const checked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
+
+                    html += `
+                        <div class="via-item">
+                            <div class="via-detalles">
+                                <div class="via-numero">${via.numero}.</div>
+                                <div class="via-nombre">${via.nombreVia}</div>
+                                <div class="via-grado">${via.grado}</div>
+                            </div>
+                            <div class="via-check">
+                                <select class="estado-via" onchange="cambiarColorEstado(this)" style="padding: 2px; border-radius: 5px; font-weight: bold; cursor: pointer; outline: none; border: 1px solid #ccc; font-size: 0.9em;">
+                                    <option value="" style="background-color: white; color: black;">Sin hacer</option>
+                                    <option value="a-vista" style="background-color: #3CB371; color: white;">a vista</option>
+                                    <option value="a-flash" style="background-color: #00CED1; color: white;">a flash</option>
+                                    <option value="2-pegue" style="background-color: #FFA500; color: white;">2º pegue</option>
+                                    <option value="trabajado" style="background-color: #FF6347; color: white;">trabajado</option>
+                                </select>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            contenedor.innerHTML = html;
+            window.scrollTo({ top: map ? map.offsetHeight : 0, behavior: 'smooth' });
+        }
+
+        function guardarEncade(key, valor) {
+            localStorage.setItem(key, valor);
+        }
+
+        function cambiarColorEstado(elemento) {
+            const colores = {
+                'a-vista': '#3CB371',
+                'a-flash': '#00CED1',
+                '2-pegue': '#FFA500',
+                'trabajado': '#FF6347'
+            };
+            
+            const valor = elemento.value;
+            
+            if (valor && colores[valor]) {
+                elemento.style.backgroundColor = colores[valor];
+                elemento.style.color = 'white'; 
+                elemento.style.border = 'none';
+            } else {
+                elemento.style.backgroundColor = '';
+                elemento.style.color = 'black';
+                elemento.style.border = '1px solid #ccc';
+            }
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('menuOpciones');
+            if (menu.style.display === 'none' || menu.style.display === '') {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+            }
+        }
+
+        // CONTROLADOR GLOBAL SEGURO PARA CERRAR MENÚ Y BUSCADOR
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('menuOpciones');
+            const btnMenu = document.getElementById('btnMenuToggle');
+            
+            // Cerrar menú
+            if (menu && menu.style.display === 'block' && !menu.contains(event.target) && btnMenu && !btnMenu.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+
+            // Cerrar buscador
+            const cajaResultados = document.getElementById('resultadosBusqueda');
+            const buscador = document.getElementById('buscadorPrincipal');
+            if (cajaResultados && cajaResultados.style.display === 'block' && event.target !== buscador && !cajaResultados.contains(event.target)) {
+                cajaResultados.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
