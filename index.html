@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiki-Honorio v2.0</title>
+    <title>Wiki-Honorio v2.1</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -11,7 +11,6 @@
         /* Evita el scroll horizontal en toda la web */
         html, body { max-width: 100%; overflow-x: hidden; background-color: #f4f4f9; color: #333; padding-bottom: 40px; }
         
-        header { background-color: #2c3e50; color: white; padding: 15px; font-size: 1.2rem; font-weight: bold; }
         #map { height: 40vh; width: 100%; border-bottom: 3px solid #2c3e50; }
         
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
@@ -45,326 +44,25 @@
 </head>
 <body>
 
-    <header style="display: flex; justify-content: center; align-items: center; position: relative; width: 100%; box-sizing: border-box;">
-        <div onclick="mostrarInicio()" style="flex-grow: 1; text-align: center; cursor: pointer;">Wiki-Honorio</div>
-        <div onclick="toggleMenu()" style="font-size: 1.5em; cursor: pointer; position: absolute; right: 20px; line-height: 1; padding: 5px;">
-            &#9776;
+    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #2c3e50; color: white; padding: 10px 15px; position: relative; width: 100%; box-sizing: border-box;">
+        
+        <div onclick="mostrarInicio()" style="font-size: 1.2rem; font-weight: bold; cursor: pointer; white-space: nowrap;">Wiki-Honorio</div>
+        
+        <div style="display: flex; align-items: center; gap: 12px;">
+            
+            <div style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 4px 10px;">
+                <input type="text" id="buscadorPrincipal" placeholder="Buscar..." style="border: none; outline: none; width: 100px; font-size: 0.9em; color: #333; background: transparent;">
+                <span onclick="alert('Próximamente: Función de búsqueda')" style="cursor: pointer; color: #555; font-size: 1.1em; margin-left: 5px;">🔍</span>
+            </div>
+
+            <div onclick="toggleMenu()" style="font-size: 1.5em; cursor: pointer; line-height: 1;">
+                &#9776;
+            </div>
         </div>
     </header>
 
-    <div id="menuOpciones" style="display: none; position: absolute; top: 55px; right: 15px; background-color: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; min-width: 220px; overflow: hidden;">
+    <div id="menuOpciones" style="display: none; position: absolute; top: 60px; right: 15px; background-color: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; min-width: 220px; overflow: hidden;">
         <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Perfil del usuario')">
             <span style="font-size: 1.2em;">👤</span> Perfil del usuario
         </div>
-        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Buscador')">
-            <span style="font-size: 1.2em;">🔍</span> Buscador
-        </div>
-        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Rocódromos')">
-            <img src="climbing-hold-icon.png" style="height: 1.2em; vertical-align: middle;" alt="Icono presa"> Rocódromos
-        </div>
-        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Sobre el proyecto')">
-            <span style="font-size: 1.2em;">❓</span> Sobre el proyecto
-        </div>
-        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Donaciones')">
-            <span style="font-size: 1.2em;">🔩</span> Donaciones
-        </div>
-        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Colaboradores')">
-            <span style="font-size: 1.2em;">🤝</span> Colaboradores
-        </div>
-        <div style="padding: 12px 16px; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Contacto')">
-            <span style="font-size: 1.2em;">✉️</span> Contacto
-        </div>
-    </div>
-
-    <div id="map"></div>
-    
-    <div class="container" id="contenido-dinamico">
-        <div class="section-title">Escuelas de escalada</div>
-        <div id="lista-escuelas">Cargando escuelas... 🧗‍♂️</div>
-    </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        const map = L.map('map').setView([43.18, -5.98], 11);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-        let database = { escuelas: [], sectores: [], vias: [] };
-        let marcadores = {};
-        let escuelaActualId = null;
-
-        async function inicializar() {
-            try {
-                database.escuelas = [];
-                database.sectores = [];
-                database.vias = [];
-                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
-                const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-
-                const firebaseConfig = {
-                    apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
-                    authDomain: "wiki-honorio.firebaseapp.com",
-                    projectId: "wiki-honorio",
-                    storageBucket: "wiki-honorio.firebasestorage.app",
-                    messagingSenderId: "544094917297",
-                    appId: "1:544094917297:web:f0e150ce0db1cfd7374890"
-                };
-
-                const app = initializeApp(firebaseConfig);
-                const db = getFirestore(app);
-
-                function arreglarEnlaceDrive(url) {
-                    if (!url) return '';
-                    if (url.includes('/file/d/')) {
-                        const id = url.split('/file/d/')[1].split('/')[0];
-                        return `https://drive.google.com/uc?export=view&id=${id}`;
-                    }
-                    return url; 
-                }
-
-                const escSnapshot = await getDocs(collection(db, "escuelas"));
-                escSnapshot.forEach(doc => {
-                    let data = doc.data();
-                    let fotoRaw = data.foto || data.Foto || '';
-                    database.escuelas.push({
-                        id: Number(doc.id), 
-                        nombre: data.nombre,
-                        lat: Number(data.lat),
-                        lng: Number(data.lng),
-                        foto: arreglarEnlaceDrive(fotoRaw)
-                    });
-                });
-
-                const secSnapshot = await getDocs(collection(db, "sectores"));
-                secSnapshot.forEach(doc => {
-                    let data = doc.data();
-                    let fotoRaw = data.foto || data.Foto || '';
-                    database.sectores.push({
-                        idEscuela: Number(data.id_escuela),
-                        idSector: Number(doc.id),
-                        id: Number(doc.id), 
-                        nombreSector: data.nombre,
-                        nombre: data.nombre, 
-                        vias: data.vias,
-                        grados: data.grados,
-                        fotoSector: arreglarEnlaceDrive(fotoRaw),
-                        foto: arreglarEnlaceDrive(fotoRaw) 
-                    });
-                });
-
-                const viasSnapshot = await getDocs(collection(db, "vias"));
-                viasSnapshot.forEach(doc => {
-                    let data = doc.data();
-                    let sectorPadre = database.sectores.find(s => s.idSector === Number(data.id_sector));
-                    let notaRaw = data.nota || data.Nota || '';
-                    
-                    database.vias.push({
-                        idEscuela: sectorPadre ? sectorPadre.idEscuela : null,
-                        idSector: Number(data.id_sector),
-                        numero: Number(doc.id),
-                        nombreVia: data.nombre,
-                        nombre: data.nombre,
-                        grado: data.grado,
-                        fotoCroquis: arreglarEnlaceDrive(notaRaw) 
-                    });
-                });
-
-                database.escuelas.forEach(escuela => {
-                    const customIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div class="marker-pin">${escuela.id}</div>`,
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 15]
-                    });
-
-                    const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
-                    marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
-                    marker.on('click', () => seleccionarEscuela(escuela.id));
-                    marcadores[escuela.id] = marker;
-                });
-
-                mostrarInicio();
-
-            } catch (error) {
-                console.error("Error conectando a Firebase:", error);
-                document.getElementById('lista-escuelas').innerHTML = `
-                    <div class="error-box">
-                        <b>⚠️ Problema de conexión con la Base de Datos</b><br><br>
-                        ${error.message}
-                    </div>
-                `;
-            }
-        }
-
-        function mostrarInicio() {
-            document.getElementById('map').style.display = 'block';
-            escuelaActualId = null;
-            map.setView([43.18, -5.98], 11);
-            const contenedor = document.getElementById('contenido-dinamico');
-            
-            let html = `<div class="section-title">Escuelas de escalada</div>`;
-            database.escuelas.forEach(escuela => {
-                html += `
-                    <div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})">
-                        <div class="badge">${escuela.id}</div>
-                        <div class="escuela-name">${escuela.nombre}</div>
-                    </div>`;
-            });
-            contenedor.innerHTML = html;
-        }
-
-        function seleccionarEscuela(id) {
-            document.getElementById('map').style.display = 'none';
-            escuelaActualId = id;
-            const escuela = database.escuelas.find(e => e.id === id);
-            if (!escuela) return;
-
-            map.setView([escuela.lat, escuela.lng], 13);
-            if (marcadores[id]) marcadores[id].openPopup();
-
-            const contenedor = document.getElementById('contenido-dinamico');
-            let html = `
-                <button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button>
-                <div class="section-title">${escuela.nombre}</div>
-            `;
-
-            if (escuela.foto) {
-                html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela">`;
-            }
-
-            html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
-            const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
-
-            if (sectoresFiltrados.length === 0) {
-                html += `<p style="color:#777; font-style:italic;">No se encontraron sectores asignados.</p>`;
-            } else {
-                sectoresFiltrados.forEach(sector => {
-                    html += `
-                    <div class="sector-card" onclick="verSector(${sector.idSector})">
-                        <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
-                            <h3 style="margin: 0; font-size: 1.2em; color: #333;">${sector.idSector}. ${sector.nombreSector}</h3>
-                            <span style="font-size: 0.85em; font-weight: bold; color: #777; flex-grow: 1; text-align: center;">Rango de grados</span>
-                            <span style="font-size: 0.85em; color: #666; white-space: nowrap;">Vías: <span class="info-tag">${sector.vias || 0}</span></span>
-                        </div>
-
-                        <div style="display: flex; flex-direction: row; justify-content: space-between; gap: 4px; width: 100%; flex-wrap: nowrap;">
-                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
-                                <span style="font-size: 0.75em; color: #555;">Hasta 6a:</span>
-                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo1 || 0}</span>
-                            </div>
-                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
-                                <span style="font-size: 0.75em; color: #555;">6a+-6c+:</span>
-                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo2 || 0}</span>
-                            </div>
-                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
-                                <span style="font-size: 0.75em; color: #555;">7a-7c+:</span>
-                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo3 || 0}</span>
-                            </div>
-                            <div style="background: #f8f9fa; padding: 4px 6px; border-radius: 6px; border: 1px solid #eaeaea; display: flex; align-items: center; gap: 3px; flex: 1; justify-content: center; white-space: nowrap;">
-                                <span style="font-size: 0.75em; color: #555;">≥ de 8a:</span>
-                                <span class="info-tag" style="font-weight: bold; font-size: 0.8em; padding: 2px 4px;">${sector.vias_grupo4 || 0}</span>
-                            </div>
-                        </div>
-                    </div>`;
-                });
-            }
-            contenedor.innerHTML = html;
-            window.scrollTo({ top: map.offsetHeight, behavior: 'smooth' });
-        }
-
-        function verSector(idSector) {
-            const sector = database.sectores.find(s => s.idEscuela === escuelaActualId && s.idSector === idSector);
-            if (!sector) return;
-
-            const contenedor = document.getElementById('contenido-dinamico');
-            let html = `
-                <button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">← Atrás</button>
-                <div class="section-title">${sector.nombreSector}</div>
-            `;
-
-            const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
-            
-            if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) {
-                html += `<img src="${viasFiltradas[0].fotoCroquis}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
-            } else if (sector.fotoSector) {
-                html += `<img src="${sector.fotoSector}" class="foto-guia" alt="Croquis del Sector" onerror="this.style.display='none'">`;
-            }
-
-            html += `<div class="section-title" style="font-size:1rem;">Vías del sector</div>`;
-
-            if (viasFiltradas.length === 0) {
-                html += `<p style="color:#777; font-style:italic;">Aún no hay vías registradas para este sector.</p>`;
-            } else {
-                viasFiltradas.forEach((via, index) => {
-                    const storageKey = `encadenada-${escuelaActualId}-${sector.idSector}-${via.numero}`;
-                    const checked = localStorage.getItem(storageKey) === 'true' ? 'checked' : '';
-
-                    html += `
-                        <div class="via-item">
-                            <div class="via-detalles">
-                                <div class="via-numero">${via.numero}.</div>
-                                <div class="via-nombre">${via.nombreVia}</div>
-                                <div class="via-grado">${via.grado}</div>
-                            </div>
-                            <div class="via-check">
-                                <select class="estado-via" onchange="cambiarColorEstado(this)" style="padding: 2px; border-radius: 5px; font-weight: bold; cursor: pointer; outline: none; border: 1px solid #ccc; font-size: 0.9em;">
-                                    <option value="" style="background-color: white; color: black;">Sin hacer</option>
-                                    <option value="a-vista" style="background-color: #3CB371; color: white;">a vista</option>
-                                    <option value="a-flash" style="background-color: #00CED1; color: white;">a flash</option>
-                                    <option value="2-pegue" style="background-color: #FFA500; color: white;">2º pegue</option>
-                                    <option value="trabajado" style="background-color: #FF6347; color: white;">trabajado</option>
-                                </select>
-                            </div>
-                        </div>`;
-                });
-            }
-
-            contenedor.innerHTML = html;
-            window.scrollTo({ top: map.offsetHeight, behavior: 'smooth' });
-        }
-
-        function guardarEncade(key, valor) {
-            localStorage.setItem(key, valor);
-        }
-
-        function cambiarColorEstado(elemento) {
-            const colores = {
-                'a-vista': '#3CB371',
-                'a-flash': '#00CED1',
-                '2-pegue': '#FFA500',
-                'trabajado': '#FF6347'
-            };
-            
-            const valor = elemento.value;
-            
-            if (valor && colores[valor]) {
-                elemento.style.backgroundColor = colores[valor];
-                elemento.style.color = 'white'; 
-                elemento.style.border = 'none';
-            } else {
-                elemento.style.backgroundColor = '';
-                elemento.style.color = 'black';
-                elemento.style.border = '1px solid #ccc';
-            }
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('menuOpciones');
-            if (menu.style.display === 'none' || menu.style.display === '') {
-                menu.style.display = 'block';
-            } else {
-                menu.style.display = 'none';
-            }
-        }
-
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('menuOpciones');
-            const iconoMenu = event.target.closest('[onclick="toggleMenu()"]');
-            
-            if (menu && menu.style.display === 'block' && !menu.contains(event.target) && !iconoMenu) {
-                menu.style.display = 'none';
-            }
-        });
-
-        inicializar();
-    </script>
-</body>
-</html>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-
