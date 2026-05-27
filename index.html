@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiki-Honorio v2.1</title>
+    <title>Wiki-Honorio v2.2</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        /* Evita el scroll horizontal en toda la web */
         html, body { max-width: 100%; overflow-x: hidden; background-color: #f4f4f9; color: #333; padding-bottom: 40px; }
         
         #map { height: 40vh; width: 100%; border-bottom: 3px solid #2c3e50; }
@@ -44,15 +43,18 @@
 </head>
 <body>
 
-    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #2c3e50; color: white; padding: 10px 15px; position: relative; width: 100%; box-sizing: border-box;">
+    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #2c3e50; color: white; padding: 10px 15px; position: relative; width: 100%; box-sizing: border-box; z-index: 10001;">
         
         <div onclick="mostrarInicio()" style="font-size: 1.2rem; font-weight: bold; cursor: pointer; white-space: nowrap;">Wiki-Honorio</div>
         
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; position: relative;">
             
-            <div style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 4px 10px;">
-                <input type="text" id="buscadorPrincipal" placeholder="Buscar..." style="border: none; outline: none; width: 100px; font-size: 0.9em; color: #333; background: transparent;">
-                <span onclick="alert('Próximamente: Función de búsqueda')" style="cursor: pointer; color: #555; font-size: 1.1em; margin-left: 5px;">🔍</span>
+            <div style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 4px 10px; position: relative;">
+                <input type="text" id="buscadorPrincipal" placeholder="Buscar..." oninput="buscarElementos()" style="border: none; outline: none; width: 120px; font-size: 0.9em; color: #333; background: transparent;">
+                <span style="color: #555; font-size: 1.1em; margin-left: 5px;">🔍</span>
+                
+                <div id="resultadosBusqueda" style="display: none; position: absolute; top: 35px; right: 0; background: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 260px; max-height: 300px; overflow-y: auto; z-index: 10002;">
+                    </div>
             </div>
 
             <div onclick="toggleMenu()" style="font-size: 1.5em; cursor: pointer; line-height: 1;">
@@ -65,4 +67,76 @@
         <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Perfil del usuario')">
             <span style="font-size: 1.2em;">👤</span> Perfil del usuario
         </div>
-        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Rocódromos')">
+            <img src="climbing-hold-icon.png" style="height: 1.2em; vertical-align: middle;" alt="Icono presa"> Rocódromos
+        </div>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Sobre el proyecto')">
+            <span style="font-size: 1.2em;">❓</span> Sobre el proyecto
+        </div>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Donaciones')">
+            <span style="font-size: 1.2em;">🔩</span> Donaciones
+        </div>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Colaboradores')">
+            <span style="font-size: 1.2em;">🤝</span> Colaboradores
+        </div>
+        <div style="padding: 12px 16px; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Contacto')">
+            <span style="font-size: 1.2em;">✉️</span> Contacto
+        </div>
+    </div>
+
+    <div id="map"></div>
+    
+    <div class="container" id="contenido-dinamico">
+        <div class="section-title">Escuelas de escalada</div>
+        <div id="lista-escuelas">Cargando escuelas... 🧗‍♂️</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([43.18, -5.98], 11);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+        let database = { escuelas: [], sectores: [], vias: [] };
+        let marcadores = {};
+        let escuelaActualId = null;
+
+        async function inicializar() {
+            try {
+                database.escuelas = [];
+                database.sectores = [];
+                database.vias = [];
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+                const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
+                    authDomain: "wiki-honorio.firebaseapp.com",
+                    projectId: "wiki-honorio",
+                    storageBucket: "wiki-honorio.firebasestorage.app",
+                    messagingSenderId: "544094917297",
+                    appId: "1:544094917297:web:f0e150ce0db1cfd7374890"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+
+                function arreglarEnlaceDrive(url) {
+                    if (!url) return '';
+                    if (url.includes('/file/d/')) {
+                        const id = url.split('/file/d/')[1].split('/')[0];
+                        return `https://drive.google.com/uc?export=view&id=${id}`;
+                    }
+                    return url; 
+                }
+
+                const escSnapshot = await getDocs(collection(db, "escuelas"));
+                escSnapshot.forEach(doc => {
+                    let data = doc.data();
+                    let fotoRaw = data.foto || data.Foto || '';
+                    database.escuelas.push({
+                        id: Number(doc.id), 
+                        nombre: data.nombre,
+                        lat: Number(data.lat),
+                        lng: Number(data.lng),
+                        foto: arreglarEnlaceDrive(fotoRaw)
+                    });
+                });
