@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiki-Honorio v2.8</title>
+    <title>Wiki-Honorio v3.0</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { max-width: 100%; overflow-x: hidden; background-color: #f4f4f9; color: #333; padding-bottom: 40px; }
         
         #map { height: 40vh; width: 100%; border-bottom: 3px solid #2c3e50; }
+        
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         .section-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 12px; color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+        
         .btn-volver { display: inline-block; background-color: #7f8c8d; color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-size: 0.9rem; margin-bottom: 15px; cursor: pointer; font-weight: bold; border: none; margin-right: 10px; }
         
         .escuela-item { display: flex; align-items: center; background: white; padding: 12px; margin-bottom: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }
@@ -19,6 +21,7 @@
         .escuela-name { font-size: 1.1rem; font-weight: 600; color: #34495e; }
         
         .foto-guia { width: 100%; max-height: 300px; object-fit: cover; background-color: #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px; display: block; }
+        
         .sector-card { background: white; padding: 15px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #e74c3c; cursor: pointer; }
         .info-tag { background: #edf2f7; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
 
@@ -30,4 +33,281 @@
 
         .custom-div-icon { display: flex; align-items: center; justify-content: center; }
         .marker-pin { background-color: #e74c3c; color: white; font-weight: bold; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); font-size: 0.9rem; }
-        .error-box { background: #fee2e2;
+        
+        .error-box { background: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 15px; border-radius: 8px; font-size: 0.95rem; }
+
+        /* MODAL PERFIL */
+        .modal-perfil { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 20000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px 10px; }
+        .modal-content { background: white; width: 100%; max-width: 500px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); padding: 20px; position: relative; margin: auto; }
+        .close-modal { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #999; border: none; background: none; outline: none; }
+        
+        .stat-bar-container { background: #eee; border-radius: 6px; height: 20px; width: 100%; margin: 4px 0 12px 0; overflow: hidden; position: relative; }
+        .stat-bar-fill { height: 100%; width: 0%; transition: width 0.5s ease-out; }
+        .stat-bar-text { position: absolute; right: 8px; top: 1px; font-size: 0.8rem; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+
+    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #2c3e50; color: white; padding: 10px 15px; position: relative; width: 100%; box-sizing: border-box; z-index: 10001;">
+        <div onclick="mostrarInicio()" style="font-size: 1.2rem; font-weight: bold; cursor: pointer; white-space: nowrap;">Wiki-Honorio</div>
+        <div style="display: flex; align-items: center; gap: 12px; position: relative;">
+            
+            <div style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 4px 10px; position: relative;">
+                <input type="text" id="buscadorPrincipal" placeholder="Buscar..." oninput="buscarElementos()" style="border: none; outline: none; width: 120px; font-size: 0.9em; color: #333; background: transparent;">
+                <span style="color: #555; font-size: 1.1em; margin-left: 5px;">🔍</span>
+                <div id="resultadosBusqueda" style="display: none; position: absolute; top: 35px; right: 0; background: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: 260px; max-height: 300px; overflow-y: auto; z-index: 10002;"></div>
+            </div>
+
+            <div id="btnMenuToggle" onclick="toggleMenu(event)" style="font-size: 1.5em; cursor: pointer; line-height: 1; user-select: none;">&#9776;</div>
+        </div>
+    </header>
+
+    <div id="menuOpciones" style="display: none; position: absolute; top: 60px; right: 15px; background-color: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; min-width: 220px; overflow: hidden;">
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="abrirPerfil()">
+            <span style="font-size: 1.2em;">👤</span> Perfil del usuario
+        </div>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Rocódromos')">
+            <img src="climbing-hold-icon.png" style="height: 1.2em; vertical-align: middle;" alt="Icono presa"> Rocódromos
+        </div>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Sobre el proyecto')">
+            <span style="font-size: 1.2em;">❓</span> Sobre el proyecto
+        </div>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Donaciones')">
+            <span style="font-size: 1.2em;">🔩</span> Donaciones
+        </div>
+        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Colaboradores')">
+            <span style="font-size: 1.2em;">🤝</span> Colaboradores
+        </div>
+        <div style="padding: 12px 16px; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Contacto')">
+            <span style="font-size: 1.2em;">✉️</span> Contacto
+        </div>
+    </div>
+
+    <div id="modalPerfilUsuario" class="modal-perfil" onclick="cerrarPerfilFuera(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal" onclick="cerrarPerfil()">&times;</button>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="font-size: 3rem;">👤</span>
+                <div style="margin-top: 5px;">
+                    <input type="text" id="nombreUsuarioInput" oninput="guardarNombreUsuario(this.value)" placeholder="Tu Nombre de Escalador" style="font-size: 1.3rem; font-weight: bold; text-align: center; border: none; border-bottom: 2px dashed #ccc; outline: none; padding: 4px; width: 80%; color: #2c3e50;">
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">📊 Estadísticas de Encadenes</h3>
+                <label style="font-size: 0.85rem; font-weight: bold; color: #555;">A Vista</label>
+                <div class="stat-bar-container"><div id="bar-vista" class="stat-bar-fill" style="background: #3CB371;"></div><span id="txt-vista" class="stat-bar-text">0</span></div>
+                <label style="font-size: 0.85rem; font-weight: bold; color: #555;">A Flash</label>
+                <div class="stat-bar-container"><div id="bar-flash" class="stat-bar-fill" style="background: #00CED1;"></div><span id="txt-flash" class="stat-bar-text">0</span></div>
+                <label style="font-size: 0.85rem; font-weight: bold; color: #555;">2º Pegue</label>
+                <div class="stat-bar-container"><div id="bar-2pegue" class="stat-bar-fill" style="background: #FFA500;"></div><span id="txt-2pegue" class="stat-bar-text">0</span></div>
+            </div>
+            <div style="margin-bottom: 20px; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; justify-content: space-around; text-align: center;">
+                <div>
+                    <h4 style="font-size: 0.85rem; color: #666; margin-bottom: 4px;">🏆 Máx Histórico</h4>
+                    <span id="maxGradoGeneral" style="font-size: 1.4rem; font-weight: bold; color: #e74c3c;">--</span>
+                </div>
+                <div style="border-left: 1px solid #ddd; padding-left: 20px;">
+                    <h4 style="font-size: 0.85rem; color: #666; margin-bottom: 4px;">👁️ Máx A Vista</h4>
+                    <span id="maxGradoVista" style="font-size: 1.4rem; font-weight: bold; color: #3CB371;">--</span>
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">🛠️ Mis Proyectos</h3>
+                <div id="listaProyectosPerfil" style="max-height: 120px; overflow-y: auto; font-size: 0.95rem; color: #555;"></div>
+            </div>
+            <div>
+                <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🌍 Escuelas Visitadas</h3>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #edf2f7; padding: 8px 12px; border-radius: 6px;">
+                    <span id="contadorEscuelasVisitadas" style="font-size: 0.95rem; font-weight: 500; color: #333;">0 de 0 escuelas</span>
+                    <span id="porcentajeEscuelas" style="background: #2c3e50; color: white; padding: 2px 8px; border-radius: 20px; font-weight: bold; font-size: 0.85rem;">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+    <div class="container" id="contenido-dinamico">
+        <div class="section-title">Escuelas de escalada</div>
+        <div id="lista-escuelas">Cargando escuelas... 🧗‍♂️</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Inicializamos mapa de inmediato, como lo tenías originalmente
+        const map = L.map('map').setView([43.18, -5.98], 11);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+        
+        let database = { escuelas: [], sectores: [], vias: [] };
+        let marcadores = {};
+        let escuelaActualId = null;
+
+        const nombreGuardado = localStorage.getItem('nombre-usuario-escalador');
+        if(nombreGuardado) document.getElementById('nombreUsuarioInput').value = nombreGuardado;
+
+        async function inicializar() {
+            try {
+                // Carga dinámica que sí te funcionaba en tu código base
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+                const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
+                    authDomain: "wiki-honorio.firebaseapp.com",
+                    projectId: "wiki-honorio",
+                    storageBucket: "wiki-honorio.firebasestorage.app",
+                    messagingSenderId: "544094917297",
+                    appId: "1:544094917297:web:f0e150ce0db1cfd7374890"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+
+                function arreglarUrl(url) {
+                    if (!url) return '';
+                    if (url.includes('/file/d/')) return `https://drive.google.com/uc?export=view&id=${url.split('/file/d/')[1].split('/')[0]}`;
+                    return url; 
+                }
+
+                const escSnapshot = await getDocs(collection(db, "escuelas"));
+                escSnapshot.forEach(doc => {
+                    let d = doc.data();
+                    database.escuelas.push({ id: Number(doc.id), nombre: d.nombre, lat: Number(d.lat), lng: Number(d.lng), foto: arreglarUrl(d.foto || d.Foto || '') });
+                });
+
+                const secSnapshot = await getDocs(collection(db, "sectores"));
+                secSnapshot.forEach(doc => {
+                    let d = doc.data();
+                    database.sectores.push({
+                        idEscuela: Number(d.id_escuela), idSector: Number(doc.id), id: Number(doc.id), nombreSector: d.nombre, nombre: d.nombre, vias: d.vias,
+                        fotoSector: arreglarUrl(d.foto || d.Foto || ''), vias_grupo1: Number(d.vias_grupo1||0), vias_grupo2: Number(d.vias_grupo2||0),
+                        vias_grupo3: Number(d.vias_grupo3||0), vias_grupo4: Number(d.vias_grupo4||0)
+                    });
+                });
+
+                const viasSnapshot = await getDocs(collection(db, "vias"));
+                viasSnapshot.forEach(doc => {
+                    let d = doc.data();
+                    let sPadre = database.sectores.find(s => s.idSector === Number(d.id_sector));
+                    database.vias.push({ idEscuela: sPadre ? sPadre.idEscuela : null, idSector: Number(d.id_sector), numero: Number(doc.id), nombreVia: d.nombre, grado: d.grado, fotoCroquis: arreglarUrl(d.nota || d.Nota || '') });
+                });
+
+                database.escuelas.forEach(escuela => {
+                    const customIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin">${escuela.id}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+                    const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
+                    marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
+                    marker.on('click', () => seleccionarEscuela(escuela.id));
+                    marcadores[escuela.id] = marker;
+                });
+
+                mostrarInicio();
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('lista-escuelas').innerHTML = `<div class="error-box"><b>⚠️ Error al conectar con la base de datos</b><br>${error.message}</div>`;
+            }
+        }
+
+        inicializar();
+
+        // ------------------ FUNCIONES DEL BUSCADOR ------------------
+        function buscarElementos() {
+            const input = document.getElementById('buscadorPrincipal').value.toLowerCase();
+            const cajaResultados = document.getElementById('resultadosBusqueda');
+            if (input.length < 2) { cajaResultados.style.display = 'none'; return; }
+            let resultados = [];
+
+            database.escuelas.forEach(e => { if (e.nombre && e.nombre.toLowerCase().includes(input)) resultados.push({ tipo: 'escuela', textoVisible: e.nombre, idEscuela: e.id, idSector: null }); });
+            database.sectores.forEach(s => { const n = s.nombreSector || s.nombre; if (n && n.toLowerCase().includes(input)) resultados.push({ tipo: 'sector', textoVisible: n, idEscuela: s.idEscuela, idSector: s.idSector }); });
+            database.vias.forEach(v => { const n = v.nombreVia || v.nombre; if (n && n.toLowerCase().includes(input)) resultados.push({ tipo: 'vía', textoVisible: n, idEscuela: v.idEscuela, idSector: v.idSector }); });
+
+            if (resultados.length > 0) {
+                let html = '';
+                resultados.forEach(res => { html += `<div style="padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; color: #333;" onclick="irDesdeBuscador('${res.tipo}', ${res.idEscuela}, ${res.idSector})"><b>${res.textoVisible}</b> <span style="color:#999;font-size:0.85em;">(${res.tipo})</span></div>`; });
+                cajaResultados.innerHTML = html; cajaResultados.style.display = 'block';
+            } else {
+                cajaResultados.innerHTML = `<div style="padding:12px;color:#999;text-align:center;">Sin resultados</div>`; cajaResultados.style.display = 'block';
+            }
+        }
+
+        function irDesdeBuscador(tipo, idEscuela, idSector) {
+            document.getElementById('buscadorPrincipal').value = '';
+            document.getElementById('resultadosBusqueda').style.display = 'none';
+            if (tipo === 'escuela') seleccionarEscuela(idEscuela);
+            else { seleccionarEscuela(idEscuela); setTimeout(() => { verSector(idSector); }, 50); }
+        }
+
+        // ------------------ FUNCIONES DE NAVEGACIÓN ------------------
+        function mostrarInicio() {
+            document.getElementById('map').style.display = 'block'; map.setView([43.18, -5.98], 11);
+            escuelaActualId = null;
+            let html = `<div class="section-title">Escuelas de escalada</div>`;
+            database.escuelas.forEach(escuela => { html += `<div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})"><div class="badge">${escuela.id}</div><div class="escuela-name">${escuela.nombre}</div></div>`; });
+            document.getElementById('contenido-dinamico').innerHTML = html;
+        }
+
+        function seleccionarEscuela(id) {
+            document.getElementById('map').style.display = 'none';
+            escuelaActualId = id;
+            const escuela = database.escuelas.find(e => e.id === id);
+            if (!escuela) return;
+
+            let html = `<button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button><div class="section-title">${escuela.nombre}</div>`;
+            if (escuela.foto) html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela">`;
+            html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
+            
+            const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
+            if (sectoresFiltrados.length === 0) {
+                html += `<p style="color:#777; font-style:italic;">No sectores asignados.</p>`;
+            } else {
+                sectoresFiltrados.forEach(sector => {
+                    html += `
+                    <div class="sector-card" onclick="verSector(${sector.idSector})">
+                        <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
+                            <h3 style="margin: 0; font-size: 1.2em; color: #333;">${sector.idSector}. ${sector.nombreSector}</h3>
+                            <span style="font-size: 0.85em; font-weight: bold; color: #777; flex-grow: 1; text-align: center;">Rango de grados</span>
+                            <span style="font-size: 0.85em; color: #666; white-space: nowrap;">Vías: <span class="info-tag">${sector.vias || 0}</span></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; gap: 4px; width: 100%;">
+                            <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">Hasta 6a:<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo1 || 0}</span></div>
+                            <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">6a+-6c+:<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo2 || 0}</span></div>
+                            <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">7a-7c+:<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo3 || 0}</span></div>
+                            <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">&ge; 8a:<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo4 || 0}</span></div>
+                        </div>
+                    </div>`;
+                });
+            }
+            document.getElementById('contenido-dinamico').innerHTML = html;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function verSector(idSector) {
+            const sector = database.sectores.find(s => s.idEscuela === escuelaActualId && s.idSector === idSector);
+            if (!sector) return;
+
+            let html = `<button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">← Atrás</button><div class="section-title">${sector.nombreSector}</div>`;
+            const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
+            
+            if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) html += `<img src="${viasFiltradas[0].fotoCroquis}" class="foto-guia" alt="Croquis" onerror="this.style.display='none'">`;
+            else if (sector.fotoSector) html += `<img src="${sector.fotoSector}" class="foto-guia" alt="Croquis" onerror="this.style.display='none'">`;
+
+            html += `<div class="section-title" style="font-size:1rem;">Vías del sector</div>`;
+
+            if (viasFiltradas.length === 0) html += `<p style="color:#777; font-style:italic;">Aún no hay vías registradas.</p>`;
+            else {
+                viasFiltradas.forEach(via => {
+                    const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
+                    const estadoGuardado = localStorage.getItem(storageKey) || "";
+
+                    html += `
+                        <div class="via-item">
+                            <div class="via-detalles">
+                                <div class="via-numero">${via.numero}.</div>
+                                <div class="via-nombre">${via.nombreVia}</div>
+                                <div class="via-grado">${via.grado}</div>
+                            </div>
+                            <div class="via-check">
+                                <select class="estado-via" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
+                                    <option value="" ${estadoGuardado === '' ? 'selected' : ''}>Sin hacer</option>
+                                    <option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>a vista</option>
+                                    <option value="a-flash" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>a flash</option>
+                                    <option value="2-pegue" ${estado
