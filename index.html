@@ -365,9 +365,8 @@ function actualizarGraficoPerfil() {
 
     // Trigonometría para poner los números dentro del gráfico
     let html = '';
-    const radioCirculo = 65; // Mitad del ancho/alto del gráfico (130px)
-    const radioTexto = 40;   // Distancia desde el centro a la que se colocan los números
-
+   const radioCirculo = 55; // Mitad del gráfico (110px)
+const radioTexto = 32;   // Distancia reajustada
     const addLabel = (valor, startPct, endPct) => {
         if (valor === 0) return '';
         // Calculamos el ángulo central de la porción en radianes
