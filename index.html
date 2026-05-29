@@ -317,14 +317,17 @@
            let html = `<button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button><div class="section-title">${escuela.nombre}</div>`;
 if (escuela.foto) html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela" style="margin-bottom: 10px;">`;
 
-// NUEVO BLOQUE: Botones de Información y Cómo llegar
+// NUEVO BLOQUE: Botones de Información y Cómo llegar (Diseño Icono Universal)
 html += `
 <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center;">
     <a href="pagina_info_${escuela.id}.html" target="_blank" style="text-decoration: none; display: flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; border-radius: 50%; background-color: #3498db; color: white; font-weight: bold; font-size: 1.2rem; font-family: Georgia, serif; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
         i
     </a>
-    <a href="https://www.google.com/maps/dir/?api=1&destination=${escuela.lat},${escuela.lng}" target="_blank" style="text-decoration: none; display: flex; align-items: center; gap: 6px; background-color: #2ecc71; color: white; padding: 0 16px; height: 36px; border-radius: 20px; font-weight: bold; font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.15); flex-grow: 1; justify-content: center;">
-        <span style="font-size: 1.2em;">📍</span> Cómo llegar
+
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${escuela.lat},${escuela.lng}" target="_blank" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 6px; background-color: #00796B; box-shadow: 0 2px 4px rgba(0,0,0,0.15); transform: rotate(45deg);">
+        <svg viewBox="0 0 24 24" fill="white" style="width: 22px; height: 22px; transform: rotate(-45deg);">
+            <path d="M20.5 4l-4-4v2h-8C5.01 2 3 4.01 3 6.5v13h2.5v-13C5.5 5.12 6.62 4 8 4h8.5v2L20.5 4z"/>
+        </svg>
     </a>
 </div>
 `;
