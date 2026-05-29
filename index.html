@@ -290,6 +290,85 @@ function actualizarFotoPerfilDisplay(savedFoto) {
                 cajaResultados.style.display = 'none';
             }
         });
+        // --- NUEVAS FUNCIONES PARA EL GRÁFICO CIRCULAR E INTERACTIVO ---
+
+const ordenGradosGlobal = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6b+", "6c", "6c+", "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+"];
+
+// 1. Rellena el desplegable con la escala francesa
+function poblarSelectGrados() {
+    const select = document.getElementById('filtroGradoPerfil');
+    if(select.options.length <= 1) { 
+        ordenGradosGlobal.forEach(grado => {
+            select.innerHTML += `<option value="${grado}">${grado}</option>`;
+        });
+    }
+}
+
+// 2. Calcula los datos, pinta el gráfico de colores y posiciona los números
+function actualizarGraficoPerfil() {
+    const gradoFiltro = document.getElementById('filtroGradoPerfil').value;
+    let tVista = 0, tFlash = 0, tTrabajado = 0;
+
+    database.vias.forEach(via => {
+        // Si el filtro no es "todos" y la vía no coincide, la saltamos
+        if (gradoFiltro !== 'todos' && via.grado !== gradoFiltro) return;
+
+        const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
+        const estado = getLocal(storageKey);
+
+        if (estado) {
+            if (estado === 'a-vista') tVista++;
+            else if (estado === 'a-flash') tFlash++;
+            else if (estado === '2-pegue' || estado === 'trabajado') tTrabajado++;
+        }
+    });
+
+    // Actualizamos los numeritos de la leyenda
+    document.getElementById('leyenda-vista').innerText = tVista;
+    document.getElementById('leyenda-flash').innerText = tFlash;
+    document.getElementById('leyenda-trabajado').innerText = tTrabajado;
+
+    const chartDiv = document.getElementById('grafico-circular');
+    const total = tVista + tFlash + tTrabajado;
+
+    // Si no hay datos, mostramos un círculo gris
+    if (total === 0) {
+        chartDiv.style.background = '#f8f9fa';
+        chartDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:0.8rem;text-align:center;font-style:italic;">Sin<br>datos</div>';
+        return;
+    }
+
+    // Calculamos los porcentajes para rellenar el círculo (CSS conic-gradient)
+    const pVista = (tVista / total) * 100;
+    const pFlash = (tFlash / total) * 100;
+    const pTrab = (tTrabajado / total) * 100;
+
+    chartDiv.style.background = `conic-gradient(
+        #3CB371 0% ${pVista}%,
+        #00CED1 ${pVista}% ${pVista + pFlash}%,
+        #FF6347 ${pVista + pFlash}% 100%
+    )`;
+
+    // Trigonometría para poner los números dentro del gráfico
+    let html = '';
+    const radioCirculo = 65; // Mitad del ancho/alto del gráfico (130px)
+    const radioTexto = 40;   // Distancia desde el centro a la que se colocan los números
+
+    const addLabel = (valor, startPct, endPct) => {
+        if (valor === 0) return '';
+        // Calculamos el ángulo central de la porción en radianes
+        const angle = ((startPct + (endPct - startPct) / 2) * 3.6 - 90) * (Math.PI / 180);
+        const x = radioCirculo + Math.cos(angle) * radioTexto - 10; 
+        const y = radioCirculo + Math.sin(angle) * radioTexto - 10;
+        return `<div style="position:absolute; left:${x}px; top:${y}px; width:20px; height:20px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:0.95rem; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);">${valor}</div>`;
+    };
+
+    html += addLabel(tVista, 0, pVista);
+    html += addLabel(tFlash, pVista, pVista + pFlash);
+    html += addLabel(tTrabajado, pVista + pFlash, 100);
+
+    chartDiv.innerHTML = html;
+}
     </script>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
