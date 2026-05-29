@@ -134,62 +134,76 @@
         </div>
     </div>
 
-    <div id="modalPerfilUsuario" class="modal-perfil" onclick="cerrarPerfilFuera(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="close-modal" onclick="cerrarPerfil()">&times;</button>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div class="perfil-foto-frame" id="perfilFotoInputContainer" onclick="triggerFotoInput()">
-    <img id="perfilFotoMostrar" src="" alt="Foto de Perfil">
-    <span id="perfilFotoDefecto" style="font-size: 3.5rem;">👤</span>
-</div>
-<input type="file" id="perfilFotoInput" style="display: none;" accept="image/*" onchange="handleProfilePicture(this)">
-                <div style="margin-top: 5px;">
-                    <input type="text" id="nombreUsuarioInput" oninput="setLocal('nombre-usuario-escalador', this.value)" placeholder="Tu Nombre" style="font-size: 1.3rem; font-weight: bold; text-align: center; border: none; border-bottom: 2px dashed #ccc; outline: none; padding: 4px; width: 80%; color: #2c3e50;">
-                </div>
+   <div id="modalPerfilUsuario" class="modal-perfil" onclick="cerrarPerfilFuera(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-modal" onclick="cerrarPerfil()">&times;</button>
+        
+        <div style="text-align: center; margin-bottom: 15px;">
+            <div class="perfil-foto-frame" id="perfilFotoInputContainer" onclick="triggerFotoInput()" style="margin-bottom: 5px;">
+                <img id="perfilFotoMostrar" src="" alt="Foto de Perfil">
+                <span id="perfilFotoDefecto" style="font-size: 3.5rem;">👤</span>
             </div>
-         <div style="margin-bottom: 20px;">
-    <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">📊 Estadísticas de Encadenes</h3>
-    
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 15px;">
-        <div id="grafico-circular" style="position: relative; width: 130px; height: 130px; border-radius: 50%; background: #eee; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <input type="file" id="perfilFotoInput" style="display: none;" accept="image/*" onchange="handleProfilePicture(this)">
+            <div style="margin-top: 5px;">
+                <input type="text" id="nombreUsuarioInput" oninput="setLocal('nombre-usuario-escalador', this.value)" placeholder="Tu Nombre" style="font-size: 1.2rem; font-weight: bold; text-align: center; border: none; border-bottom: 2px dashed #ccc; outline: none; padding: 4px; width: 80%; color: #2c3e50;">
             </div>
+        </div>
 
-        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px;">
-            <select id="filtroGradoPerfil" onchange="actualizarGraficoPerfil()" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; color: #2c3e50; outline: none; cursor: pointer; font-size: 0.9rem;">
-                <option value="todos">Todos los grados</option>
-                </select>
+        <div style="margin-bottom: 15px;">
+            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">📊 Estadísticas de Encadenes</h3>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                <div id="grafico-circular" style="position: relative; width: 110px; height: 110px; border-radius: 50%; background: #eee; flex-shrink: 0; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                </div>
 
-            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; font-weight: bold; color: #555;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: #3CB371; border-radius: 3px;"></span> A Vista</div>
-                    <span id="leyenda-vista">0</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: #00CED1; border-radius: 3px;"></span> A Flash</div>
-                    <span id="leyenda-flash">0</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: #FF6347; border-radius: 3px;"></span> Trabajado</div>
-                    <span id="leyenda-trabajado">0</span>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <select id="filtroGradoPerfil" onchange="actualizarGraficoPerfil()" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; color: #2c3e50; outline: none; cursor: pointer; font-size: 0.85rem; max-width: 130px;">
+                        <option value="todos">Todos los grados</option>
+                    </select>
+
+                    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; font-weight: bold; color: #555;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                            <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #3CB371; border-radius: 2px;"></span> A Vista</div>
+                            <span id="leyenda-vista">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                            <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #00CED1; border-radius: 2px;"></span> A Flash</div>
+                            <span id="leyenda-flash">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                            <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #FF6347; border-radius: 2px;"></span> Trabajado</div>
+                            <span id="leyenda-trabajado">0</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">🛠️ Mis Proyectos</h3>
-                <div id="listaProyectosPerfil" style="max-height: 120px; overflow-y: auto; font-size: 0.95rem; color: #555;"></div>
-            </div>
+
+        <div style="margin-bottom: 12px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; justify-content: space-around; text-align: center;">
             <div>
-                <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🌍 Escuelas Visitadas</h3>
-                <div style="display: flex; align-items: center; justify-content: space-between; background: #edf2f7; padding: 8px 12px; border-radius: 6px;">
-                    <span id="contadorEscuelasVisitadas" style="font-size: 0.95rem; font-weight: 500; color: #333;">0 de 0 escuelas</span>
-                    <span id="porcentajeEscuelas" style="background: #2c3e50; color: white; padding: 2px 8px; border-radius: 20px; font-weight: bold; font-size: 0.85rem;">0%</span>
-                </div>
+                <h4 style="font-size: 0.8rem; color: #666; margin-bottom: 2px;">🏆 Máx Histórico</h4>
+                <span id="maxGradoGeneral" style="font-size: 1.2rem; font-weight: bold; color: #e74c3c;">--</span>
+            </div>
+            <div style="border-left: 1px solid #ddd; padding-left: 20px;">
+                <h4 style="font-size: 0.8rem; color: #666; margin-bottom: 2px;">👁️ Máx A Vista</h4>
+                <span id="maxGradoVista" style="font-size: 1.2rem; font-weight: bold; color: #3CB371;">--</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🛠️ Mis Proyectos</h3>
+            <div id="listaProyectosPerfil" style="max-height: 80px; overflow-y: auto; font-size: 0.9rem; color: #555;"></div>
+        </div>
+
+        <div>
+            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🌍 Escuelas Visitadas</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #edf2f7; padding: 6px 10px; border-radius: 6px;">
+                <span id="contadorEscuelasVisitadas" style="font-size: 0.9rem; font-weight: 500; color: #333;">0 de 0 escuelas</span>
+                <span id="porcentajeEscuelas" style="background: #2c3e50; color: white; padding: 2px 6px; border-radius: 12px; font-weight: bold; font-size: 0.8rem;">0%</span>
             </div>
         </div>
     </div>
+</div>
 
     <div id="map"></div>
     <div class="container" id="contenido-dinamico">
