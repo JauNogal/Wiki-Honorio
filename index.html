@@ -197,11 +197,17 @@
             if (menu) menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
         }
 
-        function abrirPerfil() {
-            document.getElementById('menuOpciones').style.display = 'none';
-            try { calcularYMostrarPerfil(); } catch(e) { console.error("Error calculando perfil", e); }
-            document.getElementById('modalPerfilUsuario').style.display = 'flex';
-        }
+  function abrirPerfil() {
+    document.getElementById('menuOpciones').style.display = 'none';
+    try { 
+        // NUEVO: Cargar la foto de perfil de la memoria antes de mostrar la ventana
+        const savedFoto = getLocal('perfil-foto-escalador');
+        actualizarFotoPerfilDisplay(savedFoto);
+        
+        calcularYMostrarPerfil(); 
+    } catch(e) { console.error("Error calculando perfil", e); }
+    document.getElementById('modalPerfilUsuario').style.display = 'flex';
+}
 
         function cerrarPerfil() {
             document.getElementById('modalPerfilUsuario').style.display = 'none';
