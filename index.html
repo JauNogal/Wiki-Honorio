@@ -147,24 +147,35 @@
                     <input type="text" id="nombreUsuarioInput" oninput="setLocal('nombre-usuario-escalador', this.value)" placeholder="Tu Nombre" style="font-size: 1.3rem; font-weight: bold; text-align: center; border: none; border-bottom: 2px dashed #ccc; outline: none; padding: 4px; width: 80%; color: #2c3e50;">
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">📊 Estadísticas de Encadenes</h3>
-                <label style="font-size: 0.85rem; font-weight: bold; color: #555;">A Vista</label>
-                <div class="stat-bar-container"><div id="bar-vista" class="stat-bar-fill" style="background: #3CB371;"></div><span id="txt-vista" class="stat-bar-text">0</span></div>
-                <label style="font-size: 0.85rem; font-weight: bold; color: #555;">A Flash</label>
-                <div class="stat-bar-container"><div id="bar-flash" class="stat-bar-fill" style="background: #00CED1;"></div><span id="txt-flash" class="stat-bar-text">0</span></div>
-                <label style="font-size: 0.85rem; font-weight: bold; color: #555;">2º Pegue</label>
-                <div class="stat-bar-container"><div id="bar-2pegue" class="stat-bar-fill" style="background: #FFA500;"></div><span id="txt-2pegue" class="stat-bar-text">0</span></div>
+         <div style="margin-bottom: 20px;">
+    <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">📊 Estadísticas de Encadenes</h3>
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 15px;">
+        <div id="grafico-circular" style="position: relative; width: 130px; height: 130px; border-radius: 50%; background: #eee; flex-shrink: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
             </div>
-            <div style="margin-bottom: 20px; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; justify-content: space-around; text-align: center;">
-                <div>
-                    <h4 style="font-size: 0.85rem; color: #666; margin-bottom: 4px;">🏆 Máx Histórico</h4>
-                    <span id="maxGradoGeneral" style="font-size: 1.4rem; font-weight: bold; color: #e74c3c;">--</span>
+
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px;">
+            <select id="filtroGradoPerfil" onchange="actualizarGraficoPerfil()" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; color: #2c3e50; outline: none; cursor: pointer; font-size: 0.9rem;">
+                <option value="todos">Todos los grados</option>
+                </select>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; font-weight: bold; color: #555;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: #3CB371; border-radius: 3px;"></span> A Vista</div>
+                    <span id="leyenda-vista">0</span>
                 </div>
-                <div style="border-left: 1px solid #ddd; padding-left: 20px;">
-                    <h4 style="font-size: 0.85rem; color: #666; margin-bottom: 4px;">👁️ Máx A Vista</h4>
-                    <span id="maxGradoVista" style="font-size: 1.4rem; font-weight: bold; color: #3CB371;">--</span>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: #00CED1; border-radius: 3px;"></span> A Flash</div>
+                    <span id="leyenda-flash">0</span>
                 </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 14px; height: 14px; background: #FF6347; border-radius: 3px;"></span> Trabajado</div>
+                    <span id="leyenda-trabajado">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
             <div style="margin-bottom: 20px;">
                 <h3 style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px;">🛠️ Mis Proyectos</h3>
