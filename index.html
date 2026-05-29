@@ -636,19 +636,9 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
                 }
             });
 
-            const totalCompletadas = totalVista + totalFlash + total2Pegue;
-            const obtenerAncho = (valor) => totalCompletadas > 0 ? (valor / totalCompletadas) * 100 : 0;
-
-            setTimeout(() => {
-                document.getElementById('bar-vista').style.width = obtenerAncho(totalVista) + "%";
-                document.getElementById('bar-flash').style.width = obtenerAncho(totalFlash) + "%";
-                document.getElementById('bar-2pegue').style.width = obtenerAncho(total2Pegue) + "%";
-            }, 50);
-
-            document.getElementById('txt-vista').innerText = totalVista;
-            document.getElementById('txt-flash').innerText = totalFlash;
-            document.getElementById('txt-2pegue').innerText = total2Pegue;
-
+            poblarSelectGrados();
+document.getElementById('filtroGradoPerfil').value = 'todos'; 
+actualizarGraficoPerfil();
             const obtenerMaxGrado = (listaGrados) => {
                 if(!listaGrados || listaGrados.length === 0) return '--';
                 let maxIdx = -1; let maxStr = '--';
