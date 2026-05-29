@@ -211,6 +211,56 @@
             if(e.target.id === 'modalPerfilUsuario') cerrarPerfil();
         }
 
+        // --- NUEVAS FUNCIONES PARA LA FOTO DE PERFIL ---
+
+// 1. Simula el clic en el input de archivo oculto
+function triggerFotoInput() {
+    document.getElementById('perfilFotoInput').click();
+}
+
+// 2. Lee la foto seleccionada, comprueba el tamaño y la guarda
+function handleProfilePicture(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        // Validar que la foto no sea gigante (Límite 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('El archivo es demasiado grande. Máximo 5MB.');
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const base64Image = e.target.result;
+            // Guardar en la memoria del navegador usando tu función setLocal
+            setLocal('perfil-foto-escalador', base64Image);
+            // Mostrar la foto al instante
+            actualizarFotoPerfilDisplay(base64Image);
+        };
+
+        // Convierte la imagen a texto (base64) para poder guardarla
+        reader.readAsDataURL(file);
+    }
+}
+
+// 3. Decide si mostrar la foto del usuario o el icono por defecto
+function actualizarFotoPerfilDisplay(savedFoto) {
+    const fileFotoMostrar = document.getElementById('perfilFotoMostrar');
+    const fileFotoDefecto = document.getElementById('perfilFotoDefecto');
+
+    if (savedFoto) {
+        fileFotoMostrar.src = savedFoto;
+        fileFotoMostrar.style.display = 'block';
+        fileFotoDefecto.style.display = 'none';
+    } else {
+        fileFotoMostrar.src = '';
+        fileFotoMostrar.style.display = 'none';
+        fileFotoDefecto.style.display = 'block';
+    }
+}
+// --- FIN FUNCIONES FOTO PERFIL ---
+
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('menuOpciones');
             const btnMenu = document.getElementById('btnMenuToggle');
