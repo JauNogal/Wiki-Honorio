@@ -438,9 +438,9 @@ function actualizarGraficoPerfil() {
             let pFlash = (d.flash / d.total) * 100;
             let pTrabajado = (d.trabajado / d.total) * 100;
 
-            // NUEVO: Formatear el grado. Si es romano (iii, iv, v, v+...) lo pone en mayúsculas
-            let gradoDisplay = /^[ivx]+(\+)?$/i.test(grado) ? grado.toUpperCase() : grado;
-
+          // NUEVO: Truco definitivo. Si NO empieza por un número, es romano. Limpiamos espacios y pasamos a mayúsculas.
+let gradoLimpio = grado.toString().trim();
+let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
             let barHtml = `
             <div style="display: flex; align-items: center; height: 22px; font-size: 0.8rem; margin-bottom: 4px;">
                 <div style="width: 35px; font-weight: bold; color: #555; text-align: right; padding-right: 8px;">${gradoDisplay}</div>
