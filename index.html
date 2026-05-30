@@ -678,13 +678,17 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
                     const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
                     const estadoGuardado = getLocal(storageKey) || "";
 
-                    html += `
-                        <div class="via-item">
-                            <div class="via-detalles">
-                                <div class="via-numero">${via.numero}.</div>
-                                <div class="via-nombre">${via.nombreVia}</div>
-                                <div class="via-grado">${via.grado}</div>
-                            </div>
+                    // Aplicamos el truco de los números romanos antes de pintar
+            let gradoLimpio = (via.grado || "").toString().trim();
+            let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
+
+            html += `
+                <div class="via-item">
+                    <div class="via-detalles">
+                        <div class="via-numero">${via.numero}.</div>
+                        <div class="via-nombre">${via.nombreVia}</div>
+                        <div class="via-grado">${gradoDisplay}</div>
+                    </div>
                             <div class="via-check">
                                 <select class="estado-via" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
                                     <option value="" ${estadoGuardado === '' ? 'selected' : ''}>Sin hacer</option>
