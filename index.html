@@ -338,7 +338,8 @@ function actualizarGraficoPerfil() {
 
     database.vias.forEach(via => {
         // Si el filtro no es "todos" y la vía no coincide, la saltamos
-        if (gradoFiltro !== 'todos' && via.grado !== gradoFiltro) return;
+       // Compara ignorando si está escrito en mayúsculas o minúsculas en la base de datos
+if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoFiltro.toLowerCase()) return;
 
         const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
         const estado = getLocal(storageKey);
