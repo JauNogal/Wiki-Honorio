@@ -328,6 +328,7 @@ function poblarSelectGrados() {
 }
 
 // 2. Calcula los datos, pinta el gráfico de colores y posiciona los números
+// 2. Calcula los datos, pinta el gráfico de colores y posiciona los números
 function actualizarGraficoPerfil() {
     const gradoFiltro = document.getElementById('filtroGradoPerfil').value;
     let tVista = 0, tFlash = 0, tTrabajado = 0;
@@ -358,117 +359,113 @@ function actualizarGraficoPerfil() {
     if (total === 0) {
         chartDiv.style.background = '#f8f9fa';
         chartDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:0.8rem;text-align:center;font-style:italic;">Sin<br>datos</div>';
-        return;
+    } else {
+        // Calculamos los porcentajes para rellenar el círculo (CSS conic-gradient)
+        const pVista = (tVista / total) * 100;
+        const pFlash = (tFlash / total) * 100;
+        const pTrab = (tTrabajado / total) * 100;
+
+        chartDiv.style.background = `conic-gradient(
+            #3CB371 0% ${pVista}%,
+            #00CED1 ${pVista}% ${pVista + pFlash}%,
+            #FF6347 ${pVista + pFlash}% 100%
+        )`;
+
+        // Trigonometría para poner los números dentro del gráfico
+        let html = '';
+        const radioCirculo = 55; // Mitad del gráfico (110px)
+        const radioTexto = 24;   // Distancia reajustada
+
+        const addLabel = (valor, startPct, endPct) => {
+            if (valor === 0) return '';
+            const angle = ((startPct + (endPct - startPct) / 2) * 3.6 - 90) * (Math.PI / 180);
+            const x = radioCirculo + Math.cos(angle) * radioTexto - 10; 
+            const y = radioCirculo + Math.sin(angle) * radioTexto - 10;
+            return `<div style="position:absolute; left:${x}px; top:${y}px; width:20px; height:20px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:0.95rem; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);">${valor}</div>`;
+        };
+
+        html += addLabel(tVista, 0, pVista);
+        html += addLabel(tFlash, pVista, pVista + pFlash);
+        html += addLabel(tTrabajado, pVista + pFlash, 100);
+
+        chartDiv.innerHTML = html;
     }
 
-    // Calculamos los porcentajes para rellenar el círculo (CSS conic-gradient)
-    const pVista = (tVista / total) * 100;
-    const pFlash = (tFlash / total) * 100;
-    const pTrab = (tTrabajado / total) * 100;
+    // --- NUEVA LÓGICA: Gráfico de barras horizontales ---
+    let statsPorGrado = {};
+    let maxTotalBarras = 0;
 
-    chartDiv.style.background = `conic-gradient(
-        #3CB371 0% ${pVista}%,
-        #00CED1 ${pVista}% ${pVista + pFlash}%,
-        #FF6347 ${pVista + pFlash}% 100%
-    )`;
-
-    // Trigonometría para poner los números dentro del gráfico
-    let html = '';
-   const radioCirculo = 55; // Mitad del gráfico (110px)
-const radioTexto = 24;   // Distancia reajustada
-    const addLabel = (valor, startPct, endPct) => {
-        if (valor === 0) return '';
-        // Calculamos el ángulo central de la porción en radianes
-        const angle = ((startPct + (endPct - startPct) / 2) * 3.6 - 90) * (Math.PI / 180);
-        const x = radioCirculo + Math.cos(angle) * radioTexto - 10; 
-        const y = radioCirculo + Math.sin(angle) * radioTexto - 10;
-        return `<div style="position:absolute; left:${x}px; top:${y}px; width:20px; height:20px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:0.95rem; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);">${valor}</div>`;
-    };
-
-    html += addLabel(tVista, 0, pVista);
-    html += addLabel(tFlash, pVista, pVista + pFlash);
-    html += addLabel(tTrabajado, pVista + pFlash, 100);
-
-    chartDiv.innerHTML = html;
-    <div id="modalPerfilUsuario" class="modal-perfil" onclick="cerrarPerfilFuera(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="close-modal" onclick="cerrarPerfil()">&times;</button>
-        
-        <div style="text-align: center; margin-bottom: 15px;">
-            <div class="perfil-foto-frame" id="perfilFotoInputContainer" onclick="triggerFotoInput()" style="margin-bottom: 5px;">
-                <img id="perfilFotoMostrar" src="" alt="Foto de Perfil">
-                <span id="perfilFotoDefecto" style="font-size: 3.5rem;">👤</span>
-            </div>
-            <input type="file" id="perfilFotoInput" style="display: none;" accept="image/*" onchange="handleProfilePicture(this)">
-            <div style="margin-top: 5px;">
-                <input type="text" id="nombreUsuarioInput" oninput="setLocal('nombre-usuario-escalador', this.value)" placeholder="Tu Nombre" style="font-size: 1.2rem; font-weight: bold; text-align: center; border: none; border-bottom: 2px dashed #ccc; outline: none; padding: 4px; width: 80%; color: #2c3e50;">
-            </div>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            <div onclick="const cont = document.getElementById('contenedor-graficos-estadisticas'); const icono = document.getElementById('icono-estadisticas'); if(cont.style.display === 'none') { cont.style.display = 'block'; icono.style.transform = 'rotate(180deg)'; } else { cont.style.display = 'none'; icono.style.transform = 'rotate(0deg)'; }" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 10px; user-select: none;">
-                <h3 style="color: #2c3e50; font-size: 1.05rem; margin: 0;">📊 Estadísticas de Encadenes</h3>
-                <span id="icono-estadisticas" style="transition: transform 0.3s; color: #555; font-size: 0.9rem; display: inline-block;">▼</span>
-            </div>
+    // 1. Recolectar datos de todas las vías (Cualquier grado)
+    database.vias.forEach(via => {
+        const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
+        if (estado) { 
+            let gradoClave = (via.grado || "N/A").trim();
             
-            <div id="contenedor-graficos-estadisticas" style="display: none;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 10px;">
-                    <div id="grafico-circular" style="position: relative; width: 110px; height: 110px; border-radius: 50%; background: #eee; flex-shrink: 0; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <select id="filtroGradoPerfil" onchange="actualizarGraficoPerfil()" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; color: #2c3e50; outline: none; cursor: pointer; font-size: 0.85rem; max-width: 130px;">
-                            <option value="todos">Todos los grados</option>
-                        </select>
-                        <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; font-weight: bold; color: #555;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                                <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #3CB371; border-radius: 2px;"></span> A Vista</div>
-                                <span id="leyenda-vista">0</span>
-                            </div>
-                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                                <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #00CED1; border-radius: 2px;"></span> A Flash</div>
-                                <span id="leyenda-flash">0</span>
-                            </div>
-                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                                <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #FF6347; border-radius: 2px;"></span> Trabajado</div>
-                                <span id="leyenda-trabajado">0</span>
-                            </div>
-                        </div>
+            if (!statsPorGrado[gradoClave]) {
+                statsPorGrado[gradoClave] = { vista: 0, flash: 0, trabajado: 0, total: 0 };
+            }
+            if (estado === 'a-vista') statsPorGrado[gradoClave].vista++;
+            else if (estado === 'a-flash') statsPorGrado[gradoClave].flash++;
+            else if (estado === '2-pegue' || estado === 'trabajado') statsPorGrado[gradoClave].trabajado++;
+            
+            statsPorGrado[gradoClave].total++;
+        }
+    });
+
+    // 2. Encontrar la barra más larga
+    Object.values(statsPorGrado).forEach(s => {
+        if (s.total > maxTotalBarras) maxTotalBarras = s.total;
+    });
+
+    // 3. Ordenar los grados basándonos en la escala francesa (los raros como 'iv' van al principio)
+    let gradosEncontrados = Object.keys(statsPorGrado);
+    gradosEncontrados.sort((a, b) => {
+        let idxA = ordenGradosGlobal.indexOf(a.toLowerCase());
+        let idxB = ordenGradosGlobal.indexOf(b.toLowerCase());
+        if (idxA === -1) idxA = -1; 
+        if (idxB === -1) idxB = -1;
+        return idxA - idxB;
+    });
+
+    let htmlBarras = '';
+    
+    // 4. Dibujar las barras con sus proporciones
+    gradosEncontrados.forEach(grado => {
+        if (statsPorGrado[grado].total > 0) {
+            let d = statsPorGrado[grado];
+            let pctContenedor = (d.total / maxTotalBarras) * 100; 
+            let pVista = (d.vista / d.total) * 100;
+            let pFlash = (d.flash / d.total) * 100;
+            let pTrabajado = (d.trabajado / d.total) * 100;
+
+            let barHtml = `
+            <div style="display: flex; align-items: center; height: 22px; font-size: 0.8rem; margin-bottom: 4px;">
+                <div style="width: 35px; font-weight: bold; color: #555; text-align: right; padding-right: 8px;">${grado}</div>
+                
+                <div style="flex-grow: 1; height: 100%; background: transparent; display: flex;">
+                    <div style="width: ${pctContenedor}%; height: 100%; display: flex; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">
+            `;
+            
+            if (d.vista > 0) barHtml += `<div style="width: ${pVista}%; background: #3CB371; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem;">${d.vista}</div>`;
+            if (d.flash > 0) barHtml += `<div style="width: ${pFlash}%; background: #00CED1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem;">${d.flash}</div>`;
+            if (d.trabajado > 0) barHtml += `<div style="width: ${pTrabajado}%; background: #FF6347; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem;">${d.trabajado}</div>`;
+            
+            barHtml += `
                     </div>
                 </div>
+                
+                <div style="width: 55px; text-align: left; padding-left: 8px; font-weight: bold; color: #777;">Total: ${d.total}</div>
+            </div>`;
+            
+            htmlBarras += barHtml;
+        }
+    });
 
-                <div id="contenedor-barras-grados" style="margin-top: 20px; border-top: 2px solid #eaeaea; padding-top: 15px;">
-                    <h4 style="font-size: 0.95rem; color: #2c3e50; margin-bottom: 12px; text-align: center;">📈 Distribución por Grados</h4>
-                    <div id="grafico-barras-horizontales" style="display: flex; flex-direction: column; gap: 8px;">
-                        </div>
-                </div>
-            </div>
-        </div>
+    if (htmlBarras === '') {
+        htmlBarras = '<div style="text-align: center; color: #aaa; font-style: italic; font-size: 0.85rem;">No hay encadenes para mostrar</div>';
+    }
 
-        <div style="margin-bottom: 12px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; justify-content: space-around; text-align: center;">
-            <div>
-                <h4 style="font-size: 0.8rem; color: #666; margin-bottom: 2px;">🏆 Máx Histórico</h4>
-                <span id="maxGradoGeneral" style="font-size: 1.2rem; font-weight: bold; color: #e74c3c;">--</span>
-            </div>
-            <div style="border-left: 1px solid #ddd; padding-left: 20px;">
-                <h4 style="font-size: 0.8rem; color: #666; margin-bottom: 2px;">👁️ Máx A Vista</h4>
-                <span id="maxGradoVista" style="font-size: 1.2rem; font-weight: bold; color: #3CB371;">--</span>
-            </div>
-        </div>
-
-        <div style="margin-bottom: 12px;">
-            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🛠️ Mis Proyectos</h3>
-            <div id="listaProyectosPerfil" style="max-height: 80px; overflow-y: auto; font-size: 0.9rem; color: #555;"></div>
-        </div>
-
-        <div>
-            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🌍 Escuelas Visitadas</h3>
-            <div style="display: flex; align-items: center; justify-content: space-between; background: #edf2f7; padding: 6px 10px; border-radius: 6px;">
-                <span id="contadorEscuelasVisitadas" style="font-size: 0.9rem; font-weight: 500; color: #333;">0 de 0 escuelas</span>
-                <span id="porcentajeEscuelas" style="background: #2c3e50; color: white; padding: 2px 6px; border-radius: 12px; font-weight: bold; font-size: 0.8rem;">0%</span>
-            </div>
-        </div>
-    </div>
-</div>
+    document.getElementById('grafico-barras-horizontales').innerHTML = htmlBarras;
 }
     </script>
 
