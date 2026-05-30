@@ -396,6 +396,74 @@ const radioTexto = 24;   // Distancia reajustada
     html += addLabel(tTrabajado, pVista + pFlash, 100);
 
     chartDiv.innerHTML = html;
+    // --- NUEVA LÓGICA: Gráfico de barras horizontales ---
+    let statsPorGrado = {};
+    let maxTotalBarras = 0;
+
+    // 1. Recolectar datos de todas las vías (ignoramos el filtro para mostrar la visión global)
+    database.vias.forEach(via => {
+        const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
+        if (estado) { 
+            if (!statsPorGrado[via.grado]) {
+                statsPorGrado[via.grado] = { vista: 0, flash: 0, trabajado: 0, total: 0 };
+            }
+            if (estado === 'a-vista') statsPorGrado[via.grado].vista++;
+            else if (estado === 'a-flash') statsPorGrado[via.grado].flash++;
+            else if (estado === '2-pegue' || estado === 'trabajado') statsPorGrado[via.grado].trabajado++;
+            
+            statsPorGrado[via.grado].total++;
+        }
+    });
+
+    // 2. Encontrar la barra más larga para que ocupe el 100% del ancho disponible
+    Object.values(statsPorGrado).forEach(s => {
+        if (s.total > maxTotalBarras) maxTotalBarras = s.total;
+    });
+
+    let htmlBarras = '';
+    
+    // 3. Recorrer los grados en orden de dificultad (de menor a mayor)
+    ordenGradosGlobal.forEach(grado => {
+        // Solo pintamos la fila si ese grado tiene al menos 1 vía escalada
+        if (statsPorGrado[grado] && statsPorGrado[grado].total > 0) {
+            let d = statsPorGrado[grado];
+            
+            // Cálculos proporcionales
+            let pctContenedor = (d.total / maxTotalBarras) * 100; 
+            let pVista = (d.vista / d.total) * 100;
+            let pFlash = (d.flash / d.total) * 100;
+            let pTrabajado = (d.trabajado / d.total) * 100;
+
+            // Construir la barra
+            let barHtml = `
+            <div style="display: flex; align-items: center; height: 22px; font-size: 0.8rem;">
+                <div style="width: 35px; font-weight: bold; color: #555; text-align: right; padding-right: 8px;">${grado}</div>
+                
+                <div style="flex-grow: 1; height: 100%; background: transparent; display: flex;">
+                    <div style="width: ${pctContenedor}%; height: 100%; display: flex; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">
+            `;
+            
+            // Dibujar las secciones de colores con sus números dentro
+            if (d.vista > 0) barHtml += `<div style="width: ${pVista}%; background: #3CB371; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem; text-shadow: 0px 1px 2px rgba(0,0,0,0.6);">${d.vista}</div>`;
+            if (d.flash > 0) barHtml += `<div style="width: ${pFlash}%; background: #00CED1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem; text-shadow: 0px 1px 2px rgba(0,0,0,0.6);">${d.flash}</div>`;
+            if (d.trabajado > 0) barHtml += `<div style="width: ${pTrabajado}%; background: #FF6347; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem; text-shadow: 0px 1px 2px rgba(0,0,0,0.6);">${d.trabajado}</div>`;
+            
+            barHtml += `
+                    </div>
+                </div>
+                
+                <div style="width: 55px; text-align: left; padding-left: 8px; font-weight: bold; color: #777;">Total: ${d.total}</div>
+            </div>`;
+            
+            htmlBarras += barHtml;
+        }
+    });
+
+    if (htmlBarras === '') {
+        htmlBarras = '<div style="text-align: center; color: #aaa; font-style: italic; font-size: 0.85rem;">No hay encadenes para mostrar</div>';
+    }
+
+    document.getElementById('grafico-barras-horizontales').innerHTML = htmlBarras;
 }
     </script>
 
