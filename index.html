@@ -438,9 +438,12 @@ function actualizarGraficoPerfil() {
             let pFlash = (d.flash / d.total) * 100;
             let pTrabajado = (d.trabajado / d.total) * 100;
 
+            // NUEVO: Formatear el grado. Si es romano (iii, iv, v, v+...) lo pone en mayúsculas
+            let gradoDisplay = /^[ivx]+(\+)?$/i.test(grado) ? grado.toUpperCase() : grado;
+
             let barHtml = `
             <div style="display: flex; align-items: center; height: 22px; font-size: 0.8rem; margin-bottom: 4px;">
-                <div style="width: 35px; font-weight: bold; color: #555; text-align: right; padding-right: 8px;">${grado}</div>
+                <div style="width: 35px; font-weight: bold; color: #555; text-align: right; padding-right: 8px;">${gradoDisplay}</div>
                 
                 <div style="flex-grow: 1; height: 100%; background: transparent; display: flex;">
                     <div style="width: ${pctContenedor}%; height: 100%; display: flex; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">
