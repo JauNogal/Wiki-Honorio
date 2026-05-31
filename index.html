@@ -241,7 +241,7 @@ function abrirPerfil() {
         const savedFoto = getLocal('perfil-foto-escalador');
         actualizarFotoPerfilDisplay(savedFoto);
 
-        calcularyMostrarPerfil();
+        calcularYMostrarPerfil();
         actualizarMaximosPerfil();
     } catch(e) { console.error("Error calculando perfil", e); }
     document.getElementById('modalPerfilUsuario').style.display = 'flex';
