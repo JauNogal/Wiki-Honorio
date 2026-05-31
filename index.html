@@ -336,10 +336,10 @@ function actualizarGraficoPerfil() {
     const gradoFiltro = document.getElementById('filtroGradoPerfil').value;
     let tVista = 0, tFlash = 0, tTrabajado = 0;
 
+    // --- 1. LÓGICA DEL GRÁFICO CIRCULAR ---
     database.vias.forEach(via => {
-        // Si el filtro no es "todos" y la vía no coincide, la saltamos
-       // Compara ignorando si está escrito en mayúsculas o minúsculas en la base de datos
-if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoFiltro.toLowerCase()) return;
+        // Compara ignorando si está escrito en mayúsculas o minúsculas
+        if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoFiltro.toLowerCase()) return;
 
         const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
         const estado = getLocal(storageKey);
@@ -351,7 +351,6 @@ if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoF
         }
     });
 
-    // Actualizamos los numeritos de la leyenda
     document.getElementById('leyenda-vista').innerText = tVista;
     document.getElementById('leyenda-flash').innerText = tFlash;
     document.getElementById('leyenda-trabajado').innerText = tTrabajado;
@@ -359,12 +358,10 @@ if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoF
     const chartDiv = document.getElementById('grafico-circular');
     const total = tVista + tFlash + tTrabajado;
 
-    // Si no hay datos, mostramos un círculo gris
     if (total === 0) {
         chartDiv.style.background = '#f8f9fa';
         chartDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:0.8rem;text-align:center;font-style:italic;">Sin<br>datos</div>';
     } else {
-        // Calculamos los porcentajes para rellenar el círculo (CSS conic-gradient)
         const pVista = (tVista / total) * 100;
         const pFlash = (tFlash / total) * 100;
         const pTrab = (tTrabajado / total) * 100;
@@ -375,15 +372,14 @@ if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoF
             #FF6347 ${pVista + pFlash}% 100%
         )`;
 
-        // Trigonometría para poner los números dentro del gráfico
         let html = '';
-        const radioCirculo = 55; // Mitad del gráfico (110px)
-        const radioTexto = 24;   // Distancia reajustada
+        const radioCirculo = 55;
+        const radioTexto = 24;
 
         const addLabel = (valor, startPct, endPct) => {
             if (valor === 0) return '';
             const angle = ((startPct + (endPct - startPct) / 2) * 3.6 - 90) * (Math.PI / 180);
-            const x = radioCirculo + Math.cos(angle) * radioTexto - 10; 
+            const x = radioCirculo + Math.cos(angle) * radioTexto - 10;
             const y = radioCirculo + Math.sin(angle) * radioTexto - 10;
             return `<div style="position:absolute; left:${x}px; top:${y}px; width:20px; height:20px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:0.95rem; text-shadow: 0px 1px 3px rgba(0,0,0,0.8);">${valor}</div>`;
         };
@@ -395,15 +391,15 @@ if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoF
         chartDiv.innerHTML = html;
     }
 
-    // --- NUEVA LÓGICA: Gráfico de barras horizontales ---
+    // --- 2. LÓGICA DEL GRÁFICO DE BARRAS HORIZONTALES ---
     let statsPorGrado = {};
     let maxTotalBarras = 0;
 
-    // 1. Recolectar datos de todas las vías (Cualquier grado)
     database.vias.forEach(via => {
         const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
-        if (estado) { 
-            let gradoClave = (via.grado || "N/A").trim();
+        if (estado) {
+            // Agrupamos todo en minúsculas temporalmente para evitar duplicados (ej: "IV" y "iv")
+            let gradoClave = (via.grado || "N/A").trim().toLowerCase(); 
             
             if (!statsPorGrado[gradoClave]) {
                 statsPorGrado[gradoClave] = { vista: 0, flash: 0, trabajado: 0, total: 0 };
@@ -416,35 +412,32 @@ if (gradoFiltro !== 'todos' && (via.grado || "").trim().toLowerCase() !== gradoF
         }
     });
 
-    // 2. Encontrar la barra más larga
     Object.values(statsPorGrado).forEach(s => {
         if (s.total > maxTotalBarras) maxTotalBarras = s.total;
     });
 
-    // 3. Ordenar los grados basándonos en la escala francesa (los raros como 'iv' van al principio)
     let gradosEncontrados = Object.keys(statsPorGrado);
     gradosEncontrados.sort((a, b) => {
-        let idxA = ordenGradosGlobal.indexOf(a.toLowerCase());
-        let idxB = ordenGradosGlobal.indexOf(b.toLowerCase());
-        if (idxA === -1) idxA = -1; 
-        if (idxB === -1) idxB = -1;
+        let idxA = ordenGradosGlobal.indexOf(a);
+        let idxB = ordenGradosGlobal.indexOf(b);
+        if (idxA === -1) idxA = 999; 
+        if (idxB === -1) idxB = 999;
         return idxA - idxB;
     });
 
     let htmlBarras = '';
     
-    // 4. Dibujar las barras con sus proporciones
     gradosEncontrados.forEach(grado => {
         if (statsPorGrado[grado].total > 0) {
             let d = statsPorGrado[grado];
-            let pctContenedor = (d.total / maxTotalBarras) * 100; 
+            let pctContenedor = (d.total / maxTotalBarras) * 100;
             let pVista = (d.vista / d.total) * 100;
             let pFlash = (d.flash / d.total) * 100;
             let pTrabajado = (d.trabajado / d.total) * 100;
 
-          // NUEVO: Truco definitivo. Si NO empieza por un número, es romano. Limpiamos espacios y pasamos a mayúsculas.
-let gradoLimpio = grado.toString().trim();
-let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
+            // Truco definitivo: Si no empieza por número, se pone en mayúsculas automáticamente
+            let gradoDisplay = /^[0-9]/.test(grado) ? grado : grado.toUpperCase();
+
             let barHtml = `
             <div style="display: flex; align-items: center; height: 22px; font-size: 0.8rem; margin-bottom: 4px;">
                 <div style="width: 35px; font-weight: bold; color: #555; text-align: right; padding-right: 8px;">${gradoDisplay}</div>
@@ -453,6 +446,7 @@ let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUppe
                     <div style="width: ${pctContenedor}%; height: 100%; display: flex; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">
             `;
             
+            // Estas son las líneas que probablemente se borraron por accidente:
             if (d.vista > 0) barHtml += `<div style="width: ${pVista}%; background: #3CB371; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem;">${d.vista}</div>`;
             if (d.flash > 0) barHtml += `<div style="width: ${pFlash}%; background: #00CED1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem;">${d.flash}</div>`;
             if (d.trabajado > 0) barHtml += `<div style="width: ${pTrabajado}%; background: #FF6347; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem;">${d.trabajado}</div>`;
