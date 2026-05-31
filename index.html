@@ -230,15 +230,15 @@
             const menu = document.getElementById('menuOpciones');
             if (menu) menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
         }
-
-  function abrirPerfil() {
+function abrirPerfil() {
     document.getElementById('menuOpciones').style.display = 'none';
-    try { 
+    try {
         // NUEVO: Cargar la foto de perfil de la memoria antes de mostrar la ventana
         const savedFoto = getLocal('perfil-foto-escalador');
         actualizarFotoPerfilDisplay(savedFoto);
-        
-        calcularYMostrarPerfil(); 
+
+        calcularyMostrarPerfil();
+        actualizarMaximosPerfil();
     } catch(e) { console.error("Error calculando perfil", e); }
     document.getElementById('modalPerfilUsuario').style.display = 'flex';
 }
