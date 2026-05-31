@@ -746,20 +746,7 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
             poblarSelectGrados();
 document.getElementById('filtroGradoPerfil').value = 'todos'; 
 actualizarGraficoPerfil();
-            const obtenerMaxGrado = (listaGrados) => {
-                if(!listaGrados || listaGrados.length === 0) return '--';
-                let maxIdx = -1; let maxStr = '--';
-                listaGrados.forEach(g => {
-                    if(g) {
-                        let idx = ordenGrados.indexOf(g.toString().trim().toLowerCase());
-                        if(idx > maxIdx) { maxIdx = idx; maxStr = g; }
-                    }
-                });
-                return maxStr;
-            };
-
-            document.getElementById('maxGradoGeneral').innerText = obtenerMaxGrado(gradosEncadenados);
-            document.getElementById('maxGradoVista').innerText = obtenerMaxGrado(gradosAVista);
+           
 
             const divProyectos = document.getElementById('listaProyectosPerfil');
             if (proyectos.length === 0) divProyectos.innerHTML = `<p style="color:#aaa; font-style:italic; font-size:0.9rem;">No tienes proyectos marcados.</p>`;
@@ -775,6 +762,58 @@ actualizarGraficoPerfil();
             document.getElementById('contadorEscuelasVisitadas').innerText = `${numVisitadas} de ${totalEscuelasMapa} escuelas`;
             document.getElementById('porcentajeEscuelas').innerText = `${totalEscuelasMapa > 0 ? Math.round((numVisitadas / totalEscuelasMapa) * 100) : 0}%`;
         }
+        function actualizarMaximosPerfil() {
+    let maxHistIndex = -1;
+    let maxVistaIndex = -1;
+    let conteoPorGrado = {};
+
+    database.vias.forEach(via => {
+        const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
+        if (estado) {
+            let gradoLimpio = (via.grado || "").trim().toLowerCase();
+            let gradoIndex = ordenGradosGlobal.indexOf(gradoLimpio);
+
+            if (gradoIndex !== -1) {
+                // 1. Máx Histórico (se actualiza sin importar el estilo)
+                if (gradoIndex > maxHistIndex) {
+                    maxHistIndex = gradoIndex;
+                }
+
+                // 2. Máx A Vista (solo si el estilo es a-vista)
+                if (estado === 'a-vista' && gradoIndex > maxVistaIndex) {
+                    maxVistaIndex = gradoIndex;
+                }
+
+                // 3. Conteo para Grado Asentado
+                if (!conteoPorGrado[gradoIndex]) conteoPorGrado[gradoIndex] = 0;
+                conteoPorGrado[gradoIndex]++;
+            }
+        }
+    });
+
+    // Buscar el grado más alto que tenga MÁS DE 15 encadenes
+    let maxAsentadoIndex = -1;
+    for (let index in conteoPorGrado) {
+        if (conteoPorGrado[index] > 15) {
+            let numIndex = parseInt(index);
+            if (numIndex > maxAsentadoIndex) {
+                maxAsentadoIndex = numIndex;
+            }
+        }
+    }
+
+    // Función auxiliar para pintar el grado con los romanos en mayúsculas
+    const formatGrado = (index) => {
+        if (index === -1) return "--";
+        let g = ordenGradosGlobal[index];
+        return /^[0-9]/.test(g) ? g : g.toUpperCase();
+    };
+
+    // Mandar los resultados a la pantalla
+    document.getElementById('maxGradoGeneral').innerText = formatGrado(maxHistIndex);
+    document.getElementById('maxGradoVista').innerText = formatGrado(maxVistaIndex);
+    document.getElementById('maxGradoAsentado').innerText = formatGrado(maxAsentadoIndex);
+}
     </script>
 </body>
 </html>
