@@ -746,164 +746,50 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
             }
         }
 
-        function calcularYMostrarPerfil() {
-            let totalVista = 0, totalFlash = 0, total2Pegue = 0;
-            let proyectos = [];
-            let escuelasConEncadenes = new Set();
-            let gradosEncadenados = [];
-            let gradosAVista = [];
-            const ordenGrados = ["4", "4+", "5", "5+", "6a", "6a+", "6b", "6b+", "6c", "6c+", "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+"];
-
-            database.vias.forEach(via => {
-                const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
-                const estado = getLocal(storageKey);
-                if (estado) {
-                    if (estado === 'a-vista') { totalVista++; gradosEncadenados.push(via.grado); gradosAVista.push(via.grado); escuelasConEncadenes.add(via.idEscuela); }
-                    if (estado === 'a-flash') { totalFlash++; gradosEncadenados.push(via.grado); escuelasConEncadenes.add(via.idEscuela); }
-                    if (estado === '2-pegue') { total2Pegue++; gradosEncadenados.push(via.grado); escuelasConEncadenes.add(via.idEscuela); }
-                    if (estado === 'trabajado') {
-                        const escuelaPadre = database.escuelas.find(e => e.id === via.idEscuela);
-                        proyectos.push(`${via.nombreVia} (${via.grado}) - <small>${escuelaPadre ? escuelaPadre.nombre : ''}</small>`);
-                    }
-                }
-            });
-
-            poblarSelectGrados();
-document.getElementById('filtroGradoPerfil').value = 'todos'; 
-actualizarGraficoPerfil();
-           
-
-                    const totalEscuelasMapa = database.escuelas.length;
-            const numVisitadas = escuelasConEncadenes.size;
-            document.getElementById('contadorEscuelasVisitadas').innerText = `${numVisitadas} de ${totalEscuelasMapa} escuelas`;
-            document.getElementById('porcentajeEscuelas').innerText = `${totalEscuelasMapa > 0 ? Math.round((numVisitadas / totalEscuelasMapa) * 100) : 0}%`;
-        }
-        function actualizarMaximosPerfil() {
-    let maxHistIndex = -1;
-    let maxVistaIndex = -1;
-    let conteoPorGrado = {};
+       function calcularYMostrarPerfil() {
+    let totalVista = 0, totalFlash = 0, total2Pegue = 0;
+    let proyectos = [];
+    let escuelasConEncadenes = new Set();
+    let gradosEncadenados = [];
+    let gradosAVista = [];
 
     database.vias.forEach(via => {
-        const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
+        const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
+        const estado = getLocal(storageKey);
         if (estado) {
-            let gradoLimpio = (via.grado || "").trim().toLowerCase();
-            let gradoIndex = ordenGradosGlobal.indexOf(gradoLimpio);
-
-            if (gradoIndex !== -1) {
-                // 1. Máx Histórico (se actualiza sin importar el estilo)
-                if (gradoIndex > maxHistIndex) {
-                    maxHistIndex = gradoIndex;
-                }
-
-                // 2. Máx A Vista (solo si el estilo es a-vista)
-                if (estado === 'a-vista' && gradoIndex > maxVistaIndex) {
-                    maxVistaIndex = gradoIndex;
-                }
-
-                // 3. Conteo para Grado Asentado
-                if (!conteoPorGrado[gradoIndex]) conteoPorGrado[gradoIndex] = 0;
-                conteoPorGrado[gradoIndex]++;
+            if (estado === 'a-vista') {
+                totalVista++;
+                gradosEncadenados.push(via.grado);
+                gradosAVista.push(via.grado);
+                escuelasConEncadenes.add(via.idEscuela);
+            }
+            if (estado === 'a-flash') {
+                totalFlash++;
+                gradosEncadenados.push(via.grado);
+                escuelasConEncadenes.add(via.idEscuela);
+            }
+            if (estado === '2-pegue' || estado === 'trabajado') {
+                total2Pegue++;
+                gradosEncadenados.push(via.grado);
+                escuelasConEncadenes.add(via.idEscuela);
             }
         }
     });
 
-    // Buscar el grado más alto que tenga MÁS DE 15 encadenes
-    let maxAsentadoIndex = -1;
-    for (let index in conteoPorGrado) {
-        if (conteoPorGrado[index] > 15) {
-            let numIndex = parseInt(index);
-            if (numIndex > maxAsentadoIndex) {
-                maxAsentadoIndex = numIndex;
-            }
-        }
-    }
+    // Actualizar los contadores de escuelas visitadas en el panel del perfil
+    const totalEscuelasMapa = database.escuelas.length;
+    const numVisitadas = escuelasConEncadenes.size;
+    
+    const contEscuelas = document.getElementById('contadorEscuelasVisitadas');
+    const porcEscuelas = document.getElementById('porcentajeEscuelas');
+    
+    if (contEscuelas) contEscuelas.innerText = `${numVisitadas} de ${totalEscuelasMapa} escuelas`;
+    if (porcEscuelas) porcEscuelas.innerText = `${totalEscuelasMapa > 0 ? Math.round((numVisitadas / totalEscuelasMapa) * 100) : 0}%`;
 
-    // Función auxiliar para pintar el grado con los romanos en mayúsculas
-    const formatGrado = (index) => {
-        if (index === -1) return "--";
-        let g = ordenGradosGlobal[index];
-        return /^[0-9]/.test(g) ? g : g.toUpperCase();
-    };
-
-    // Mandar los resultados a la pantalla
-    document.getElementById('maxGradoGeneral').innerText = formatGrado(maxHistIndex);
-    document.getElementById('maxGradoVista').innerText = formatGrado(maxVistaIndex);
-    document.getElementById('maxGradoAsentado').innerText = formatGrado(maxAsentadoIndex);
+    // Activar funciones auxiliares de gráficos si existen en el documento
+    if (typeof poblarSelectGrados === 'function') poblarSelectGrados();
+    if (typeof actualizarGraficoPerfil === 'function') actualizarGraficoPerfil();
 }
-        // --- GESTIÓN MANUAL DE LA TABLA DE PROYECTOS ---
-function pintarProyectosManuales() {
-    const tbody = document.getElementById('tablaProyectosBody');
-    if (!tbody) return;
-    
-    let proyectosRaw = getLocal('proyectos-manuales-lista');
-    let proyectos = [];
-    try {
-        if (proyectosRaw) proyectos = JSON.parse(proyectosRaw);
-    } catch(e) { proyectos = []; }
-    
-    if (!Array.isArray(proyectos) || proyectos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">No hay proyectos apuntados</td></tr>`;
-        return;
-    }
-    
-    let html = '';
-    proyectos.forEach((p, index) => {
-        html += `
-            <tr style="border-bottom: 1px solid #f2f2f2;">
-                <td style="padding: 6px 8px; color: #666;">${p.fecha}</td>
-                <td style="padding: 6px 8px; font-weight: bold; color: #333;">${p.nombre}</td>
-                <td style="padding: 6px 8px; color: #666;">${p.escuela}</td>
-                <td style="padding: 6px 8px; text-align: center; font-weight: bold; color: #3498db;">${p.intentos}</td>
-                <td style="padding: 6px 8px; text-align: center;">
-                    <span onclick="eliminarProyectoManual(${index})" style="color: #e74c3c; cursor: pointer; font-weight: bold; font-size: 1rem; line-height: 1;">&times;</span>
-                </td>
-            </tr>
-        `;
-    });
-    tbody.innerHTML = html;
-}
-
-function agregarProyectoManual() {
-    const fechaInput = document.getElementById('projFecha');
-    const nombreInput = document.getElementById('projNombre');
-    const escuelaInput = document.getElementById('projEscuela');
-    const intentosInput = document.getElementById('projIntentos');
-    
-    if (!nombreInput.value.trim()) {
-        alert('Por favor, introduce al menos el nombre de la vía.');
-        return;
-    }
-    
-    let proyectosRaw = getLocal('proyectos-manuales-lista');
-    let proyectos = [];
-    try {
-        if (proyectosRaw) proyectos = JSON.parse(proyectosRaw);
-    } catch(e) { proyectos = []; }
-    if (!Array.isArray(proyectos)) proyectos = [];
-    
-    proyectos.push({
-        fecha: fechaInput.value.trim() || '-',
-        nombre: nombreInput.value.trim(),
-        escuela: escuelaInput.value.trim() || '-',
-        intentos: intentosInput.value.trim() || '0'
-    });
-    
-    setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
-    
-    fechaInput.value = '';
-    nombreInput.value = '';
-    escuelaInput.value = '';
-    intentosInput.value = '';
-    
-    pintarProyectosManuales();
-}
-
-function eliminarProyectoManual(index) {
-    let proyectosRaw = getLocal('proyectos-manuales-lista');
-    let proyectos = [];
-    try {
-        if (proyectosRaw) proyectos = JSON.parse(proyectosRaw);
-    } catch(e) { proyectos = []; }
     </script>
 </body>
 </html>
