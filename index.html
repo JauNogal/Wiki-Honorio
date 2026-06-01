@@ -260,13 +260,14 @@
 function abrirPerfil() {
     document.getElementById('menuOpciones').style.display = 'none';
     try {
-        // NUEVO: Cargar la foto de perfil de la memoria antes de mostrar la ventana
+        // Cargar la foto de perfil de la memoria antes de mostrar la ventana
         const savedFoto = getLocal('perfil-foto-escalador');
         actualizarFotoPerfilDisplay(savedFoto);
 
-        calcularyMostrarPerfil();
+        // ¡CORREGIDO! Con la 'Y' mayúscula para encontrar la función maestra
+        calcularYMostrarPerfil();
         actualizarMaximosPerfil();
-        pintarProyectosManuales(); // <--- AQUÍ ESTÁ EL PASO 2 COMPLETADO
+        pintarProyectosManuales();
     } catch(e) { console.error("Error calculando perfil", e); }
     document.getElementById('modalPerfilUsuario').style.display = 'flex';
 }
