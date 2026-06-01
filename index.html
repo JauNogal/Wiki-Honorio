@@ -835,9 +835,13 @@ function pintarProyectosManuales() {
     const tbody = document.getElementById('tablaProyectosBody');
     if (!tbody) return;
     
-    let proyectos = getLocal('proyectos-manuales-lista') || [];
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try {
+        if (proyectosRaw) proyectos = JSON.parse(proyectosRaw);
+    } catch(e) { proyectos = []; }
     
-    if (proyectos.length === 0) {
+    if (!Array.isArray(proyectos) || proyectos.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">No hay proyectos apuntados</td></tr>`;
         return;
     }
@@ -870,18 +874,22 @@ function agregarProyectoManual() {
         return;
     }
     
-    let proyectos = getLocal('proyectos-manuales-lista') || [];
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try {
+        if (proyectosRaw) proyectos = JSON.parse(proyectosRaw);
+    } catch(e) { proyectos = []; }
+    if (!Array.isArray(proyectos)) proyectos = [];
     
     proyectos.push({
         fecha: fechaInput.value.trim() || '-',
         nombre: nombreInput.value.trim(),
         escuela: escuelaInput.value.trim() || '-',
-        intentos: intentosInput.value || 0
+        intentos: intentosInput.value.trim() || '0'
     });
     
-    setLocal('proyectos-manuales-lista', proyectos);
+    setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
     
-    // Limpiar los campos del formulario tras añadir
     fechaInput.value = '';
     nombreInput.value = '';
     escuelaInput.value = '';
@@ -891,11 +899,11 @@ function agregarProyectoManual() {
 }
 
 function eliminarProyectoManual(index) {
-    let proyectos = getLocal('proyectos-manuales-lista') || [];
-    proyectos.splice(index, 1);
-    setLocal('proyectos-manuales-lista', proyectos);
-    pintarProyectosManuales();
-}
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try {
+        if (proyectosRaw) proyectos = JSON.parse(proyectosRaw);
+    } catch(e) { proyectos = []; }
     </script>
 </body>
 </html>
