@@ -790,6 +790,130 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
     if (typeof poblarSelectGrados === 'function') poblarSelectGrados();
     if (typeof actualizarGraficoPerfil === 'function') actualizarGraficoPerfil();
 }
+        // --- 1. FUNCIÓN DE GRADOS MÁXIMOS ---
+function actualizarMaximosPerfil() {
+    let maxHistIndex = -1;
+    let maxVistaIndex = -1;
+    let maxAsentadoIndex = -1;
+    let conteoPorGrado = {};
+
+    // Escala completa con números romanos, III+ y 9a incluidos
+    const escalaGrados = ["III", "III+", "IV", "IV+", "V", "V+", "6a", "6a+", "6b", "6b+", "6c", "6c+", "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+", "9a"];
+
+    database.vias.forEach(via => {
+        const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
+        if (estado) {
+            let gradoIndex = escalaGrados.findIndex(g => g.toLowerCase() === via.grado.toLowerCase());
+            
+            if (gradoIndex !== -1) {
+                if (gradoIndex > maxHistIndex) maxHistIndex = gradoIndex;
+                
+                if (estado === 'a-vista') {
+                    if (gradoIndex > maxVistaIndex) maxVistaIndex = gradoIndex;
+                }
+                
+                if (!conteoPorGrado[gradoIndex]) conteoPorGrado[gradoIndex] = 0;
+                conteoPorGrado[gradoIndex]++;
+            }
+        }
+    });
+
+    for (let index in conteoPorGrado) {
+        if (conteoPorGrado[index] > 15) {
+            let numIndex = parseInt(index);
+            if (numIndex > maxAsentadoIndex) maxAsentadoIndex = numIndex;
+        }
+    }
+
+    const formatGrado = (index) => {
+        if (index === -1) return "--";
+        let g = escalaGrados[index];
+        return /^[0-9]/.test(g) ? g : g.toUpperCase();
+    };
+
+    const elemGen = document.getElementById('maxGradoGeneral');
+    const elemVis = document.getElementById('maxGradoVista');
+    const elemAsen = document.getElementById('maxGradoAsentado');
+    
+    if (elemGen) elemGen.innerText = formatGrado(maxHistIndex);
+    if (elemVis) elemVis.innerText = formatGrado(maxVistaIndex);
+    if (elemAsen) elemAsen.innerText = formatGrado(maxAsentadoIndex);
+}
+
+// --- 2. GESTIÓN MANUAL DE LA TABLA DE PROYECTOS ---
+function pintarProyectosManuales() {
+    const tbody = document.getElementById('tablaProyectosBody');
+    if (!tbody) return;
+    
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) { proyectos = []; }
+    
+    if (!Array.isArray(proyectos) || proyectos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">No hay proyectos apuntados</td></tr>`;
+        return;
+    }
+    
+    let html = '';
+    proyectos.forEach((p, index) => {
+        html += `
+            <tr style="border-bottom: 1px solid #f2f2f2;">
+                <td style="padding: 6px 8px; color: #666;">${p.fecha}</td>
+                <td style="padding: 6px 8px; font-weight: bold; color: #333;">${p.nombre}</td>
+                <td style="padding: 6px 8px; color: #666;">${p.escuela}</td>
+                <td style="padding: 6px 8px; text-align: center; font-weight: bold; color: #3498db;">${p.intentos}</td>
+                <td style="padding: 6px 8px; text-align: center;">
+                    <span onclick="eliminarProyectoManual(${index})" style="color: #e74c3c; cursor: pointer; font-weight: bold; font-size: 1rem; line-height: 1;">&times;</span>
+                </td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+}
+
+function agregarProyectoManual() {
+    const fechaInput = document.getElementById('projFecha');
+    const nombreInput = document.getElementById('projNombre');
+    const escuelaInput = document.getElementById('projEscuela');
+    const intentosInput = document.getElementById('projIntentos');
+    
+    if (!nombreInput.value.trim()) {
+        alert('Por favor, introduce al menos el nombre de la vía.');
+        return;
+    }
+    
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) { proyectos = []; }
+    if (!Array.isArray(proyectos)) proyectos = [];
+    
+    proyectos.push({
+        fecha: fechaInput.value.trim() || '-',
+        nombre: nombreInput.value.trim(),
+        escuela: escuelaInput.value.trim() || '-',
+        intentos: intentosInput.value.trim() || '0'
+    });
+    
+    setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
+    
+    fechaInput.value = '';
+    nombreInput.value = '';
+    escuelaInput.value = '';
+    intentosInput.value = '';
+    
+    pintarProyectosManuales();
+}
+
+function eliminarProyectoManual(index) {
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) { proyectos = []; }
+    if (!Array.isArray(proyectos)) return;
+
+    proyectos.splice(index, 1);
+    setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
+    pintarProyectosManuales();
+}
     </script>
 </body>
 </html>
