@@ -203,9 +203,32 @@
             </div>
         </div>
 
-        <div style="margin-bottom: 12px;">
-            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🛠️ Mis Proyectos</h3>
-            <div id="listaProyectosPerfil" style="max-height: 80px; overflow-y: auto; font-size: 0.9rem; color: #555;"></div>
+       <div style="margin-bottom: 16px;">
+            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 8px;">🛠️ Mis Proyectos</h3>
+            
+            <div style="display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap;">
+                <input type="text" id="projFecha" placeholder="Fecha" style="flex: 1; min-width: 60px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="projNombre" placeholder="Nombre vía" style="flex: 2; min-width: 90px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="projEscuela" placeholder="Escuela" style="flex: 1.5; min-width: 70px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="number" id="projIntentos" placeholder="Pegues" min="0" style="width: 55px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                <button onclick="agregarProyectoManual()" style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer;">+</button>
+            </div>
+
+            <div style="border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+                    <thead style="background: #f8f9fa; color: #555; border-bottom: 1px solid #eaeaea;">
+                        <tr>
+                            <th style="padding: 6px 8px; font-weight: bold;">Fecha</th>
+                            <th style="padding: 6px 8px; font-weight: bold;">Nombre</th>
+                            <th style="padding: 6px 8px; font-weight: bold;">Escuela</th>
+                            <th style="padding: 6px 8px; font-weight: bold; text-align: center;">Intentos</th>
+                            <th style="padding: 6px 8px; text-align: center; width: 20px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaProyectosBody">
+                        </tbody>
+                </table>
+            </div>
         </div>
 
         <div>
