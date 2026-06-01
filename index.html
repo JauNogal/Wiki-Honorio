@@ -223,7 +223,7 @@
             </div>
 
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                <input type="text" id="projFecha" placeholder="Fecha" autocomplete="on" style="flex: 1; min-width: 60px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="projFecha" placeholder="DD/MM/AA" autocomplete="on" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{2})(\d)/, '$1/$2').replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3').slice(0, 8);" style="flex: 1; min-width: 60px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
                 <input type="text" id="projNombre" placeholder="Nombre vía" autocomplete="on" style="flex: 2; min-width: 90px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
                 <input type="text" id="projEscuela" placeholder="Escuela" autocomplete="on" style="flex: 1.5; min-width: 70px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
                 <input type="text" id="projIntentos" placeholder="Intentos" autocomplete="on" style="width: 55px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
