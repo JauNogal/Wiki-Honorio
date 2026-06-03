@@ -562,7 +562,7 @@ function actualizarGraficoPerfil() {
                         vias_grupo3: Number(d.vias_grupo3||0), vias_grupo4: Number(d.vias_grupo4||0)
                     });
                 });
-                database.sectores.sort((a, b) => a.idSector - b.idSector);
+                
 
                 const viasSnapshot = await getDocs(collection(db, "vias"));
                 viasSnapshot.forEach(doc => {
