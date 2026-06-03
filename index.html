@@ -566,12 +566,16 @@ function actualizarGraficoPerfil() {
 
                 const viasSnapshot = await getDocs(collection(db, "vias"));
                 viasSnapshot.forEach(doc => {
-                    let d = doc.data();
-                    let sPadre = database.sectores.find(s => s.idSector === Number(d.id_sector));
-                    database.vias.push({ 
-                        idEscuela: sPadre ? sPadre.idEscuela : null, idSector: Number(d.id_sector), 
-                        numero: Number(doc.id), nombreVia: d.nombre, grado: d.grado, fotoCroquis: arreglarUrl(d.nota || d.Nota || '') 
-                    });
+                   let d = doc.data();
+        database.vias.push({
+            idEscuela: Number(d.id_escuela),
+            idSector: Number(d.id_sector),
+            numero: Number(doc.id),
+            nombreVia: d.nombre,
+            grado: d.grado,
+            fotoCroquis: arreglarUrl(d.notas || d.nota || d.Nota || ''),
+            grupo: Number(d.grupo || 0)
+        });
                 });
 
                 if (map) {
