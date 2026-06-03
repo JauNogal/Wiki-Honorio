@@ -665,7 +665,7 @@ html += `
 html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
             
             const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
-            sectoresFiltrados.sort((a, b) => a.idSector - b.idSector);
+            sectoresFiltrados.sort((a, b) => parseInt(a.idSector) - parseInt(b.idSector));
             if (sectoresFiltrados.length === 0) {
                 html += `<p style="color:#777; font-style:italic;">No hay sectores.</p>`;
             } else {
