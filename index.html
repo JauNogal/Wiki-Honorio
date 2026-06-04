@@ -513,7 +513,7 @@ function actualizarGraficoPerfil() {
 
         try {
             if (typeof L !== 'undefined') {
-                map = L.map('map').setView([43.18, -5.98], 11);
+                map = L.map('map').setView([43.18, -5.98], 9);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
             }
         } catch(e) { console.error("Error al cargar mapa", e); }
