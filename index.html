@@ -555,7 +555,7 @@ function actualizarGraficoPerfil() {
                 secSnapshot.forEach(doc => {
                     let d = doc.data();
                     database.sectores.push({
-                        idEscuela: Number(d.id_escuela), idSector: Number(doc.id), id: Number(doc.id), 
+                        idEscuela: Number(d.id_escuela), idSector: Number(d.id_sector || doc.id), id: Number(doc.id),
                         nombreSector: d.nombre, nombre: d.nombre, vias: d.vias,
                         fotoSector: arreglarUrl(d.foto || d.Foto || ''), 
                         vias_grupo1: Number(d.vias_grupo1||0), vias_grupo2: Number(d.vias_grupo2||0),
