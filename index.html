@@ -548,7 +548,7 @@ function actualizarGraficoPerfil() {
                 const escSnapshot = await getDocs(collection(db, "escuelas"));
                 escSnapshot.forEach(doc => {
                     let d = doc.data();
-                    database.escuelas.push({ id: Number(doc.id), nombre: d.nombre, lat: Number(d.lat), lng: Number(d.lng), foto: arreglarUrl(d.foto || d.Foto || '') });
+                  database.escuelas.push({ id: Number(doc.id), nombre: d.nombre, lat: Number(d.lat), lng: Number(d.lng), foto: arreglarUrl(d.foto || d.Foto || ''), informacion: d.informacion });
                 });
 
                 const secSnapshot = await getDocs(collection(db, "sectores"));
@@ -662,7 +662,7 @@ html += `
 </div>
 
 <div id="info-escuela-bloque" style="display: none; background-color: white; border-left: 4px solid #3498db; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.95rem; line-height: 1.5; color: #333;">
-    <p><b>Información de la escuela:</b> Aquí irá el texto descriptivo que añadirás próximamente (accesos, restricciones, tipo de roca, regulaciones, etc.).</p>
+    <p><b>Información de la escuela:</b><br><br>${escuela.informacion || 'No hay información detallada para esta escuela todavía.'}</p>
 </div>
 `;
 
