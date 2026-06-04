@@ -570,7 +570,7 @@ function actualizarGraficoPerfil() {
         database.vias.push({
             idEscuela: Number(d.id_escuela),
             idSector: Number(d.id_sector),
-            numero: Number(doc.id),
+            numero: Number(d.id_via || doc.id),
             nombreVia: d.nombre,
             grado: d.grado,
             fotoCroquis: arreglarUrl(d.notas || d.nota || d.Nota || ''),
