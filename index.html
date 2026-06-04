@@ -823,14 +823,17 @@ function actualizarMaximosPerfil() {
                     if (gradoIndex > maxVistaIndex) maxVistaIndex = gradoIndex;
                 }
                 
-                if (!conteoPorGrado[gradoIndex]) conteoPorGrado[gradoIndex] = 0;
-                conteoPorGrado[gradoIndex]++;
+                const estilosValidos = ['a-vista', 'a vista', 'a-flash', 'a flash', 'en-el-dia', 'en el día', 'en el dia'];
+        if (estilosValidos.includes(estado.toLowerCase())) {
+            if (!conteoPorGrado[gradoIndex]) conteoPorGrado[gradoIndex] = 0;
+            conteoPorGrado[gradoIndex]++;
+        }
             }
         }
     });
 
     for (let index in conteoPorGrado) {
-        if (conteoPorGrado[index] > 15) {
+        if (conteoPorGrado[index] >= 10) {
             let numIndex = parseInt(index);
             if (numIndex > maxAsentadoIndex) maxAsentadoIndex = numIndex;
         }
