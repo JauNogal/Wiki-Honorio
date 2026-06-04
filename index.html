@@ -631,7 +631,7 @@ function actualizarGraficoPerfil() {
         }
 
         function mostrarInicio() {
-            if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.18, -5.98], 9); }
+            if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.18, -5.98],9); }
             escuelaActualId = null;
             let html = `<div class="section-title">Escuelas de escalada</div>`;
             database.escuelas.forEach(escuela => { html += `<div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})"><div class="badge">${escuela.id}</div><div class="escuela-name">${escuela.nombre}</div></div>`; });
