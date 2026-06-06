@@ -594,6 +594,7 @@ function actualizarGraficoPerfil() {
         const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon });
         
         marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
+        marker.bindTooltip(escuela.nombre, { permanent: true, direction: 'right', offset: [15, 0] });
         marker.on('click', () => seleccionarEscuela(escuela.id));
         marcadores[escuela.id] = marker;
         
