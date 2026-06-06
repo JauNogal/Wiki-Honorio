@@ -582,13 +582,26 @@ function actualizarGraficoPerfil() {
                 });
 
                 if (map) {
-                    database.escuelas.forEach(escuela => {
-                        const customIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin">${escuela.id}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
-                        const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon }).addTo(map);
-                        marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
-                        marker.on('click', () => seleccionarEscuela(escuela.id));
-                        marcadores[escuela.id] = marker;
-                    });
+                    // 1. Creamos el grupo agrupador ANTES del bucle
+    const marcadoresCluster = L.markerClusterGroup();
+
+    database.escuelas.forEach(escuela => {
+        // Tu línea original exacta (con el iconSize que le pusiste)
+        const customIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin">${escuela.id}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+        
+        // 2. LÍNEA CLAVE: Le quitamos el .addTo(map) del final
+        const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon });
+        
+        marker.bindPopup(`<b>${escuela.id}. ${escuela.nombre}</b>`);
+        marker.on('click', () => seleccionarEscuela(escuela.id));
+        marcadores[escuela.id] = marker;
+        
+        // 3. Metemos la chincheta en el grupo en lugar de en el mapa
+        marcadoresCluster.addLayer(marker);
+    });
+
+    // 4. Cuando termina de leer el Excel, añadimos todo el grupo de golpe al mapa
+    map.addLayer(marcadoresCluster);
                 }
 
                 mostrarInicio();
