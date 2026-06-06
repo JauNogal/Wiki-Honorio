@@ -548,7 +548,7 @@ function actualizarGraficoPerfil() {
                 const escSnapshot = await getDocs(collection(db, "escuelas"));
                 escSnapshot.forEach(doc => {
                     let d = doc.data();
-                  database.escuelas.push({ id: Number(doc.id), nombre: d.nombre, lat: Number(d.lat), lng: Number(d.lng), foto: arreglarUrl(d.foto || d.Foto || ''), informacion: d.informacion });
+                  database.escuelas.push({ id: Number(doc.id), nombre: d.nombre, lat: Number(d.lat), lng: Number(d.lng), foto: arreglarUrl(d.foto || d.Foto || ''), informacion: d.informacion, total_vias: d.total_vias, rango_grados: d.rango_grados });
                 });
 
                 const secSnapshot = await getDocs(collection(db, "sectores"));
