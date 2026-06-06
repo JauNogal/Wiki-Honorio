@@ -634,7 +634,18 @@ function actualizarGraficoPerfil() {
             if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.30, -5.98],8); }
             escuelaActualId = null;
             let html = `<div class="section-title">Escuelas de escalada</div>`;
-            database.escuelas.forEach(escuela => { html += `<div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})"><div class="badge">${escuela.id}</div><div class="escuela-name">${escuela.nombre}</div></div>`; });
+            database.escuelas.forEach(escuela => { 
+    html += `<div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <div class="badge">${escuela.id}</div>
+                    <div style="font-weight: bold; font-size: 1.1rem;">${escuela.nombre}</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #555; display: flex; gap: 5px;">
+                    <span style="background: #eef2f5; padding: 4px 8px; border-radius: 6px; border: 1px solid #dcdcdc;">🧗 ${escuela.total_vias || 0} vías</span>
+                    <span style="background: #eef2f5; padding: 4px 8px; border-radius: 6px; border: 1px solid #dcdcdc;">📈 ${escuela.rango_grados || '--'}</span>
+                </div>
+             </div>`; 
+});
             document.getElementById('contenido-dinamico').innerHTML = html;
         }
 
