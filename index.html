@@ -588,7 +588,7 @@ function actualizarGraficoPerfil() {
 
     database.escuelas.forEach(escuela => {
         // Tu línea original exacta (con el iconSize que le pusiste)
-        const customIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin">${escuela.id}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+        const customIcon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin">${escuela.total_vias || 0}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
         
         // 2. LÍNEA CLAVE: Le quitamos el .addTo(map) del final
         const marker = L.marker([escuela.lat, escuela.lng], { icon: customIcon });
