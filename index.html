@@ -644,6 +644,60 @@ function actualizarGraficoPerfil() {
         if(typeof renderizarViasEncadenadas === 'function') renderizarViasEncadenadas();
     }, 50);
 }
+        function agregarViaEncadenada() {
+    let fecha = document.getElementById('encFecha').value;
+    let nombre = document.getElementById('encNombre').value;
+    let grado = document.getElementById('encGrado').value;
+    let intentos = document.getElementById('encIntentos').value;
+
+    if (!nombre) {
+        alert('Por favor, indica al menos el nombre de la vía.');
+        return;
+    }
+
+    // Recuperar la lista de la memoria, añadir la nueva y volver a guardar
+    let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
+    lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: intentos });
+    setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
+
+    // Limpiar las casillas para añadir otra rápidamente
+    document.getElementById('encNombre').value = '';
+    document.getElementById('encGrado').value = '';
+    document.getElementById('encIntentos').value = '';
+    
+    // Volver a dibujar la tabla actualizada
+    renderizarViasEncadenadas();
+}
+
+function renderizarViasEncadenadas() {
+    let tbody = document.getElementById('tablaEncadenadasBody');
+    if (!tbody) return; 
+
+    let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
+    tbody.innerHTML = ''; // Limpiamos la tabla antes de rellenarla
+
+    lista.forEach((via, index) => {
+        let tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid #eaeaea";
+        tr.innerHTML = `
+            <td style="padding: 6px 8px;">${via.fecha}</td>
+            <td style="padding: 6px 8px; font-weight: 500;">${via.nombre}</td>
+            <td style="padding: 6px 8px; text-align: center; font-weight: bold; color: #2c3e50;">${via.grado}</td>
+            <td style="padding: 6px 8px; text-align: center;">${via.intentos}</td>
+            <td style="padding: 6px 8px; text-align: center; cursor: pointer; color: #e74c3c;" onclick="eliminarViaEncadenada(${index})">✖</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function eliminarViaEncadenada(index) {
+    if(confirm('¿Seguro que quieres borrar esta vía de tu lista de encadenes?')) {
+        let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
+        lista.splice(index, 1); // Borramos la vía exacta de la memoria
+        setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
+        renderizarViasEncadenadas(); // Refrescamos la vista
+    }
+}
 function mostrarEstadisticas() {
     // 1. Ocultamos el mapa
     if (map) document.getElementById('map').style.display = 'none';
