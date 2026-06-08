@@ -893,13 +893,14 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
                         <div class="via-grado">${gradoDisplay}</div>
                     </div>
                             <div class="via-check">
-                                <select class="estado-via" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
-                                    <option value="" ${estadoGuardado === '' ? 'selected' : ''}>Sin hacer</option>
-                                    <option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>a vista</option>
-                                    <option value="a-flash" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>a flash</option>
-                                    <option value="2-pegue" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>En el día</option>
-                                    <option value="trabajado" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>trabajado</option>
-                                </select>
+                               <select class="estado-via" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
+    <option value="" ${estadoGuardado === '' ? 'selected' : ''}>Sin hacer</option>
+    <option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>A vista</option>
+    <option value="a-flash" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>A flash</option>
+    <option value="2-pegue" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>En el día</option>
+    <option value="trabajado" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>Trabajado</option>
+    <option value="proyecto" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>Proyecto</option>
+</select>
                             </div>
                         </div>`;
                 });
