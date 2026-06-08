@@ -593,25 +593,56 @@ function actualizarGraficoPerfil() {
             if (tipo === 'escuela') seleccionarEscuela(idEscuela);
             else { seleccionarEscuela(idEscuela); setTimeout(() => { verSector(idSector); }, 50); }
         }
-        function mostrarDiario() {
-    // 1. Ocultamos el mapa
+       function mostrarDiario() {
+    // Ocultamos el mapa
     if (map) document.getElementById('map').style.display = 'none';
     
-   
-    
-    // 3. Construimos la interfaz con un bloc de notas limpio
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
             ← Volver a Escuelas
         </button>
-        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 5px; color: #2c3e50;">📓 Diario de Escalada</div>
-       
+        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">📓 Mi Diario de Escalada</div>
+        
+        <div style="margin-bottom: 16px;">
+            <h3 onclick="let caja = document.getElementById('cajaEncadenadas'); let icono = document.getElementById('flechaEncadenadas'); if(caja.style.display === 'none'){ caja.style.display = 'block'; icono.innerText = '▲'; } else { caja.style.display = 'none'; icono.innerText = '▼'; }" style="color: #2c3e50; font-size: 1.05rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 2px solid #eaeaea; padding-bottom: 4px;">
+                <span>🧗 Vías Encadenadas</span>
+                <span id="flechaEncadenadas" style="font-size: 0.8rem; color: #888;">▲</span>
+            </h3>
+            
+            <div id="cajaEncadenadas" style="display: block;">
+                <div style="border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 8px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+                        <thead style="background: #f8f9fa; color: #555; border-bottom: 1px solid #eaeaea;">
+                            <tr>
+                                <th style="padding: 6px 8px; font-weight: bold;">Fecha</th>
+                                <th style="padding: 6px 8px; font-weight: bold;">Nombre</th>
+                                <th style="padding: 6px 8px; font-weight: bold; text-align: center;">Grado</th>
+                                <th style="padding: 6px 8px; font-weight: bold; text-align: center;">Intentos</th>
+                                <th style="padding: 6px 8px; text-align: center; width: 20px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaEncadenadasBody">
+                            </tbody>
+                    </table>
+                </div>
+                
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <input type="text" id="encFecha" placeholder="DD/MM/AA" oninput="this.value = this.value.replace(/[^0-9/]/g, '').slice(0, 8);" style="flex: 1; min-width: 60px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="encNombre" placeholder="Nombre vía" style="flex: 3; min-width: 110px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="encGrado" placeholder="Grado" style="flex: 1; min-width: 40px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px; text-align: center;">
+                    <input type="text" id="encIntentos" placeholder="Intentos" style="flex: 1; min-width: 50px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px; text-align: center;">
+                    <button onclick="agregarViaEncadenada()" style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 10px; font-weight: bold; cursor: pointer; font-size: 1rem;">+</button>
+                </div>
+            </div>
+        </div>
     `;
     
-    // 4. Inyectamos el diseño en la pantalla
     document.getElementById('contenido-dinamico').innerHTML = html;
     
-   
+    // Al abrir la pantalla, le decimos que pinte las vías que ya tenías guardadas
+    setTimeout(() => {
+        if(typeof renderizarViasEncadenadas === 'function') renderizarViasEncadenadas();
+    }, 50);
 }
 function mostrarEstadisticas() {
     // 1. Ocultamos el mapa
