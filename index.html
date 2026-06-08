@@ -924,6 +924,65 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
     }
 }
 
+
+        function lanzarModalProyecto(nombre, grado) {
+    // 1. Si en el pasado marcó la casilla, guarda directo y no saca el cartel
+    if (localStorage.getItem('noPreguntarProyecto') === 'true') {
+        guardarEnDiarioProyectos(nombre, grado);
+        return;
+    }
+
+    // 2. Creamos el fondo oscuro que bloquea la pantalla
+    const fondo = document.createElement('div');
+    fondo.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999;";
+
+    // 3. Creamos el cuadro blanco central
+    const caja = document.createElement('div');
+    caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
+
+    caja.innerHTML = `
+        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">¿Deseas anotar <b>${nombre}</b> en tu lista de proyectos?</div>
+        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; font-size: 0.85em; color: #666; cursor: pointer;">
+            <input type="checkbox" id="checkNoPreguntarProy"> No volver a preguntar
+        </label>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button id="btnNoProy" style="flex: 1; padding: 10px; border: none; background: #eee; border-radius: 5px; cursor: pointer; color: #333; font-weight: bold;">No</button>
+            <button id="btnSiProy" style="flex: 1; padding: 10px; border: none; background: #3498db; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Sí, anotar</button>
+        </div>
+    `;
+
+    fondo.appendChild(caja);
+    document.body.appendChild(fondo);
+
+    // 4. Acción al pulsar "No"
+    document.getElementById('btnNoProy').onclick = () => {
+        document.body.removeChild(fondo);
+    };
+
+    // 5. Acción al pulsar "Sí, anotar"
+    document.getElementById('btnSiProy').onclick = () => {
+        if (document.getElementById('checkNoPreguntarProy').checked) {
+            localStorage.setItem('noPreguntarProyecto', 'true');
+        }
+        guardarEnDiarioProyectos(nombre, grado);
+        document.body.removeChild(fondo);
+        alert('¡' + nombre + ' añadida a Mis Proyectos!');
+    };
+}
+
+// Función que inyecta la vía directamente en la memoria de tu Diario
+function guardarEnDiarioProyectos(nombre, grado) {
+    let lista = localStorage.getItem('proyectos-manuales-lista');
+    let proyectos = [];
+    try { if (lista) proyectos = JSON.parse(lista); } catch(e) { proyectos = []; }
+    if (!Array.isArray(proyectos)) proyectos = [];
+
+    let hoy = new Date();
+    let fecha = ('0' + hoy.getDate()).slice(-2) + '/' + ('0' + (hoy.getMonth()+1)).slice(-2) + '/' + hoy.getFullYear().toString().slice(-2);
+
+    proyectos.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0' });
+    localStorage.setItem('proyectos-manuales-lista', JSON.stringify(proyectos));
+}
         function actualizarEstiloSelect(elemento) {
             const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', '2-pegue': '#FFA500', 'trabajado': '#FF6347' };
             const valor = elemento.value;
