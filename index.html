@@ -1094,24 +1094,28 @@ function actualizarMaximosPerfil() {
 function pintarProyectosManuales() {
     const tbody = document.getElementById('tablaProyectosBody');
     if (!tbody) return;
-    
+
     let proyectosRaw = getLocal('proyectos-manuales-lista');
     let proyectos = [];
     try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) { proyectos = []; }
-    
+
     if (!Array.isArray(proyectos) || proyectos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">No hay proyectos apuntados</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">No hay proyectos apuntados</td></tr>';
         return;
     }
-    
+
     let html = '';
     proyectos.forEach((p, index) => {
         html += `
             <tr style="border-bottom: 1px solid #f2f2f2;">
-                <td style="padding: 6px 8px; color: #666;">${p.fecha}</td>
+                <td style="padding: 6px 8px;">
+                    <input type="text" value="${p.fecha}" onchange="actualizarProyectoManual(${index}, 'fecha', this.value)" style="width: 70px; border: none; background: transparent; color: #666; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
+                </td>
                 <td style="padding: 6px 8px; font-weight: bold; color: #333;">${p.nombre}</td>
                 <td style="padding: 6px 8px; color: #666; text-align: center; font-weight: 500;">${p.grado || p.escuela || '-'}</td>
-                <td style="padding: 6px 8px; text-align: center; font-weight: bold; color: #3498db;">${p.intentos}</td>
+                <td style="padding: 6px 8px; text-align: center;">
+                    <input type="number" value="${p.intentos}" min="0" onchange="actualizarProyectoManual(${index}, 'intentos', this.value)" style="width: 45px; border: none; background: transparent; color: #3498db; font-weight: bold; text-align: center; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
+                </td>
                 <td style="padding: 6px 8px; text-align: center;">
                     <span onclick="eliminarProyectoManual(${index})" style="color: #e74c3c; cursor: pointer; font-weight: bold; font-size: 1rem; line-height: 1;">&times;</span>
                 </td>
@@ -1119,6 +1123,17 @@ function pintarProyectosManuales() {
         `;
     });
     tbody.innerHTML = html;
+}
+
+function actualizarProyectoManual(index, campo, valor) {
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) { proyectos = []; }
+    
+    if (proyectos[index]) {
+        proyectos[index][campo] = valor;
+        setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
+    }
 }
 
 function agregarProyectoManual() {
