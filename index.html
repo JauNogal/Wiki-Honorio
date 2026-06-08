@@ -916,11 +916,15 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
     if (valor === "") removeLocal(storageKey); else setLocal(storageKey, valor);
     actualizarEstiloSelect(elemento);
 
-    // NUEVO: Si marcan "Proyecto", abrimos el cuadro emergente pasándole el nombre y grado
+    // Extraemos el nombre y el grado de la vía seleccionada
+    const nombre = elemento.getAttribute('data-nombre') || 'Vía';
+    const grado = elemento.getAttribute('data-grado') || '-';
+
+    // Si es proyecto, lanza su cuadro. Si es un encadene, lanza el nuevo cuadro.
     if (valor === 'proyecto') {
-        const nombre = elemento.getAttribute('data-nombre') || 'Vía';
-        const grado = elemento.getAttribute('data-grado') || '-';
         lanzarModalProyecto(nombre, grado);
+    } else if (valor === 'a-vista' || valor === 'a-flash' || valor === '2-pegue' || valor === 'trabajado') {
+        lanzarModalEncadenada(nombre, grado, valor);
     }
 }
 
