@@ -643,6 +643,7 @@ function actualizarGraficoPerfil() {
     // Al abrir la pantalla, le decimos que pinte las vías que ya tenías guardadas
     setTimeout(() => {
         if(typeof renderizarViasEncadenadas === 'function') renderizarViasEncadenadas();
+        if(typeof renderizarProyectos === 'function') renderizarProyectos();
     }, 50);
 }
         function agregarViaEncadenada() {
