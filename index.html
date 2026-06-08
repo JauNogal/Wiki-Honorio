@@ -911,11 +911,18 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
         }
 
         function cambiarColorEstado(elemento, idEscuela, idSector, numeroVia) {
-            const valor = elemento.value;
-            const storageKey = `estado-via-${idEscuela}-${idSector}-${numeroVia}`;
-            if (valor === "") removeLocal(storageKey); else setLocal(storageKey, valor);
-            actualizarEstiloSelect(elemento);
-        }
+    const valor = elemento.value;
+    const storageKey = `estado-via-${idEscuela}-${idSector}-${numeroVia}`;
+    if (valor === "") removeLocal(storageKey); else setLocal(storageKey, valor);
+    actualizarEstiloSelect(elemento);
+
+    // NUEVO: Si marcan "Proyecto", abrimos el cuadro emergente pasándole el nombre y grado
+    if (valor === 'proyecto') {
+        const nombre = elemento.getAttribute('data-nombre') || 'Vía';
+        const grado = elemento.getAttribute('data-grado') || '-';
+        lanzarModalProyecto(nombre, grado);
+    }
+}
 
         function actualizarEstiloSelect(elemento) {
             const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', '2-pegue': '#FFA500', 'trabajado': '#FF6347' };
