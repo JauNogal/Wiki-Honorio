@@ -983,6 +983,54 @@ function guardarEnDiarioProyectos(nombre, grado) {
     proyectos.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0' });
     localStorage.setItem('proyectos-manuales-lista', JSON.stringify(proyectos));
 }
+        function lanzarModalEncadenada(nombre, grado, estilo) {
+    // 1. Creamos el fondo oscuro que bloquea la pantalla
+    const fondo = document.createElement('div');
+    fondo.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999;";
+
+    // 2. Creamos el cuadro blanco central
+    const caja = document.createElement('div');
+    caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
+
+    caja.innerHTML = `
+        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 20px;">¿Quieres apuntar <b>${nombre}</b> en tu diario?</div>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button id="btnNoEnc" style="flex: 1; padding: 10px; border: none; background: #eee; border-radius: 5px; cursor: pointer; color: #333; font-weight: bold;">No</button>
+            <button id="btnSiEnc" style="flex: 1; padding: 10px; border: none; background: #27ae60; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Sí</button>
+        </div>
+    `;
+
+    fondo.appendChild(caja);
+    document.body.appendChild(fondo);
+
+    // 3. Acción al pulsar "No"
+    document.getElementById('btnNoEnc').onclick = () => {
+        document.body.removeChild(fondo);
+    };
+
+    // 4. Acción al pulsar "Sí"
+    document.getElementById('btnSiEnc').onclick = () => {
+        guardarEnDiarioEncadenadas(nombre, grado);
+        document.body.removeChild(fondo);
+        alert('¡' + nombre + ' añadida a Vías Encadenadas!');
+    };
+}
+
+// Función que inyecta la vía en la memoria (Versión limpia, con intentos a 0)
+function guardarEnDiarioEncadenadas(nombre, grado) {
+    let listaRaw = getLocal('astur_vertical_encadenadas');
+    let lista = [];
+    try { if (listaRaw) lista = JSON.parse(listaRaw); } catch(e) { lista = []; }
+    if (!Array.isArray(lista)) lista = [];
+
+    // Pillamos la fecha de hoy automáticamente
+    let hoy = new Date();
+    let fecha = ('0' + hoy.getDate()).slice(-2) + '/' + ('0' + (hoy.getMonth()+1)).slice(-2) + '/' + hoy.getFullYear().toString().slice(-2);
+
+    // Guardamos la vía con los intentos a 0 por defecto para que tú los edites
+    lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0' });
+    setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
+}
         function actualizarEstiloSelect(elemento) {
             const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', '2-pegue': '#FFA500', 'trabajado': '#FF6347' };
             const valor = elemento.value;
