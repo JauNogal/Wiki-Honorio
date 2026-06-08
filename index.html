@@ -597,8 +597,7 @@ function actualizarGraficoPerfil() {
     // 1. Ocultamos el mapa
     if (map) document.getElementById('map').style.display = 'none';
     
-    // 2. Recuperamos las notas que estuvieran guardadas en el navegador
-    let diarioGuardado = getLocal('astur_vertical_diario') || '';
+   
     
     // 3. Construimos la interfaz con un bloc de notas limpio
     let html = `
@@ -606,19 +605,13 @@ function actualizarGraficoPerfil() {
             ← Volver a Escuelas
         </button>
         <div class="section-title" style="font-size: 1.4rem; margin-bottom: 5px; color: #2c3e50;">📓 Diario de Escalada</div>
-        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Un rincón privado para tus sensaciones del día, croquis rápidos, entrenamientos o cordadas. Se guarda solo al escribir.</p>
-        
-        <textarea id="inputDiario" 
-            oninput="setLocal('astur_vertical_diario', this.value)" 
-            placeholder="Escribe aquí tus notas del día... Ej: Hoy en Quirós muy buenas sensaciones, encadené..." 
-            style="width: 100%; height: 350px; padding: 15px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; font-size: 1rem; line-height: 1.6; resize: vertical; box-sizing: border-box; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);"></textarea>
+       
     `;
     
     // 4. Inyectamos el diseño en la pantalla
     document.getElementById('contenido-dinamico').innerHTML = html;
     
-    // 5. Volvemos a pintar el texto que el usuario tenía guardado
-    document.getElementById('inputDiario').value = diarioGuardado;
+   
 }
 function mostrarEstadisticas() {
     // 1. Ocultamos el mapa
