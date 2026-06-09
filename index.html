@@ -576,18 +576,7 @@ function actualizarGraficoPerfil() {
     🧗‍♀️ Vías Encadenadas
     <select id="filtroAnoEncadenadas" onchange="renderizarViasEncadenadas()" onclick="event.stopPropagation()" style="font-size: 0.8rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; color: #333; font-weight: normal;">
         <option value="todos">Todos los años</option>
-        </select>
-    <script>
-        (function() {
-            let selectFiltro = document.getElementById('filtroAnoEncadenadas');
-            for (let i = 2026; i >= 1980; i--) {
-                let opt = document.createElement('option');
-                opt.value = i.toString().slice(-2);
-                opt.textContent = i;
-                selectFiltro.appendChild(opt);
-            }
-        })();
-    </script>
+    </select>
 </span>
                 <span id="flechaEncadenadas" style="font-size: 0.8rem; color: #888;">▲</span>
             </h3>
