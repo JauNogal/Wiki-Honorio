@@ -1119,7 +1119,7 @@ function guardarEnDiarioProyectos(nombre, grado) {
 }
 
 // Función que inyecta la vía en la memoria (Versión limpia, con intentos a 0)
-function guardarEnDiarioEncadenadas(nombre, grado) {
+function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
     let listaRaw = getLocal('astur_vertical_encadenadas');
     let lista = [];
     try { if (listaRaw) lista = JSON.parse(listaRaw); } catch(e) { lista = []; }
@@ -1130,7 +1130,7 @@ function guardarEnDiarioEncadenadas(nombre, grado) {
     let fecha = ('0' + hoy.getDate()).slice(-2) + '/' + ('0' + (hoy.getMonth()+1)).slice(-2) + '/' + hoy.getFullYear().toString().slice(-2);
 
     // Guardamos la vía con los intentos a 0 por defecto para que tú los edites
-    lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0' });
+    lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0', estilo: estilo });
     setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
 }
         function actualizarEstiloSelect(elemento) {
