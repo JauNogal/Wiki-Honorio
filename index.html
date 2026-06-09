@@ -1050,35 +1050,70 @@ function guardarEnDiarioProyectos(nombre, grado) {
     localStorage.setItem('proyectos-manuales-lista', JSON.stringify(proyectos));
 }
         function lanzarModalEncadenada(nombre, grado, estilo) {
-    // 1. Creamos el fondo oscuro que bloquea la pantalla
+    // Escala completa de grados de deportiva para poder navegar por ella
+    const escalaGrados = ['III', 'IV', 'IV+', 'V', 'V+', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a', '8a+', '8b', '8b+', '8c', '8c+', '9a', '9a+', '9b', '9b+', '9c'];
+    
+    // Buscamos la posición del grado oficial. Si por lo que sea no está o la vía no tiene, empezamos en V
+    let indiceActual = escalaGrados.indexOf(grado);
+    if (indiceActual === -1) indiceActual = escalaGrados.indexOf('V');
+
+    // 1. Creamos el fondo oscuro
     const fondo = document.createElement('div');
     fondo.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999;";
 
-    // 2. Creamos el cuadro blanco central
+    // 2. Creamos el cuadro central
     const caja = document.createElement('div');
-    caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
+    caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; width:90%; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
 
     caja.innerHTML = `
-        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 20px;">¿Quieres apuntar <b>${nombre}</b> en tu diario?</div>
+        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">¿Quieres apuntar <b>${nombre}</b> en tu diario?</div>
+        
+        <div style="background: #f8f9fa; border: 1px solid #eaeaea; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+            <div style="font-size: 0.85em; color: #666; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Tu Propuesta de Grado</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <button id="btnMenosGrado" style="width: 35px; height: 35px; font-size: 1.2em; font-weight: bold; border: none; border-radius: 5px; background: #e0e0e0; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center;">&minus;</button>
+                <div id="gradoMostrado" style="font-size: 1.4em; font-weight: bold; color: #2980b9; width: 60px; text-align: center;">${escalaGrados[indiceActual]}</div>
+                <button id="btnMasGrado" style="width: 35px; height: 35px; font-size: 1.2em; font-weight: bold; border: none; border-radius: 5px; background: #e0e0e0; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center;">&plus;</button>
+            </div>
+        </div>
+
         <div style="display: flex; gap: 10px; justify-content: center;">
-            <button id="btnNoEnc" style="flex: 1; padding: 10px; border: none; background: #eee; border-radius: 5px; cursor: pointer; color: #333; font-weight: bold;">No</button>
-            <button id="btnSiEnc" style="flex: 1; padding: 10px; border: none; background: #27ae60; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Sí</button>
+            <button id="btnNoEnc" style="flex: 1; padding: 12px; border: none; background: #eee; border-radius: 6px; cursor: pointer; color: #333; font-weight: bold; font-size: 1em;">No</button>
+            <button id="btnSiEnc" style="flex: 1; padding: 12px; border: none; background: #27ae60; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;">Sí, apuntar</button>
         </div>
     `;
 
     fondo.appendChild(caja);
     document.body.appendChild(fondo);
 
+    // --- MOTOR DE LOS BOTONES DE GRADO ---
+    document.getElementById('btnMenosGrado').onclick = () => {
+        if (indiceActual > 0) {
+            indiceActual--;
+            document.getElementById('gradoMostrado').innerText = escalaGrados[indiceActual];
+        }
+    };
+
+    document.getElementById('btnMasGrado').onclick = () => {
+        if (indiceActual < escalaGrados.length - 1) {
+            indiceActual++;
+            document.getElementById('gradoMostrado').innerText = escalaGrados[indiceActual];
+        }
+    };
+
     // 3. Acción al pulsar "No"
     document.getElementById('btnNoEnc').onclick = () => {
         document.body.removeChild(fondo);
     };
 
-    // 4. Acción al pulsar "Sí"
+    // 4. Acción al pulsar "Sí, apuntar"
     document.getElementById('btnSiEnc').onclick = () => {
-        guardarEnDiarioEncadenadas(nombre, grado);
+        // Leemos el grado que el usuario ha dejado puesto en el marcador
+        const gradoPropuestoFinal = document.getElementById('gradoMostrado').innerText;
+        
+        // Lo mandamos a la memoria del Diario
+        guardarEnDiarioEncadenadas(nombre, gradoPropuestoFinal);
         document.body.removeChild(fondo);
-        alert('¡' + nombre + ' añadida a Vías Encadenadas!');
     };
 }
 
