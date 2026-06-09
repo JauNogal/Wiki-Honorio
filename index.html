@@ -1106,13 +1106,14 @@ function guardarEnDiarioProyectos(nombre, grado) {
         document.body.removeChild(fondo);
     };
 
-    // 4. Acción al pulsar "Sí, apuntar"
+  // 4. Acción al pulsar "Sí, apuntar"
     document.getElementById('btnSiEnc').onclick = () => {
-        // Leemos el grado que el usuario ha dejado puesto en el marcador
+        // Leemos el grado propuesto (preparado para la Fase 2)
         const gradoPropuestoFinal = document.getElementById('gradoMostrado').innerText;
         
-        // Lo mandamos a la memoria del Diario
-        guardarEnDiarioEncadenadas(nombre, gradoPropuestoFinal);
+        // Guardamos en tu diario el grado OFICIAL de la guía, no la propuesta
+        guardarEnDiarioEncadenadas(nombre, grado);
+        
         document.body.removeChild(fondo);
     };
 }
