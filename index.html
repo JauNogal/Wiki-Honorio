@@ -1112,7 +1112,7 @@ function guardarEnDiarioProyectos(nombre, grado) {
         const gradoPropuestoFinal = document.getElementById('gradoMostrado').innerText;
         
         // Guardamos en tu diario el grado OFICIAL de la guía, no la propuesta
-        guardarEnDiarioEncadenadas(nombre, grado);
+        guardarEnDiarioEncadenadas(nombre, grado, estilo);
         
         document.body.removeChild(fondo);
     };
