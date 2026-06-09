@@ -935,7 +935,7 @@ html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
             if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) html += `<img src="${viasFiltradas[0].fotoCroquis}" class="foto-guia" alt="Croquis" onerror="this.style.display='none'">`;
             else if (sector.fotoSector) html += `<img src="${sector.fotoSector}" class="foto-guia" alt="Croquis" onerror="this.style.display='none'">`;
 
-            html += `<div class="section-title" style="font-size:1rem;">Vías del sector</div>`;
+            html += `<div class="section-title" style="font-size:1rem;">Vías</div>`;
 
             if (viasFiltradas.length === 0) html += `<p style="color:#777; font-style:italic;">Aún no hay vías registradas.</p>`;
             else {
