@@ -1332,6 +1332,35 @@ function eliminarProyectoManual(index) {
     setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
     pintarProyectosManuales();
 }
+        function mostrarContacto() {
+    let contenedor = document.getElementById('contenido-dinamico');
+    if (!contenedor) return;
+
+    contenedor.innerHTML = `
+        <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
+            
+            <div style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                📩 Contacto
+            </div>
+
+            <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.6; color: #444; font-size: 0.95rem; text-align: justify;">
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    Hacer una guía de escalada es un proceso complejo. Hay mucha información que está cambiando constantemente en el tiempo, y es fácil cometer pequeños (o grandes) errores.
+                </p>
+                <p style="margin-bottom: 15px;">
+                    Por otro lado, los equipadores, en su infinito altruismo, no paran de abrir vías y sectores nuevos. Esto nos produce como escaladores, un profundo agradecimiento, pero como desarrolladores de este proyecto, un gran dolor de cabeza. Por suerte prima con creces lo primero.
+                </p>
+                <p style="margin-bottom: 0;">
+                    Si observas en esta guía una errata en algún nombre o grado de una vía, ponte en contacto con nosotros para corregirlo. Así mismo, como equipador, si has abierto alguna vía nueva en algún sector ya existente, o incluso algún sector nuevo y deseas publicarlo, ponte en contacto con nosotros porque estaremos encantados de actualizar la web con tus vías nuevas.
+                </p>
+            </div>
+
+            </div>
+    `;
+
+    // Esto hace que la página haga scroll hacia arriba del todo automáticamente
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
     </script>
 </body>
 </html>
