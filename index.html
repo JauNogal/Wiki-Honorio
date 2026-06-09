@@ -645,11 +645,22 @@ function actualizarGraficoPerfil() {
     
     document.getElementById('contenido-dinamico').innerHTML = html;
     
-    // Al abrir la pantalla, le decimos que pinte las vías que ya tenías guardadas
-    setTimeout(() => {
-        if(typeof renderizarViasEncadenadas === 'function') renderizarViasEncadenadas();
-if(typeof pintarProyectosManuales === 'function') pintarProyectosManuales();
-    }, 50);
+   // Al abrir la pantalla, le decimos que pinte las vías y rellene el desplegable
+setTimeout(() => {
+    if(typeof renderizarViasEncadenadas === 'function') renderizarViasEncadenadas();
+    if(typeof pintarProyectosManuales === 'function') pintarProyectosManuales();
+    
+    // Generamos los años del desplegable de forma segura
+    let selectFiltro = document.getElementById('filtroAnoEncadenadas');
+    if (selectFiltro && selectFiltro.options.length <= 1) {
+        for (let i = 2026; i >= 1980; i--) {
+            let opt = document.createElement('option');
+            opt.value = i.toString().slice(-2);
+            opt.textContent = i;
+            selectFiltro.appendChild(opt);
+        }
+    }
+}, 50);
 }
         function agregarViaEncadenada() {
     let fecha = document.getElementById('encFecha').value;
