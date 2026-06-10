@@ -1332,7 +1332,7 @@ function eliminarProyectoManual(index) {
     setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
     pintarProyectosManuales();
 }
-        function mostrarContacto() {
+       function mostrarContacto() {
     let contenedor = document.getElementById('contenido-dinamico');
     if (!contenedor) return;
 
@@ -1351,17 +1351,39 @@ function eliminarProyectoManual(index) {
                     Por otro lado, los equipadores, en su infinito altruismo, no paran de abrir vías y sectores nuevos. Esto nos produce como escaladores, un profundo agradecimiento, pero como desarrolladores de este proyecto, un gran dolor de cabeza. Por suerte prima con creces lo primero.
                 </p>
                 <p style="margin-bottom: 0;">
-                    Si observas en esta guía una errata en algún nombre o grado de una vía, ponte en contacto con nosotros para corregirlo. 
-                     </p>
-                <p style="margin-bottom: 0;">
-                Del mismo modo, si eres equipador y has abierto nuevas vías en un sector ya existente, o incluso has desarrollado un sector nuevo y deseas darlo a conocer, estaremos encantados de incorporarlo a la web. Ponte en contacto con nosotros y actualizaremos la información con tus nuevas vías.
+                    Si observas en esta guía una errata en algún nombre o grado de una vía, ponte en contacto con nosotros para corregirlo. Del mismo modo, si eres equipador y has abierto nuevas vías en un sector ya existente, o incluso has desarrollado un sector nuevo y deseas darlo a conocer, estaremos encantados de incorporarlo a la web. Ponte en contacto con nosotros y actualizaremos la información con tus nuevas vías.
                 </p>
             </div>
 
+            <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1rem; margin-bottom: 15px;">Envíanos un mensaje</h3>
+                
+                <form action="TU_ENLACE_DE_FORMSPREE_AQUI" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+                    
+                    <div>
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Tu Nombre</label>
+                        <input type="text" name="name" required style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Tu Correo (para poder responderte)</label>
+                        <input type="email" name="email" required style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Mensaje</label>
+                        <textarea name="message" required rows="5" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <button type="submit" style="background: #2980b9; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 5px; transition: background 0.2s;">
+                        Enviar Mensaje
+                    </button>
+                </form>
             </div>
+
+        </div>
     `;
 
-    // Esto hace que la página haga scroll hacia arriba del todo automáticamente
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
     </script>
