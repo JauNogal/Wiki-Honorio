@@ -852,26 +852,49 @@ function mostrarEstadisticas() {
     }, 50);
 }
         function mostrarInicio() {
-            if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.30, -5.98],8); }
-            escuelaActualId = null;
-            let html = `<div class="section-title">Escuelas de escalada</div>`;
-            // Hacemos una copia y ordenamos alfabéticamente (A-Z) por el nombre
-const escuelasOrdenadas = [...database.escuelas].sort((a, b) => a.nombre.localeCompare(b.nombre));
+    if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.30, -5.98],8); }
+    escuelaActualId = null;
+    let html = `<div class="section-title">Escuelas de escalada</div>`;
 
-escuelasOrdenadas.forEach(escuela => { 
-    html += `<div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})" style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center;">
-                    <div class="badge">${escuela.total_vias || 0}</div>
-                    <div style="font-weight: bold; font-size: 1.1rem;">${escuela.nombre}</div>
-                </div>
-                <div style="font-size: 0.85rem; color: #555; display: flex; gap: 5px;">
-                    <span style="background: #eef2f5; padding: 4px 8px; border-radius: 6px; border: 1px solid #dcdcdc;">🧗 ${escuela.total_vias || 0} vías</span>
-                    <span style="background: #eef2f5; padding: 4px 8px; border-radius: 6px; border: 1px solid #dcdcdc;">📈 ${escuela.rango_grados || '--'}</span>
-                </div>
-             </div>`; 
-});
-            document.getElementById('contenido-dinamico').innerHTML = html;
+    // 1. MOTOR MATEMÁTICO: Contamos los encadenes totales por escuela
+    let encadenesPorEscuela = {};
+    database.vias.forEach(via => {
+        const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
+        if (estado && estado !== 'proyecto') {
+            encadenesPorEscuela[via.idEscuela] = (encadenesPorEscuela[via.idEscuela] || 0) + 1;
         }
+    });
+
+    // Hacemos una copia y ordenamos alfabéticamente (A-Z) por el nombre
+    const escuelasOrdenadas = [...database.escuelas].sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    escuelasOrdenadas.forEach(escuela => { 
+        // 2. Calculamos el porcentaje global de la escuela
+        let totalVias = escuela.total_vias || 0;
+        let encadenadas = encadenesPorEscuela[escuela.id] || 0;
+        let porcentaje = totalVias > 0 ? Math.round((encadenadas / totalVias) * 100) : 0;
+
+        // 3. Lógica de la corona y la pastilla azul oscuro de estadísticas
+        let textoPastilla = porcentaje === 100 ? `👑 100%` : `${porcentaje}%`;
+        let etiquetaPorcentaje = `<span style="background: #2c3e50; color: white; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; margin-left: 10px; display: inline-block; line-height: 1.2;">${textoPastilla}</span>`;
+
+        // 4. Dibujamos la caja de la escuela con su porcentaje incorporado
+        html += `<div class="escuela-item" onclick="seleccionarEscuela(${escuela.id})" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center;">
+                        <div class="badge">${totalVias}</div>
+                        <div style="font-weight: bold; font-size: 1.1rem; display: flex; align-items: center;">
+                            ${escuela.nombre}
+                            ${etiquetaPorcentaje}
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: #555; display: flex; gap: 5px;">
+                        <span style="background: #eef2f5; padding: 4px 8px; border-radius: 6px; border: 1px solid #dcdcdc;">🧗 ${totalVias} vías</span>
+                        <span style="background: #eef2f5; padding: 4px 8px; border-radius: 6px; border: 1px solid #dcdcdc;">📈 ${escuela.rango_grados || '--'}</span>
+                    </div>
+                 </div>`; 
+    });
+    document.getElementById('contenido-dinamico').innerHTML = html;
+}
 
         function seleccionarEscuela(id) {
     if (map) document.getElementById('map').style.display = 'none';
