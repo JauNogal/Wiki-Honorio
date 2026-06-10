@@ -848,6 +848,7 @@ function mostrarEstadisticas() {
         
         // Ejecutamos tu función para que dibuje el gráfico al instante
         if (typeof actualizarGraficoPerfil === 'function') actualizarGraficoPerfil();
+        calcularYMostrarPerfil();
     }, 50);
 }
         function mostrarInicio() {
