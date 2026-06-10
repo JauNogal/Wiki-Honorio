@@ -1189,6 +1189,7 @@ function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
     // Activar funciones auxiliares de gráficos si existen en el documento
     if (typeof poblarSelectGrados === 'function') poblarSelectGrados();
     if (typeof actualizarGraficoPerfil === 'function') actualizarGraficoPerfil();
+           actualizarMaximosPerfil();
 }
         // --- 1. FUNCIÓN DE GRADOS MÁXIMOS ---
 function actualizarMaximosPerfil() {
