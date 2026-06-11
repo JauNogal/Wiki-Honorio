@@ -658,7 +658,7 @@ setTimeout(() => {
     
     // Generamos los años del desplegable de forma segura
     let selectFiltro = document.getElementById('filtroAnoEncadenadas');
-    if (selectFiltro && selectFiltro.options.length <= 1) {
+    if (selectFiltro && selectFiltro.options.length <= 2) {
         let anoActual = new Date().getFullYear();
 for (let i = anoActual; i >= 1980; i--) {
             let opt = document.createElement('option');
