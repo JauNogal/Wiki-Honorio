@@ -575,7 +575,7 @@ function actualizarGraficoPerfil() {
               <span style="display: flex; align-items: center; gap: 10px;">
     🧗‍♀️ Vías Encadenadas
     <select id="filtroAnoEncadenadas" onchange="renderizarViasEncadenadas()" onclick="event.stopPropagation()" style="font-size: 0.8rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; color: #333; font-weight: normal;">
-        <option value="todos">Todos los años</option>
+        <option value="todos">📅 Por año (Todos)</option>
     </select>
     <select id="ordenEncadenadas" onchange="renderizarViasEncadenadas()" onclick="event.stopPropagation()" style="font-size: 0.8rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; color: #333; font-weight: normal; background-color: #f8f9fa;">
         <option value="fecha">Por grado</option>
@@ -658,7 +658,8 @@ setTimeout(() => {
     // Generamos los años del desplegable de forma segura
     let selectFiltro = document.getElementById('filtroAnoEncadenadas');
     if (selectFiltro && selectFiltro.options.length <= 1) {
-        for (let i = 2026; i >= 1980; i--) {
+        let anoActual = new Date().getFullYear();
+for (let i = anoActual; i >= 1980; i--) {
             let opt = document.createElement('option');
             opt.value = i.toString().slice(-2);
             opt.textContent = i;
