@@ -755,14 +755,25 @@ function renderizarViasEncadenadas() {
     listaFiltrada.forEach(via => {
         let tr = document.createElement('tr');
         tr.style.borderBottom = "1px solid #eaeaea";
+        
+        // --- MAGIA DE COLORES: Asignamos fondo claro y texto oscuro según el estilo ---
+        let bgEstilo = '#e8f4f8', textEstilo = '#2980b9'; // Azul por defecto
+        if (via.estilo === 'a-vista') { bgEstilo = '#eaf7f0'; textEstilo = '#27ae60'; } // Verde
+        else if (via.estilo === 'a-flash') { bgEstilo = '#e0f8f8'; textEstilo = '#008b8b'; } // Turquesa
+        else if (via.estilo === '2-pegue') { bgEstilo = '#fff4e0'; textEstilo = '#d35400'; } // Naranja
+        else if (via.estilo === 'trabajado') { bgEstilo = '#ffebea'; textEstilo = '#c0392b'; } // Rojo
+
+        // Construimos la pastilla solo si la vía tiene un estilo guardado
+        let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold;">${via.estilo.charAt(0).toUpperCase() + via.estilo.slice(1).replace('-', ' ')}</span>` : '';
+
         tr.innerHTML = `
             <td style="padding: 6px 8px;">
                 <input type="text" value="${via.fecha}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'fecha', this.value)" style="width: 70px; border: none; background: transparent; color: inherit; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
             </td>
            <td style="padding: 6px 8px; font-weight: 500;">
-    ${via.nombre}
-    ${via.estilo ? `<span style="font-size: 0.75em; background: #e8f4f8; color: #2980b9; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: normal;">${via.estilo.charAt(0).toUpperCase() + via.estilo.slice(1).replace('-', ' ')}</span>` : ''}
-</td>
+                ${via.nombre}
+                ${pillEstilo}
+            </td>
             <td style="padding: 6px 8px; text-align: center; font-weight: bold; color: #2c3e50;">${via.grado}</td>
             <td style="padding: 6px 8px; text-align: center;">
                 <input type="number" min="0" value="${via.intentos}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'intentos', this.value)" style="width: 45px; border: none; background: transparent; color: inherit; font-weight: inherit; text-align: center; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
