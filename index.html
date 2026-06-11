@@ -700,9 +700,12 @@ function renderizarViasEncadenadas() {
     let lista = [];
     try { if (listaRaw) lista = JSON.parse(listaRaw); } catch(e) { lista = []; }
     
-    // 1. Leemos qué año has elegido en el desplegable
+    // 1. Leemos los dos selectores (Año y Orden)
     let selectFiltro = document.getElementById('filtroAnoEncadenadas');
     let filtroAno = selectFiltro ? selectFiltro.value : 'todos';
+
+    let selectOrden = document.getElementById('ordenEncadenadas');
+    let ordenFiltro = selectOrden ? selectOrden.value : 'fecha';
 
     tbody.innerHTML = ''; // Limpiamos tabla
 
@@ -711,15 +714,33 @@ function renderizarViasEncadenadas() {
         return;
     }
 
-    // 2. Etiquetamos las vías con su posición real para no borrar la equivocada al filtrar
+    // 2. Etiquetamos con el índice original para poder borrar/editar sin fallos
     let listaFiltrada = lista.map((via, index) => {
         return { ...via, indiceOriginal: index };
     });
 
-    // 3. Si no pone "todos", filtramos para quedarnos solo con las que terminen en ese año (ej: /26)
+    // 3. Filtramos por año si hace falta
     if (filtroAno !== 'todos') {
         listaFiltrada = listaFiltrada.filter(via => {
             return via.fecha && via.fecha.endsWith(filtroAno);
+        });
+    }
+
+    // 4. MOTOR DE ORDENACIÓN POR GRADO
+    const escalaGrados = ["III", "III+", "IV", "IV+", "V", "V+", "6a", "6a+", "6b", "6b+", "6c", "6c+", "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+", "9a", "9a+", "9b", "9b+", "9c"];
+
+    if (ordenFiltro === 'grado-desc' || ordenFiltro === 'grado-asc') {
+        listaFiltrada.sort((a, b) => {
+            // Buscamos la posición del grado en nuestra tabla oficial
+            let indexA = escalaGrados.indexOf(a.grado ? a.grado.trim() : "");
+            let indexB = escalaGrados.indexOf(b.grado ? b.grado.trim() : "");
+            
+            // Si el grado está escrito raro y no existe, lo mandamos al fondo (-1)
+            if (indexA === -1) indexA = -1;
+            if (indexB === -1) indexB = -1;
+
+            if (ordenFiltro === 'grado-desc') return indexB - indexA; // De mayor a menor
+            if (ordenFiltro === 'grado-asc') return indexA - indexB;  // De menor a mayor
         });
     }
 
@@ -728,7 +749,7 @@ function renderizarViasEncadenadas() {
         return;
     }
 
-    // 4. Dibujamos la tabla usando cajas invisibles para editar fecha e intentos
+    // 5. Dibujamos la tabla final ordenada
     listaFiltrada.forEach(via => {
         let tr = document.createElement('tr');
         tr.style.borderBottom = "1px solid #eaeaea";
