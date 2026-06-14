@@ -1047,7 +1047,7 @@ function seleccionarEscuela(id) {
     } else {
         let encadenesPorSector = {};
         database.vias.forEach(via => {
-            if (via.idEscuela === id) {
+            if (Number(via.idEscuela) === Number(id)) {
                 const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
                 if (estado && estado !== 'proyecto') {
                     encadenesPorSector[via.idSector] = (encadenesPorSector[via.idSector] || 0) + 1;
