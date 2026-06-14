@@ -937,22 +937,22 @@ function mostrarEstadisticas() {
 
       // --- MOTOR DE NIDIFICACIÓN ---
 function generarAvisoNidificacion(idEscuela) {
-    // 1. DICCIONARIO DE RESTRICCIONES (Añade aquí las escuelas que necesites por su ID)
+    // 1. DICCIONARIO DE RESTRICCIONES
     const restricciones = {
-        9: { // Ejemplo con el ID 9 (Figares)
-            inicio: "12-15", // Formato Mes-Día (15 de Diciembre)
-            fin: "08-31",    // Formato Mes-Día (31 de Agosto)
+        48: { // Ejemplo con La Ñora
+            inicio: "12-15",
+            fin: "08-31",    
             sectores: "todos los sectores" 
         },
-        16: { // Ejemplo con el ID 16 (Quirós)
-            inicio: "03-01", 
-            fin: "07-31",    
-            sectores: "los sectores afectados"
+        9: { // Figares
+            inicio: "12-15", 
+            fin: "08-31",    
+            sectores: "todos los sectores"
         }
     };
 
     const aviso = restricciones[idEscuela];
-    if (!aviso) return ""; // Si la escuela no tiene restricción, no hace nada
+    if (!aviso) return ""; 
 
     let hoy = new Date();
     let anioActual = hoy.getFullYear();
@@ -966,7 +966,6 @@ function generarAvisoNidificacion(idEscuela) {
     let prohibido = false;
     let diasFaltantes = 0;
 
-    // Lógica matemática para años cruzados (Ej: Dic a Ago) y años normales
     if (fechaIni > fechaFin) {
         if (hoy >= fechaIni || hoy <= fechaFin) {
             prohibido = true;
@@ -987,11 +986,12 @@ function generarAvisoNidificacion(idEscuela) {
         }
     }
 
-    // Dibujamos el Banner Emergente
+    // Carteles con botón X para cerrar
     if (prohibido) {
         return `
-        <div style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <div style="font-size: 1.1rem; color: #b91c1c; font-weight: bold; margin-bottom: 5px;">🦅 ¡Atención! Escalada Prohibida</div>
+        <div id="cartel-nidificacion" style="position: relative; background: #fee2e2; border-left: 4px solid #ef4444; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <span onclick="document.getElementById('cartel-nidificacion').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 1.5rem; color: #b91c1c; font-weight: bold; line-height: 1;">&times;</span>
+            <div style="font-size: 1.1rem; color: #b91c1c; font-weight: bold; margin-bottom: 5px; padding-right: 20px;">🦅 ¡Atención! Escalada Prohibida</div>
             <div style="color: #7f1d1d; font-size: 0.9rem;">
                 Por nidificación, la escalada en <b>${aviso.sectores}</b> está prohibida desde el ${diaIni}/${mesIni} hasta el ${diaFin}/${mesFin}.<br>
                 <span style="display:inline-block; margin-top:8px; background:#ef4444; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;">Faltan ${diasFaltantes} días para poder escalar</span>
@@ -999,14 +999,94 @@ function generarAvisoNidificacion(idEscuela) {
         </div>`;
     } else {
         return `
-        <div style="background: #eaf7f0; border-left: 4px solid #27ae60; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <div style="font-size: 1.1rem; color: #166534; font-weight: bold; margin-bottom: 5px;">🦅 Escalada Permitida (Aviso)</div>
+        <div id="cartel-nidificacion" style="position: relative; background: #eaf7f0; border-left: 4px solid #27ae60; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <span onclick="document.getElementById('cartel-nidificacion').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 1.5rem; color: #166534; font-weight: bold; line-height: 1;">&times;</span>
+            <div style="font-size: 1.1rem; color: #166534; font-weight: bold; margin-bottom: 5px; padding-right: 20px;">🦅 Escalada Permitida (Aviso)</div>
             <div style="color: #14532d; font-size: 0.9rem;">
                 Actualmente se permite escalar en <b>${aviso.sectores}</b>. Recuerda que se prohibirá por nidificación desde el ${diaIni}/${mesIni} hasta el ${diaFin}/${mesFin}.<br>
                 <span style="display:inline-block; margin-top:8px; background:#27ae60; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;">Quedan ${diasFaltantes} días de escalada libre</span>
             </div>
         </div>`;
     }
+}
+
+function seleccionarEscuela(id) {
+    if (map) document.getElementById('map').style.display = 'none';
+    escuelaActualId = id;
+    const escuela = database.escuelas.find(e => Number(e.id) === Number(id));
+    if (!escuela) return;
+
+    let html = `<button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button><div class="section-title">${escuela.nombre}</div>`;
+    if (escuela.foto) html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela" style="margin-bottom: 10px;">`;
+
+    // INYECTAMOS EL AVISO
+    html += generarAvisoNidificacion(id);
+
+    html += `
+    <div style="display: flex; gap: 12px; margin-bottom: 15px; align-items: center;">
+        <button onclick="const el = document.getElementById('info-escuela-bloque'); el.style.display = el.style.display === 'none' ? 'block' : 'none';" style="border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; border-radius: 50%; background-color: #3498db; color: white; font-weight: bold; font-size: 1.2rem; font-family: Georgia, serif; box-shadow: 0 2px 4px rgba(0,0,0,0.15); padding: 0;">
+            i
+        </button>
+        <a href="https://maps.google.com/?q=$${escuela.lat},${escuela.lng}" target="_blank" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 6px; background-color: #00796B; box-shadow: 0 2px 4px rgba(0,0,0,0.15); transform: rotate(45deg);">
+            <svg viewBox="0 0 24 24" fill="white" style="width: 22px; height: 22px; transform: rotate(-45deg);">
+                <path d="M20.5 4l-4-4v2h-8C5.01 2 3 4.01 3 6.5v13h2.5v-13C5.5 5.12 6.62 4 8 4h8.5v2L20.5 4z"/>
+            </svg>
+        </a>
+    </div>
+    <div id="info-escuela-bloque" style="display: none; background-color: white; border-left: 4px solid #3498db; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.95rem; line-height: 1.5; color: #333;">
+        <p><b>Información de la escuela:</b><br><br>${escuela.informacion || 'No hay información detallada para esta escuela todavía.'}</p>
+    </div>
+    `;
+
+    html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
+                
+    // FILTRO BLINDADO
+    const sectoresFiltrados = database.sectores.filter(s => Number(s.idEscuela) === Number(id));
+    sectoresFiltrados.sort((a, b) => parseInt(a.idSector) - parseInt(b.idSector));
+    
+    if (sectoresFiltrados.length === 0) {
+        html += `<p style="color:#777; font-style:italic;">No hay sectores.</p>`;
+    } else {
+        let encadenesPorSector = {};
+        database.vias.forEach(via => {
+            // BLINDAJE EN LAS VÍAS
+            if (Number(via.idEscuela) === Number(id)) {
+                const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
+                if (estado && estado !== 'proyecto') {
+                    encadenesPorSector[via.idSector] = (encadenesPorSector[via.idSector] || 0) + 1;
+                }
+            }
+        });
+
+        sectoresFiltrados.forEach(sector => {
+            let totalViasSector = sector.vias || 0;
+            let encadenadasSector = encadenesPorSector[sector.idSector] || 0;
+            let porcentajeSector = totalViasSector > 0 ? Math.round((encadenadasSector / totalViasSector) * 100) : 0;
+
+            let textoPastilla = porcentajeSector === 100 ? `👑 100%` : `${porcentajeSector}%`;
+            let etiquetaPorcentajeSector = `<span style="background: #2c3e50; color: white; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; margin-left: 10px; display: inline-block; line-height: 1.2;">${textoPastilla}</span>`;
+
+            html += `
+            <div class="sector-card" onclick="verSector(${sector.idSector})">
+                <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
+                    <h3 style="margin: 0; font-size: 1.2em; color: #333; display: flex; align-items: center;">
+                        ${sector.idSector}. ${sector.nombreSector}
+                        ${etiquetaPorcentajeSector}
+                    </h3>
+                    <span style="font-size: 0.85em; font-weight: bold; color: #777; flex-grow: 1; text-align: center;">Rango de grados</span>
+                    <span style="font-size: 0.85em; color: #666; white-space: nowrap;">Vías: <span class="info-tag">${sector.vias || 0}</span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; gap: 4px; width: 100%;">
+                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">Hasta V+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo1 || 0}</span></div>
+                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">6a a 6c+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo2 || 0}</span></div>
+                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">7a a 7c+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo3 || 0}</span></div>
+                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">8a o ><br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo4 || 0}</span></div>
+                </div>
+            </div>`;
+        });
+    }
+    document.getElementById('contenido-dinamico').innerHTML = html;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function seleccionarEscuela(id) {
