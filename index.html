@@ -935,7 +935,81 @@ function mostrarEstadisticas() {
     document.getElementById('contenido-dinamico').innerHTML = html;
 }
 
-        function seleccionarEscuela(id) {
+      // --- MOTOR DE NIDIFICACIÓN ---
+function generarAvisoNidificacion(idEscuela) {
+    // 1. DICCIONARIO DE RESTRICCIONES (Añade aquí las escuelas que necesites por su ID)
+    const restricciones = {
+        48: { // Ejemplo con el ID 48 (La Ñora)
+            inicio: "12-15", // Formato Mes-Día (15 de Diciembre)
+            fin: "08-31",    // Formato Mes-Día (31 de Agosto)
+            sectores: "todos los sectores" 
+        },
+        16: { // Ejemplo con el ID 16 (Quirós)
+            inicio: "03-01", 
+            fin: "07-31",    
+            sectores: "los sectores afectados"
+        }
+    };
+
+    const aviso = restricciones[idEscuela];
+    if (!aviso) return ""; // Si la escuela no tiene restricción, no hace nada
+
+    let hoy = new Date();
+    let anioActual = hoy.getFullYear();
+
+    let [mesIni, diaIni] = aviso.inicio.split('-');
+    let [mesFin, diaFin] = aviso.fin.split('-');
+
+    let fechaIni = new Date(anioActual, mesIni - 1, diaIni);
+    let fechaFin = new Date(anioActual, mesFin - 1, diaFin);
+
+    let prohibido = false;
+    let diasFaltantes = 0;
+
+    // Lógica matemática para años cruzados (Ej: Dic a Ago) y años normales
+    if (fechaIni > fechaFin) {
+        if (hoy >= fechaIni || hoy <= fechaFin) {
+            prohibido = true;
+            let finReal = new Date(hoy <= fechaFin ? anioActual : anioActual + 1, mesFin - 1, diaFin);
+            diasFaltantes = Math.ceil((finReal - hoy) / (1000 * 60 * 60 * 24));
+        } else {
+            prohibido = false;
+            diasFaltantes = Math.ceil((fechaIni - hoy) / (1000 * 60 * 60 * 24));
+        }
+    } else {
+        if (hoy >= fechaIni && hoy <= fechaFin) {
+            prohibido = true;
+            diasFaltantes = Math.ceil((fechaFin - hoy) / (1000 * 60 * 60 * 24));
+        } else {
+            prohibido = false;
+            let iniReal = new Date(hoy > fechaFin ? anioActual + 1 : anioActual, mesIni - 1, diaIni);
+            diasFaltantes = Math.ceil((iniReal - hoy) / (1000 * 60 * 60 * 24));
+        }
+    }
+
+    // Dibujamos el Banner Emergente
+    if (prohibido) {
+        return `
+        <div style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="font-size: 1.1rem; color: #b91c1c; font-weight: bold; margin-bottom: 5px;">🦅 ¡Atención! Escalada Prohibida</div>
+            <div style="color: #7f1d1d; font-size: 0.9rem;">
+                Por nidificación, la escalada en <b>${aviso.sectores}</b> está prohibida desde el ${diaIni}/${mesIni} hasta el ${diaFin}/${mesFin}.<br>
+                <span style="display:inline-block; margin-top:8px; background:#ef4444; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;">Faltan ${diasFaltantes} días para poder escalar</span>
+            </div>
+        </div>`;
+    } else {
+        return `
+        <div style="background: #eaf7f0; border-left: 4px solid #27ae60; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="font-size: 1.1rem; color: #166534; font-weight: bold; margin-bottom: 5px;">🦅 Escalada Permitida (Aviso)</div>
+            <div style="color: #14532d; font-size: 0.9rem;">
+                Actualmente se permite escalar en <b>${aviso.sectores}</b>. Recuerda que se prohibirá por nidificación desde el ${diaIni}/${mesIni} hasta el ${diaFin}/${mesFin}.<br>
+                <span style="display:inline-block; margin-top:8px; background:#27ae60; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;">Quedan ${diasFaltantes} días de escalada libre</span>
+            </div>
+        </div>`;
+    }
+}
+
+function seleccionarEscuela(id) {
     if (map) document.getElementById('map').style.display = 'none';
     escuelaActualId = id;
     const escuela = database.escuelas.find(e => e.id === id);
@@ -943,6 +1017,9 @@ function mostrarEstadisticas() {
 
     let html = `<button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button><div class="section-title">${escuela.nombre}</div>`;
     if (escuela.foto) html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela" style="margin-bottom: 10px;">`;
+
+    // INYECTAMOS EL AVISO DE NIDIFICACIÓN AQUÍ
+    html += generarAvisoNidificacion(id);
 
     html += `
     <div style="display: flex; gap: 12px; margin-bottom: 15px; align-items: center;">
@@ -968,7 +1045,6 @@ function mostrarEstadisticas() {
     if (sectoresFiltrados.length === 0) {
         html += `<p style="color:#777; font-style:italic;">No hay sectores.</p>`;
     } else {
-        // 1. MOTOR MATEMÁTICO: Contamos los encadenes por cada sector
         let encadenesPorSector = {};
         database.vias.forEach(via => {
             if (via.idEscuela === id) {
@@ -980,16 +1056,13 @@ function mostrarEstadisticas() {
         });
 
         sectoresFiltrados.forEach(sector => {
-            // 2. Calculamos el porcentaje
             let totalViasSector = sector.vias || 0;
             let encadenadasSector = encadenesPorSector[sector.idSector] || 0;
             let porcentajeSector = totalViasSector > 0 ? Math.round((encadenadasSector / totalViasSector) * 100) : 0;
 
-            // 3. Lógica de la corona y la pastilla oscura
             let textoPastilla = porcentajeSector === 100 ? `👑 100%` : `${porcentajeSector}%`;
             let etiquetaPorcentajeSector = `<span style="background: #2c3e50; color: white; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; margin-left: 10px; display: inline-block; line-height: 1.2;">${textoPastilla}</span>`;
 
-            // 4. Dibujamos la caja del sector
             html += `
             <div class="sector-card" onclick="verSector(${sector.idSector})">
                 <div style="display: flex; align-items: baseline; justify-content: space-between; width: 100%; border-bottom: 2px solid #eee; padding-bottom: 6px; margin-bottom: 12px; gap: 10px;">
