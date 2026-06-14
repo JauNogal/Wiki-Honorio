@@ -1039,7 +1039,7 @@ function seleccionarEscuela(id) {
 
     html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
                 
-    const sectoresFiltrados = database.sectores.filter(s => s.idEscuela === id);
+    const sectoresFiltrados = database.sectores.filter(s => Number(s.idEscuela) === Number(id));
     sectoresFiltrados.sort((a, b) => parseInt(a.idSector) - parseInt(b.idSector));
     
     if (sectoresFiltrados.length === 0) {
