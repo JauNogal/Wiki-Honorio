@@ -9,19 +9,28 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 
     <style>
-       .logo-movil {
-    height: 75px;          /* 1º: Lo hacemos un poco más pequeño (antes 90px) */
-    width: 75px;           /* 1º: Mantenemos la proporción cuadrada para el círculo */
-    object-fit: cover;     /* 2º y 3º: LA MAGIA. Esto hace "zoom" para rellenar todo el círculo, eliminando los bordes grises y agrandando el logo */
-    border-radius: 50%;
+       ..marco-logo {
+    height: 70px;          /* 1. Marco un poco más pequeño */
+    width: 70px;
     background-color: white;
+    border-radius: 50%;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;      /* Corta todo lo que sobresalga del círculo */
     position: relative;
     z-index: 10002;
-    margin-bottom: -30px;  /* Ajustamos la caída al nuevo tamaño */
+    margin-bottom: -25px;  /* Caída sobre el mapa */
+    margin-left: 45px;     /* 1. Más esquinado a la izquierda, pero librando el +/- */
     margin-top: 5px;
-    margin-left: 55px;     /* 1º: Lo desplazamos a la derecha para liberar el +/- del mapa */
+}
+
+.logo-movil {
+    height: 135%;          /* 2. Hace "zoom" para eliminar el margen en blanco */
+    width: 135%;
+    object-fit: contain;   /* Mantiene las proporciones del dibujo */
+    object-position: center; /* Lo centra perfectamente en el marco */
 }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { max-width: 100%; overflow-x: hidden; background-color: #f4f4f9; color: #333; padding-bottom: 40px; }
