@@ -9,30 +9,18 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 
     <style>
-       ..marco-logo {
-    width: 75px !important;
-    height: 75px !important;
-    min-width: 75px !important; /* Obliga a que la caja no se estire */
-    border-radius: 50% !important;
-    background-color: white !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
-    overflow: hidden !important; /* Corta a cuchillo todo lo que salga del círculo */
-    position: relative !important;
-    z-index: 10002 !important;
-    margin-bottom: -25px !important;
-    margin-left: 60px !important; /* Desplazado a la derecha para librar el zoom del mapa */
-    margin-top: 5px !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-}
-
-.logo-movil {
-    width: 105px !important;  /* Le damos un tamaño fijo en píxeles para hacer el "zoom" */
-    height: 105px !important; /* Nada de porcentajes */
-    min-width: 105px !important;
-    max-width: none !important; /* Truco vital para que la imagen desborde y se pueda cortar */
-    object-fit: contain !important;
+      .logo-movil {
+    height: 75px; 
+    width: 75px;
+    border-radius: 50%; /* Asegura que la sombra proyectada sea redonda */
+    background-color: white; /* Por si el interior de tu logo es transparente, para que no se vea azul */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra redonda */
+    position: relative;
+    z-index: 10002;
+    margin-bottom: -25px; /* Lo baja hacia el mapa */
+    margin-left: 60px; /* Lo aleja de los botones del zoom */
+    margin-top: 5px;
+    object-fit: contain;
 }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { max-width: 100%; overflow-x: hidden; background-color: #f4f4f9; color: #333; padding-bottom: 40px; }
