@@ -918,6 +918,7 @@ function mostrarEstadisticas() {
     }, 50);
 }
         function mostrarInicio() {
+            document.getElementById('modalRocodromos').style.display = 'none';
     if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.30, -5.98],8); }
     escuelaActualId = null;
     let html = `<div class="section-title">Escuelas de escalada</div>`;
@@ -1668,37 +1669,18 @@ function eliminarProyectoManual(index) {
     function cerrarModalRocodromos() {
         document.getElementById('modalRocodromos').style.display = 'none';
     }
-      // --- CÓDIGO VIGILANTE PARA LA PANTALLA DE ROCÓDROMOS ---
-    
-    // 1. Si haces clic en la cabecera (Logo, Buscador), apaga la pantalla
-    document.querySelector('header').addEventListener('click', function() {
-        document.getElementById('modalRocodromos').style.display = 'none';
-    });
-
-    // 2. Si estás escribiendo en el buscador y le das a "Enter", apaga la pantalla
-    document.querySelector('header').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            document.getElementById('modalRocodromos').style.display = 'none';
-        }
-    });
-
-    // 3. Si pulsas opciones del menú, apaga la pantalla (EXCEPTO el propio botón de Rocódromos)
-    document.getElementById('menuOpciones').addEventListener('click', function(e) {
-        // La clave: Solo cerramos la pantalla si NO has clicado en el botón de Rocódromos
-        if (!e.target.closest('[onclick="abrirModalRocodromos()"]')) {
-            document.getElementById('modalRocodromos').style.display = 'none';
-        }
-    });
+      
 </script>
 
-<div id="modalRocodromos" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; background-color: #f4f6f9; z-index: 9998; padding-top: 75px; padding-bottom: 50px; box-sizing: border-box;">
+<div id="modalRocodromos" style="display: none; position: absolute; top: 75px; left: 0; right: 0; min-height: calc(100vh - 75px); background-color: #f4f6f9; z-index: 1000; overflow-y: auto; overflow-x: hidden; padding-bottom: 50px;">
     
-    <div style="max-width: 900px; margin: 0 auto; padding: 15px;">
-        <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/RocosAST.jpeg?alt=media&token=67c01f7c-ff50-4417-b26f-131685c5580d" alt="Mapa Rocódromos Roca Norte" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block;">
+    <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+        <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/RocosAST.jpeg?alt=media&token=67c01f7c-ff50-4417-b26f-131685c5580d" alt="Rocódromos Roca Norte" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block;">
 
-        <div style="margin-top: 20px;"></div>
+        <div style="margin-top: 20px;">
+            
+        </div>
     </div>
-</div>
 </div>
 </body>
 </html>
