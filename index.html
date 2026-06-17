@@ -148,7 +148,7 @@
        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="alert('Próximamente: Leyenda')">
     <img src="https://img.icons8.com/ios-filled/50/000000/map-pin.png" style="height: 1.3em; width: auto; vertical-align: middle;" alt=""> Leyenda
 </div>
-       <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="abrirModalRocodromos()">
+       <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;"onclick="mostrarRocodromos(); document.getElementById('menuOpciones').style.display = 'none';">
     <div style="background-color: #fcfcfc; border: 1px solid #ddd; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; position: relative;">
         <span style="position: absolute; top: 2px; left: 4px; width: 6px; height: 6px; background-color: #e74c3c; border-radius: 50%;"></span>
         <span style="position: absolute; bottom: 4px; right: 4px; width: 5px; height: 5px; background-color: #3498db; border-radius: 50%;"></span>
@@ -916,6 +916,33 @@ function mostrarEstadisticas() {
         if (typeof actualizarGraficoPerfil === 'function') actualizarGraficoPerfil();
         calcularYMostrarPerfil();
     }, 50);
+}
+        function mostrarRocodromos() {
+    // 1. Ocultamos el mapa
+    if (map) document.getElementById('map').style.display = 'none';
+
+    // 2. Preparamos el esqueleto de la nueva pantalla
+    let html = `
+        <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
+            &#8592; Volver a Escuelas
+        </button>
+        
+        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">Rocódromos</div>
+
+        <div style="margin-bottom: 20px;">
+            <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/RocosAST.jpeg?alt=media&token=67c01f7c-ff50-4417-b26f-131685c5580d" alt="Mapa Rocódromos Roca Norte" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block;">
+        </div>
+
+        <div id="contenedor-lista-rocodromos">
+            
+        </div>
+    `;
+
+    // 3. Lo inyectamos en la pantalla principal
+    document.getElementById('contenido-dinamico').innerHTML = html;
+    
+    // 4. Forzamos la subida
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
         function mostrarInicio() {
             
