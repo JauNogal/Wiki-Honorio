@@ -1670,22 +1670,20 @@ function eliminarProyectoManual(index) {
     }
 </script>
 
-<div id="modalRocodromos" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f4f6f9; z-index: 10005; overflow-y: auto;">
+<div id="modalRocodromos" style="display: none; position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; background-color: #f4f6f9; z-index: 10000; padding-top: 75px; padding-bottom: 50px; box-sizing: border-box;">
     
-    <span onclick="cerrarModalRocodromos()" style="position: absolute; top: 15px; right: 15px; font-size: 1.8em; cursor: pointer; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; z-index: 10;">&times;</span>
-
-    <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/RocosAST.jpeg?alt=media&token=67c01f7c-ff50-4417-b26f-131685c5580d" alt="Rocódromos Roca Norte" style="width: 100%; height: 35vh; min-height: 200px; object-fit: cover; display: block; background-color: #e0e0e0;">
-
-    <div style="padding: 25px; max-width: 600px; margin: 0 auto;">
-        <h2 style="margin-top: 0; margin-bottom: 20px; color: #2c3e50; font-size: 1.6em;">Rocódromos</h2>
+    <div style="max-width: 900px; margin: 0 auto; padding: 15px;">
         
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-            
-            <a href="ENLACE_WEB_DEL_ROCODROMO" target="_blank" style="text-decoration: none; color: #333; padding: 15px; background-color: white; border-radius: 8px; border: 1px solid #ddd; font-size: 1.1em; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">Nombre del Rocódromo</a>
-            
+        <div style="text-align: right; margin-bottom: 15px;">
+            <span onclick="cerrarModalRocodromos()" style="cursor: pointer; color: #2c3e50; font-weight: bold; font-size: 1.1em; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">Volver al mapa ✖</span>
         </div>
+
+        <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/RocosAST.jpeg?alt=media&token=67c01f7c-ff50-4417-b26f-131685c5580d" alt="Mapa Rocódromos Roca Norte" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block;">
+
+        <div style="margin-top: 20px;">
+            </div>
+        
     </div>
 </div>
-
 </body>
 </html>
