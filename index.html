@@ -1668,9 +1668,9 @@ function eliminarProyectoManual(index) {
     function cerrarModalRocodromos() {
         document.getElementById('modalRocodromos').style.display = 'none';
     }
-        // --- CÓDIGO VIGILANTE PARA LA PANTALLA DE ROCÓDROMOS ---
+      // --- CÓDIGO VIGILANTE PARA LA PANTALLA DE ROCÓDROMOS ---
     
-    // 1. Si haces clic en cualquier parte de la cabecera (Logo, Buscador, etc.), apaga la pantalla
+    // 1. Si haces clic en la cabecera (Logo, Buscador), apaga la pantalla
     document.querySelector('header').addEventListener('click', function() {
         document.getElementById('modalRocodromos').style.display = 'none';
     });
@@ -1682,9 +1682,12 @@ function eliminarProyectoManual(index) {
         }
     });
 
-    // 3. Si pulsas cualquier opción del menú desplegable (Perfil, Diario, etc.), apaga la pantalla
-    document.getElementById('menuOpciones').addEventListener('click', function() {
-        document.getElementById('modalRocodromos').style.display = 'none';
+    // 3. Si pulsas opciones del menú, apaga la pantalla (EXCEPTO el propio botón de Rocódromos)
+    document.getElementById('menuOpciones').addEventListener('click', function(e) {
+        // La clave: Solo cerramos la pantalla si NO has clicado en el botón de Rocódromos
+        if (!e.target.closest('[onclick="abrirModalRocodromos()"]')) {
+            document.getElementById('modalRocodromos').style.display = 'none';
+        }
     });
 </script>
 
