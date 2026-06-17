@@ -1660,23 +1660,41 @@ function eliminarProyectoManual(index) {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-    </script>
-    1662    }
-    1661        window.scrollTo({ top: 0, behavior: 'smooth' });
-1662    }
-        
-        // Pega aquí las funciones del Paso 3
-        function abrirModalRocodromos() { ... }
-        function cerrarModalRocodromos() { ... }
+   function abrirModalRocodromos() {
+        document.getElementById('menuOpciones').style.display = 'none';
+        document.getElementById('modalRocodromos').style.display = 'flex';
+    }
 
-1663    </script>
-1663    </script>
+    function cerrarModalRocodromos() {
+        document.getElementById('modalRocodromos').style.display = 'none';
+    }
+</script>
+
+<div id="modalRocodromos" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 10005; align-items: center; justify-content: center;">
+    
+    <div style="background-color: white; width: 90%; max-width: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative;">
         
-        <div id="modalRocodromos" style="display: none; position: fixed; ...
-        ... (todo el bloque) ...
+        <span onclick="cerrarModalRocodromos()" style="position: absolute; top: 10px; right: 15px; font-size: 1.8em; cursor: pointer; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; z-index: 10;">&times;</span>
+
+        <img src="TU_ENLACE_AQUI" alt="Rocódromos Roca Norte" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+
+        <div style="padding: 20px; max-height: 50vh; overflow-y: auto;">
+            <h3 style="margin-top: 0; margin-bottom: 15px; color: #2c3e50;">Rocódromos</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <strong style="color: #666; font-size: 0.9em; margin-top: 5px;">OCCIDENTE</strong>
+                <a href="#" target="_blank" style="text-decoration: none; color: #333; padding: 12px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">🧗‍♂️ Rocódromo Occidente</a>
+
+                <strong style="color: #666; font-size: 0.9em; margin-top: 10px;">CENTRO</strong>
+                <a href="#" target="_blank" style="text-decoration: none; color: #333; padding: 12px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">🧗‍♂️ Rocódromo Centro 1</a>
+                <a href="#" target="_blank" style="text-decoration: none; color: #333; padding: 12px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">🧗‍♂️ Rocódromo Centro 2</a>
+
+                <strong style="color: #666; font-size: 0.9em; margin-top: 10px;">ORIENTE</strong>
+                <a href="#" target="_blank" style="text-decoration: none; color: #333; padding: 12px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">🧗‍♂️ Rocódromo Oriente</a>
+            </div>
         </div>
+    </div>
+</div>
 
-1664    </body>
-1665 </html>
 </body>
 </html>
