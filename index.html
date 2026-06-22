@@ -1752,7 +1752,160 @@ function eliminarProyectoManual(index) {
   
       
 </script>
+<style>
+    .leyenda-container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        transform: translateX(320px); /* Un poco más ancho para que respire bien el texto */
+        transition: transform 0.3s ease-out;
+    }
 
+    .leyenda-container.abierto {
+        transform: translateX(0px);
+    }
+
+    .leyenda-tab {
+        width: 35px;
+        height: 160px;
+        background-color: #333;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px 0 0 8px;
+        cursor: pointer;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        font-family: 'Arial Black', sans-serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .leyenda-panel {
+        width: 320px;
+        height: 100vh;
+        background-color: #fff;
+        border-left: 1px solid #ddd;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .leyenda-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-bottom: 1px solid #eaeaea;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .leyenda-header h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+    }
+
+    .leyenda-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.4rem;
+        color: #7f8c8d;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+
+    .leyenda-body {
+        flex: 1;
+        overflow-y: auto; /* ESTO ES LA MAGIA DEL SCROLL */
+        padding: 10px;
+    }
+
+    .leyenda-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .leyenda-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f4f4f4;
+    }
+
+    .leyenda-icon {
+        width: 35px;
+        height: 35px;
+        object-fit: contain; /* Para que tu símbolo encaje perfecto sin recortarse */
+    }
+
+    .leyenda-desc {
+        color: #333;
+        font-size: 0.95rem;
+        line-height: 1.3;
+        flex: 1;
+    }
+</style>
+
+<div id="leyenda-container" class="leyenda-container">
+    <div id="leyenda-tab" class="leyenda-tab" onclick="toggleLeyenda()">
+        L E Y E N D A
+    </div>
+
+    <div id="leyenda-panel" class="leyenda-panel">
+        <div class="leyenda-header">
+            <h3>Símbolos Roca Norte</h3>
+            <button class="leyenda-close-btn" onclick="toggleLeyenda()">&times;</button>
+        </div>
+        <div class="leyenda-body">
+            <ul class="leyenda-list">
+                <li class="leyenda-item"><img src="URL_IMAGEN_1" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 1</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_2" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 2</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_3" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 3</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_4" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 4</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_5" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 5</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_6" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 6</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_7" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 7</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_8" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 8</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_9" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 9</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_10" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 10</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_11" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 11</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_12" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 12</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_13" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 13</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_14" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 14</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_15" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 15</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_16" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 16</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_17" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 17</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_18" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 18</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_19" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 19</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_20" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 20</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_21" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 21</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_22" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 22</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_23" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 23</span></li>
+                <li class="leyenda-item"><img src="URL_IMAGEN_24" alt="icono" class="leyenda-icon"><span class="leyenda-desc">Explicación 24</span></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleLeyenda() {
+        const container = document.getElementById('leyenda-container');
+        container.classList.toggle('abierto');
+    }
+</script>
 
 </body>
 </html>
