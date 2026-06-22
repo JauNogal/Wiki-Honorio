@@ -1085,7 +1085,7 @@ function mostrarEstadisticas() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
         function mostrarInicio() {
-            
+       document.getElementById('leyenda-container').style.display = 'none';     
     if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.30, -5.98],8); }
     escuelaActualId = null;
     let html = `<div class="section-title">Escuelas de escalada</div>`;
@@ -1220,6 +1220,7 @@ function seleccionarEscuela(id) {
     escuelaActualId = id;
     const escuela = database.escuelas.find(e => e.id === id);
     if (!escuela) return;
+    document.getElementById('leyenda-container').style.display = 'flex';
 
     let html = `<button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button><div class="section-title">${escuela.nombre}</div>`;
     if (escuela.foto) html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela" style="margin-bottom: 10px;">`;
