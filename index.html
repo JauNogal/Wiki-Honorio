@@ -13,25 +13,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 95px;           /* El tamaño de tu marco circular fijo */
-    height: 95px;            /* El tamaño de tu marco circular fijo */
+    width: 50px;           /* El tamaño de tu marco circular fijo */
+    height: 50px;            /* El tamaño de tu marco circular fijo */
     background-color: white;
     border-radius: 50%;    /* Lo hace completamente redondo */
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     overflow: hidden;      /* IMPRESCINDIBLE: Corta la imagen si hacemos el zoom muy grande */
     position: relative;
     z-index: 10002;
-    margin-top: 5px;
-    margin-bottom: -25px;
-    margin-left: 45px;     /* Movido a la izquierda al milímetro para esquivar el + y el - */
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 10px;     /* Movido a la izquierda al milímetro para esquivar el + y el - */
 }
 
 .logo-movil {
-    width: 195px;          /* Modifica el tamaño del logo */
-    height: 195px;        /* Modifica el tamaño del logo */
+    width: 100px;          /* Modifica el tamaño del logo */
+    height: 100px;        /* Modifica el tamaño del logo */
     max-width: none;       /* Evita que el navegador intente encoger la imagen */
     object-fit: contain;
-    margin-left: -5px;    /*Centra el logo a izquierda o derecha*/
+    margin-left: -3px;    /*Centra el logo a izquierda o derecha*/
 }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         html, body { max-width: 100%; overflow-x: hidden; background-color: #f4f4f9; color: #333; padding-bottom: 40px; }
@@ -117,9 +117,12 @@
 
     <header style="display: flex; justify-content: space-between; align-items: center; background-color: #2c3e50; color: white; padding: 10px 15px; position: relative; width: 100%; box-sizing: border-box; z-index: 10001;">
     
-        <a href="#" onclick="mostrarInicio(); return false;" class="marco-blanco" style="text-decoration: none;">
-    <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/LogoCabecera.png?alt=media&token=fcfd1dbc-953d-4812-b2f9-42b464d51b53" alt="Roca Norte" class="logo-movil">
-</a>
+       <div style="display: flex; align-items: center;">
+            <a href="#" onclick="mostrarInicio(); return false;" class="marco-blanco" style="text-decoration: none;">
+                <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/LogoCabecera.png?alt=media&token=fcfd1dbc-953d-4812-b2f9-42b464d51b53" alt="Roca Norte" class="logo-movil">
+            </a>
+            <span style="color: white; font-size: 1.4rem; font-weight: bold; font-family: 'Arial Black', sans-serif; letter-spacing: 1px; margin-left: 12px; white-space: nowrap;">Roca Norte</span>
+        </div>
         <div style="display: flex; align-items: center; gap: 12px; position: relative;">
             
             <div style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 4px 10px; position: relative;">
