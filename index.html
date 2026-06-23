@@ -1731,6 +1731,63 @@ function eliminarProyectoManual(index) {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+        function mostrarColaboradores() {
+    let contenedor = document.getElementById('contenido-dinamico');
+    if (!contenedor) return;
+
+    contenedor.innerHTML = `
+        <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
+            
+            <div style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                🤝 Colaboradores
+            </div>
+
+            <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.6; color: #444; font-size: 0.95rem; text-align: justify;">
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    Aquí puedes escribir todo tu texto de introducción. Explica de qué va esta sección, el objetivo de la guía y agradece a las marcas o personas su apoyo al proyecto Roca Norte.
+                </p>
+                <p style="margin-bottom: 0;">
+                    Este es un segundo párrafo de ejemplo. Puedes editar este texto directamente en el código para contar lo que necesites a la comunidad.
+                </p>
+            </div>
+
+            <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1rem; margin-bottom: 15px;">Marcas que nos apoyan</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    
+                    <div style="display: flex; align-items: center; gap: 15px; border: 1px solid #eee; padding: 12px; border-radius: 8px; background-color: #fafafa;">
+                        <img src="https://via.placeholder.com/80" alt="Logo Marca" style="width: 70px; height: 70px; object-fit: contain; border-radius: 8px; background: white; border: 1px solid #ddd;">
+                        <div>
+                            <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.1rem;">Nombre de la Marca 1</h4>
+                            <p style="margin: 0; font-size: 0.9rem; color: #666; line-height: 1.4;">Pequeña descripción de la marca, lo que aportan, o su página web.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 15px; border: 1px solid #eee; padding: 12px; border-radius: 8px; background-color: #fafafa;">
+                        <img src="https://via.placeholder.com/80" alt="Logo Marca" style="width: 70px; height: 70px; object-fit: contain; border-radius: 8px; background: white; border: 1px solid #ddd;">
+                        <div>
+                            <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.1rem;">Nombre de la Marca 2</h4>
+                            <p style="margin: 0; font-size: 0.9rem; color: #666; line-height: 1.4;">Otra pequeña descripción que puedes ir rellenando poco a poco.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    `;
+
+    // Cierra el menú desplegable para que se vea el contenido
+    let menu = document.getElementById('menuOpciones');
+    if (menu) {
+        menu.style.display = 'none';
+    }
+    
+    // Sube la pantalla arriba del todo suavemente
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
   
    // Ocultar pantalla de carga después de 1.5 segundos
 window.addEventListener('load', () => {
