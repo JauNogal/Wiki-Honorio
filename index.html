@@ -1983,6 +1983,60 @@ window.addEventListener('load', () => {
         const container = document.getElementById('leyenda-container');
         container.classList.toggle('abierto');
     }
+    function mostrarDonaciones() {
+        let contenedor = document.getElementById('contenido-dinamico');
+        if (!contenedor) return;
+
+        contenedor.innerHTML = `
+            <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
+                
+                <div style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-hand-holding-heart" style="color: #e74c3c;"></i> Donaciones
+                </div>
+
+                <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.6; color: #444; font-size: 0.95rem; text-align: justify;">
+                    
+                    <p style="margin-top: 0; margin-bottom: 20px;">
+                        Antes que creadores de este proyecto, somos escaladores. Solo por ese motivo, estamos profundamente agradecidos a todas esas personas que sacrifican su tiempo y su dinero para pasar una tarde colgados de una cuerda, perforando una pared, cepillando roca y tragando polvo y suciedad.
+                    </p>
+                    <p style="margin-bottom: 20px;">
+                    Además, como es evidente, sin su trabajo y su generosidad no disfrutaríamos de la gran cantidad de escuelas de escalada que existen hoy en día y, por lo tanto, no habría lugar para ROCA NORTE.
+                    </p>
+                    <p style="margin-bottom: 20px;">
+                    Este proyecto se lanzará inicialmente de forma gratuita, a modo de prueba. Seguramente aparecerán errores que habrá que corregir y, además, este periodo nos permitirá conocer la acogida que tenga entre la comunidad escaladora. Sin embargo, una vez finalizada esta fase (cuya duración aún está por determinar), ROCA NORTE pasará a ser un servicio de pago.
+                    </p>
+                    <p style="margin-bottom: 20px;">
+                    Con los beneficios que, esperamos, genere el proyecto, queremos recuperar la inversión realizada y compensar el tiempo dedicado a su desarrollo. Pero también queremos destinar una parte de esos beneficios a la compra de material para equipar y reequipar vías de escalada, que entregaremos a los distintos clubes y equipadores locales.
+                    </p>
+                    <p style="margin-bottom: 20px;">
+                    Porque, en definitiva, sin ellos y sin su apoyo, este proyecto nunca habría tenido razón de existir.
+                    </p>
+                    
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="TU_ENLACE_AQUI" target="_blank" style="background: #27ae60; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: none; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-coffee"></i> Apoyar el proyecto
+                        </a>
+                    </div>
+                    
+                </div>
+
+            </div>
+        `;
+
+        // Cierra el menú desplegable para que se vea el contenido
+        let menu = document.getElementById('menuOpciones');
+        if (menu) {
+            menu.style.display = 'none';
+        }
+        
+        // Sube la pantalla arriba del todo suavemente
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+</script>
+</body>
+</html>
 </script>
 
 </body>
