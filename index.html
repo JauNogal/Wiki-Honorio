@@ -88,6 +88,24 @@
 .perfil-foto-frame:hover::after {
     opacity: 1;
 }
+
+        /* Animación de la campana de novedades */
+    @keyframes vibrar {
+        0% { transform: rotate(0deg); }
+        10% { transform: rotate(15deg); }
+        20% { transform: rotate(-10deg); }
+        30% { transform: rotate(5deg); }
+        40% { transform: rotate(-5deg); }
+        50% { transform: rotate(0deg); }
+        100% { transform: rotate(0deg); }
+    }
+    
+    .campana-vibrando {
+        animation: vibrar 1.5s infinite;
+        color: #e74c3c !important; /* Se pone roja cuando hay avisos */
+        text-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+    }
+        
     </style>
 </head>
 <body>
