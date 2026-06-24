@@ -1986,6 +1986,8 @@ window.addEventListener('load', () => {
     function mostrarDonaciones() {
         let contenedor = document.getElementById('contenido-dinamico');
         if (!contenedor) return;
+        let mapa = document.getElementById('map');
+        if (mapa) mapa.style.display = 'none';
 
         contenedor.innerHTML = `
             <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
