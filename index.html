@@ -2032,11 +2032,69 @@ window.addEventListener('load', () => {
         // Sube la pantalla arriba del todo suavemente
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    // 1. TU LISTA DE NOVEDADES (Añade las nuevas siempre arriba con un 'id' mayor)
+    const listaNovedades = [
+        { id: 1, fecha: "24/06/2026", titulo: "Lanzamiento de Roca Norte", texto: "¡Bienvenidos a la guía! Empezamos esta aventura con la información básica de los sectores principales." }
+    ];
+
+    // 2. FUNCIÓN PARA MOSTRAR LA PANTALLA
+    function mostrarNovedades() {
+        let contenedor = document.getElementById('contenido-dinamico');
+        if (!contenedor) return;
+
+        // Apagar el mapa
+        let mapa = document.getElementById('map');
+        if (mapa) mapa.style.display = 'none';
+
+        // GUARDAR EN MEMORIA QUE YA SE HAN VISTO LAS NOVEDADES
+        let idMasReciente = listaNovedades[0].id;
+        localStorage.setItem('novedadesVistasId', idMasReciente);
+
+        // QUITAR LA VIBRACIÓN A LA CAMPANA INMEDIATAMENTE
+        let campana = document.getElementById('icono-campana-novedades');
+        if (campana) {
+            campana.classList.remove('campana-vibrando');
+        }
+
+        // Crear el HTML de la lista leyendo los datos
+        let htmlTarjetas = listaNovedades.map(nov => `
+            <div style="background: white; border-left: 4px solid #3498db; padding: 15px; margin-bottom: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 5px;"><i class="far fa-calendar-alt"></i> ${nov.fecha}</div>
+                <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1rem;">${nov.titulo}</h4>
+                <p style="margin: 0; font-size: 0.95rem; color: #444; line-height: 1.5;">${nov.texto}</p>
+            </div>
+        `).join('');
+
+        // Inyectar en pantalla
+        contenedor.innerHTML = `
+            <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
+                <div style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-bullhorn" style="color: #f39c12;"></i> Novedades
+                </div>
+                ${htmlTarjetas}
+            </div>
+        `;
+
+        // Cerrar menú y subir arriba
+        let menu = document.getElementById('menuOpciones');
+        if (menu) menu.style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 3. FUNCIÓN PARA COMPROBAR AL ARRANCAR LA WEB SI HAY NOVEDADES
+    function comprobarNovedadesPendientes() {
+        let idVisto = localStorage.getItem('novedadesVistasId') || 0;
+        let idMasReciente = listaNovedades[0].id;
+        
+        let campana = document.getElementById('icono-campana-novedades');
+        if (campana && idMasReciente > idVisto) {
+            campana.classList.add('campana-vibrando');
+        }
+    }
+
+    // Ejecutar la comprobación nada más cargar la página
+    setTimeout(comprobarNovedadesPendientes, 500);
 
 </script>
-</body>
-</html>
-</script>
-
 </body>
 </html>
