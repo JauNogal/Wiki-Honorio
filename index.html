@@ -1744,10 +1744,15 @@ function eliminarProyectoManual(index) {
             </div>
 
             <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.6; color: #444; font-size: 0.95rem; text-align: justify;">
-                <p style="margin-top: 0; margin-bottom: 0;">
-                    ¿Te gustaría formar parte de Roca Norte? Contáctanos para explorar opciones de publicidad y descubrir cómo podemos colaborar para seguir impulsando este proyecto
-                </p>
-            </div>
+    <p style="margin-top: 0; margin-bottom: 20px;">
+        ¿Te gustaría formar parte de Roca Norte? Contáctanos para explorar opciones de publicidad y descubrir cómo podemos colaborar para seguir impulsando este proyecto.
+    </p>
+    <div style="text-align: center;">
+        <button onclick="irAContactoYBajar()" style="background: #2980b9; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fas fa-envelope"></i> Contactar
+        </button>
+    </div>
+</div>
 
             <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                 <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1rem; margin-bottom: 15px;">Marcas que nos apoyan</h3>
@@ -1800,6 +1805,16 @@ Titulación: Técnico Deportivo Superior en Escalada (TD3).
     
     // Sube la pantalla arriba del todo suavemente
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+        function irAContactoYBajar() {
+    mostrarContacto();
+    setTimeout(() => {
+        window.scrollTo({ 
+            top: document.body.scrollHeight, 
+            behavior: 'smooth' 
+        });
+    }, 100);
 }
   
    // Ocultar pantalla de carga después de 1.5 segundos
