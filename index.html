@@ -207,6 +207,10 @@
         }
 function abrirPerfil() {
     document.getElementById('menuOpciones').style.display = 'none';
+    let mapa = document.getElementById('map');
+    if (mapa) mapa.style.display = 'none';
+    let contenido = document.getElementById('contenido-dinamico');
+    if (contenido) contenido.style.display = 'none';
     try {
         // Cargar la foto de perfil de la memoria antes de mostrar la ventana
         const savedFoto = getLocal('perfil-foto-escalador');
@@ -218,10 +222,15 @@ function abrirPerfil() {
         pintarProyectosManuales();
     } catch(e) { console.error("Error calculando perfil", e); }
     document.getElementById('modalPerfilUsuario').style.display = 'flex';
+    
 }
 
         function cerrarPerfil() {
             document.getElementById('modalPerfilUsuario').style.display = 'none';
+            let mapa = document.getElementById('map');
+    if (mapa) mapa.style.display = 'block';
+    let contenido = document.getElementById('contenido-dinamico');
+    if (contenido) contenido.style.display = 'block';
         }
 
         function cerrarPerfilFuera(e) {
