@@ -2078,12 +2078,18 @@ window.addEventListener('load', () => {
         let idMasReciente = listaNovedades[0].id;
         localStorage.setItem('novedadesVistasId', idMasReciente);
 
-        // QUITAR LA VIBRACIÓN A LA CAMPANA INMEDIATAMENTE
-        let campana = document.getElementById('icono-campana-novedades');
-        if (campana) {
-            campana.classList.remove('campana-vibrando');
-            campana.style.display = 'none';
-        }
+      // QUITAR LA VIBRACIÓN A LA CAMPANA DE CABECERA Y OCULTARLA
+    let campanaHeader = document.getElementById('icono-campana-novedades');
+    if (campanaHeader) {
+        campanaHeader.classList.remove('campana-vibrando');
+        campanaHeader.style.display = 'none';
+    }
+
+    // DETENER LA VIBRACIÓN DE LA CAMPANA DEL MENÚ
+    let campanaMenu = document.getElementById('icono-campana-menu');
+    if (campanaMenu) {
+        campanaMenu.classList.remove('campana-vibrando');
+    }
 
         // Crear el HTML de la lista leyendo los datos
         let htmlTarjetas = listaNovedades.map(nov => `
