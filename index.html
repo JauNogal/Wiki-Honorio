@@ -144,8 +144,7 @@
     <span style="font-size: 1.2em;">📊</span> Estadísticas
 </div>
         <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;" onclick="mostrarNovedades()">
-            <span style="font-size: 1.2em;">🔔</span> Novedades
-        </div>
+<i id="icono-campana-menu" class="fas fa-bell" style="font-size: 1.2em; color: #7f8c8d; transition: 0.3s;"></i> Novedades        </div>
        
        <div style="padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; color: #333; font-size: 1.05em; display: flex; align-items: center; gap: 12px;"onclick="mostrarRocodromos(); document.getElementById('menuOpciones').style.display = 'none';">
     <div style="background-color: #fcfcfc; border: 1px solid #ddd; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; position: relative;">
@@ -2116,11 +2115,20 @@ window.addEventListener('load', () => {
         let idVisto = localStorage.getItem('novedadesVistasId') || 0;
         let idMasReciente = listaNovedades[0].id;
         
-        let campana = document.getElementById('icono-campana-novedades');
-        if (campana && idMasReciente > idVisto) {
-            campana.style.display = 'block';
-            campana.classList.add('campana-vibrando');
+       let campanaHeader = document.getElementById('icono-campana-novedades');
+    let campanaMenu = document.getElementById('icono-campana-menu'); // Detecta la campana del menú
+    
+    if (idMasReciente > idVisto) {
+        // 1. Activar campana de la cabecera
+        if (campanaHeader) {
+            campanaHeader.style.display = 'block';
+            campanaHeader.classList.add('campana-vibrando');
         }
+        // 2. Activar campana del menú lateral
+        if (campanaMenu) {
+            campanaMenu.classList.add('campana-vibrando');
+        }
+    }
     }
 
     // Ejecutar la comprobación nada más cargar la página
