@@ -2117,6 +2117,7 @@ window.addEventListener('load', () => {
         
         let campana = document.getElementById('icono-campana-novedades');
         if (campana && idMasReciente > idVisto) {
+            campana.style.display = 'block';
             campana.classList.add('campana-vibrando');
         }
     }
