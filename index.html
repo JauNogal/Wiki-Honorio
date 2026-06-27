@@ -193,7 +193,7 @@
             <div style="display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 500; color: #333;">
                 <i class="fas fa-globe" style="color: #7f8c8d; width: 20px;"></i> Idioma
             </div>
-            <select id="selectorIdioma" style="padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc; background: white; color: #333; font-size: 0.95rem; cursor: pointer; outline: none;">
+            <select id="selectorIdioma" style="padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc; background: white; color: #333; font-size: 0.95rem; cursor: pointer; outline: none;" onchange="aplicarIdioma(this.value)">
                 <option value="es">🇪🇸 Español</option>
                 <option value="en">🇬🇧 English</option>
             </select>
@@ -2155,7 +2155,59 @@ window.addEventListener('load', () => {
 
     // Ejecutar la comprobación nada más cargar la página
     setTimeout(comprobarNovedadesPendientes, 500);
+// 1. EL DICCIONARIO BILINGÜE
+const diccionario = {
+    es: {
+        menuConfiguracion: "Configuración",
+        menuDiario: "Diario de escalada",
+        menuEstadisticas: "Estadísticas",
+        menuNovedades: "Novedades",
+        menuDonaciones: "Donaciones",
+        menuContacto: "Contacto",
+        buscador: "Buscar...",
+        escuelas: "Escuelas de escalada"
+    },
+    en: {
+        menuConfiguracion: "Settings",
+        menuDiario: "Climbing Logbook",
+        menuEstadisticas: "Statistics",
+        menuNovedades: "News",
+        menuDonaciones: "Donations",
+        menuContacto: "Contact",
+        buscador: "Search...",
+        escuelas: "Crags"
+    }
+};
 
+// 2. EL MOTOR DE TRADUCCIÓN
+function aplicarIdioma(idiomaElegido) {
+    // Guardar la preferencia en la memoria del móvil
+    localStorage.setItem('idioma-rocanorte', idiomaElegido);
+    
+    // Buscar todos los elementos que tengan el atributo data-i18n
+    let elementos = document.querySelectorAll('[data-i18n]');
+    
+    elementos.forEach(elemento => {
+        let clave = elemento.getAttribute('data-i18n'); // Ej: "menuNovedades"
+        if (diccionario[idiomaElegido] && diccionario[idiomaElegido][clave]) {
+            // Si es un input (como el buscador), cambiamos el placeholder
+            if (elemento.tagName === 'INPUT') {
+                elemento.placeholder = diccionario[idiomaElegido][clave];
+            } else {
+                // Si es texto normal, cambiamos el texto
+                elemento.childNodes.forEach(nodo => {
+                    if (nodo.nodeType === 3 && nodo.nodeValue.trim() !== '') {
+                        nodo.nodeValue = diccionario[idiomaElegido][clave];
+                    }
+                });
+            }
+        }
+    });
+}
+
+// 3. ARRANCAR CON EL IDIOMA GUARDADO AL ABRIR LA APP
+let idiomaGuardado = localStorage.getItem('idioma-rocanorte') || 'es';
+setTimeout(() => aplicarIdioma(idiomaGuardado), 100);
 </script>
 </body>
 </html>
