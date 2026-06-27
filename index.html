@@ -2102,9 +2102,17 @@ window.addEventListener('load', () => {
         let contenedor = document.getElementById('contenido-dinamico');
         if (!contenedor) return;
 
-        // Apagar el mapa
-        let mapa = document.getElementById('map');
-        if (mapa) mapa.style.display = 'none';
+        // 1. Ocultamos el mapa de forma segura
+    let mapa = document.getElementById('map');
+    if (mapa) mapa.style.display = 'none';
+    
+    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
+    let modalPerfil = document.getElementById('modalPerfilUsuario');
+    if (modalPerfil) modalPerfil.style.display = 'none';
+
+    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
+    let contenido = document.getElementById('contenido-dinamico');
+    if (contenido) contenido.style.display = 'block';
 
         // GUARDAR EN MEMORIA QUE YA SE HAN VISTO LAS NOVEDADES
         let idMasReciente = listaNovedades[0].id;
