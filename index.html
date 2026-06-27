@@ -191,9 +191,9 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 500; color: #333;">
-                <i class="fas fa-globe" style="color: #7f8c8d; width: 20px;"></i> Idioma
+                <i class="fas fa-globe" style="color: #7f8c8d; width: 20px;"></i> <span id="label-idioma">Idioma</span>
             </div>
-            <select id="selectorIdioma" style="padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc; background: white; color: #333; font-size: 0.95rem; cursor: pointer; outline: none;">
+            <select id="selectorIdioma" onchange="cambiarIdioma()"style="padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc; background: white; color: #333; font-size: 0.95rem; cursor: pointer; outline: none;">
                 <option value="es">🇪🇸 Español</option>
                 <option value="en">🇬🇧 English</option>
             </select>
