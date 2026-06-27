@@ -1132,6 +1132,9 @@ function mostrarEstadisticas() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
         function mostrarInicio() {
+            // Apagamos la pantalla de Configuración por si estuviera abierta
+    let modalPerfil = document.getElementById('modalPerfilUsuario');
+    if (modalPerfil) modalPerfil.style.display = 'none';
        document.getElementById('leyenda-container').style.display = 'none';     
     if (map) { document.getElementById('map').style.display = 'block'; map.setView([43.30, -5.98],8); }
     escuelaActualId = null;
