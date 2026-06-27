@@ -2058,8 +2058,16 @@ window.addEventListener('load', () => {
     function mostrarDonaciones() {
         let contenedor = document.getElementById('contenido-dinamico');
         if (!contenedor) return;
-        let mapa = document.getElementById('map');
-        if (mapa) mapa.style.display = 'none';
+        // 1. Ocultamos el mapa de forma segura
+    let mapa = document.getElementById('map');
+    if (mapa) mapa.style.display = 'none';
+    
+    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
+    let modalPerfil = document.getElementById('modalPerfilUsuario');
+    if (modalPerfil) modalPerfil.style.display = 'none';
+
+    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
+    contenedor.style.display = 'block';
 
         contenedor.innerHTML = `
             <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
