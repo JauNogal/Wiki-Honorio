@@ -233,7 +233,6 @@ function abrirPerfil() {
         actualizarMaximosPerfil();
         pintarProyectosManuales();
     } catch(e) { console.error("Error calculando perfil", e); }
-    document.getElementById('contenido-dinamico').innerHTML = '';
     document.getElementById('modalPerfilUsuario').style.display = 'block';
     
 }
