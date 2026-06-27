@@ -198,11 +198,6 @@
                 <option value="en">🇬🇧 English</option>
             </select>
         </div>
-<div style="margin-top: 35px;">
-            <button onclick="document.getElementById('modalPerfilUsuario').style.display = 'none'; document.getElementById('map').style.display = 'block';" style="width: 100%; background-color: #3498db; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1.05rem; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Volver
-            </button>
-        </div>
        
      </div>
 </div>
@@ -239,6 +234,7 @@ function abrirPerfil() {
         actualizarMaximosPerfil();
         pintarProyectosManuales();
     } catch(e) { console.error("Error calculando perfil", e); }
+    document.getElementById('contenido-dinamico').innerHTML = '';
     document.getElementById('modalPerfilUsuario').style.display = 'block';
     
 }
@@ -617,7 +613,7 @@ function actualizarGraficoPerfil() {
        function mostrarDiario() {
     // Ocultamos el mapa
     if (map) document.getElementById('map').style.display = 'none';
-    
+    document.getElementById('modalPerfilUsuario').style.display = 'none';
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
             ← Volver a Escuelas
@@ -861,7 +857,7 @@ function eliminarViaEncadenada(index) {
 function mostrarEstadisticas() {
     // 1. Ocultamos el mapa
     if (map) document.getElementById('map').style.display = 'none';
-    
+    document.getElementById('modalPerfilUsuario').style.display = 'none';
     // 2. Preparamos el esqueleto de la nueva pantalla
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
@@ -947,7 +943,7 @@ function mostrarEstadisticas() {
         function mostrarRocodromos() {
     // 1. Ocultamos el mapa
     if (map) document.getElementById('map').style.display = 'none';
-
+document.getElementById('modalPerfilUsuario').style.display = 'none';
     // 2. Preparamos el esqueleto de la nueva pantalla
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
@@ -1728,7 +1724,7 @@ function eliminarProyectoManual(index) {
     if (!contenedor) return;
            let mapa = document.getElementById('map');
         if (mapa) mapa.style.display = 'none';
-
+document.getElementById('modalPerfilUsuario').style.display = 'none';
     contenedor.innerHTML = `
         <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
             
@@ -1785,7 +1781,7 @@ function eliminarProyectoManual(index) {
     if (!contenedor) return;
           let mapa = document.getElementById('map');
         if (mapa) mapa.style.display = 'none';
-
+document.getElementById('modalPerfilUsuario').style.display = 'none';
     contenedor.innerHTML = `
         <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
             
@@ -2040,7 +2036,7 @@ window.addEventListener('load', () => {
         if (!contenedor) return;
         let mapa = document.getElementById('map');
         if (mapa) mapa.style.display = 'none';
-
+document.getElementById('modalPerfilUsuario').style.display = 'none';
         contenedor.innerHTML = `
             <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
                 
@@ -2093,7 +2089,7 @@ window.addEventListener('load', () => {
         // Apagar el mapa
         let mapa = document.getElementById('map');
         if (mapa) mapa.style.display = 'none';
-
+document.getElementById('modalPerfilUsuario').style.display = 'none';
         // GUARDAR EN MEMORIA QUE YA SE HAN VISTO LAS NOVEDADES
         let idMasReciente = listaNovedades[0].id;
         localStorage.setItem('novedadesVistasId', idMasReciente);
