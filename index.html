@@ -39,7 +39,7 @@
         .error-box { background: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 15px; border-radius: 8px; font-size: 0.95rem; }
 
         /* MODAL PERFIL */
-        .modal-perfil { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 20000; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px 10px; }
+        .modal-perfil { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9998; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 20px 10px; }
         .modal-content { background: white; width: 100%; max-width: 500px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); padding: 20px; position: relative; margin: auto; }
         .close-modal { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #999; border: none; background: none; outline: none; }
         
@@ -332,7 +332,9 @@ function poblarSelectGrados() {
 // 2. Calcula los datos, pinta el gráfico de colores y posiciona los números
 // 2. Calcula los datos, pinta el gráfico de colores y posiciona los números
 function actualizarGraficoPerfil() {
+    if (!document.getElementById('filtroGradoPerfil')) return;
     const gradoFiltro = document.getElementById('filtroGradoPerfil').value;
+    
     let tVista = 0, tFlash = 0, tTrabajado = 0;
 
     // --- 1. LÓGICA DEL GRÁFICO CIRCULAR ---
