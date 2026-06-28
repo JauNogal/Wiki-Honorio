@@ -627,26 +627,25 @@ function actualizarGraficoPerfil() {
     let contenido = document.getElementById('contenido-dinamico');
     if (contenido) contenido.style.display = 'block';
     let html = `
-       <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
-            ← ${textos[idiomaActual].volverEscuelas}
+        <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
+            ← Volver a Escuelas
         </button>
-
-        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">📓 ${textos[idiomaActual].diarioTitulo}</div>
-
+        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">📓 Mi Diario de Escalada</div>
+        
         <div style="margin-bottom: 16px;">
-            <h3 onclick="let caja = document.getElementById('cajaEncadenadas'); let icono = document.getElementById('flechaEncadenadas'); if(caja.style.display === 'none'){ caja.style.display = 'block'; icono.innerText = '▲'; } else { caja.style.display = 'none'; icono.innerText = '▼'; }" style="color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #3498db; padding-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 0;">
-                <span style="display: flex; align-items: center; gap: 10px;">
-                    🧗 ${textos[idiomaActual].viasEncadenadas}
-                    <select id="filtroAnoEncadenadas" onchange="renderizarViasEncadenadas()" onclick="event.stopPropagation()" style="font-size: 0.8rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; color: #333; font-weight: normal;">
-                        <option value="todos" disabled selected hidden>🗓️ ${textos[idiomaActual].filtroAno}</option>
-                        <option value="todos">${textos[idiomaActual].filtroTodos}</option>
-                    </select>
-                    <select id="ordenEncadenadas" onchange="renderizarViasEncadenadas()" onclick="event.stopPropagation()" style="font-size: 0.8rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; color: #333; font-weight: normal; background-color: #f8f9fa;">
-                        <option value="fecha">🎯 ${textos[idiomaActual].filtroGrado}</option>
-                        <option value="grado-desc">🔼 ${textos[idiomaActual].filtroMayor}</option>
-                        <option value="grado-asc">🔽 ${textos[idiomaActual].filtroMenor}</option>
-                    </select>
-                </span>
+            <h3 onclick="let caja = document.getElementById('cajaEncadenadas'); let icono = document.getElementById('flechaEncadenadas'); if(caja.style.display === 'none'){ caja.style.display = 'block'; icono.innerText = '▲'; } else { caja.style.display = 'none'; icono.innerText = '▼'; }" style="color: #2c3e50; font-size: 1.05rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 2px solid #eaeaea; padding-bottom: 4px;">
+              <span style="display: flex; align-items: center; gap: 10px;">
+    🧗‍♀️ Vías Encadenadas
+  <select id="filtroAnoEncadenadas" onchange="renderizarViasEncadenadas()" onclick="event.stopPropagation()" style="font-size: 0.8rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; color: #333; font-weight: normal;">
+    <option value="todos" disabled selected hidden>📅 Por año</option>
+    <option value="todos">Todos</option>
+</select>
+    <select id="ordenEncadenadas" onchange="renderizarViasEncadenadas()" onclick="event.stopPropagation()" style="font-size: 0.8rem; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; color: #333; font-weight: normal; background-color: #f8f9fa;">
+        <option value="fecha">🎯 Por grado</option>
+       <option value="grado-desc">🔼 Mayor Grado</option>
+        <option value="grado-asc">🔽 Menor Grado</option>
+    </select>
+</span>
                 <span id="flechaEncadenadas" style="font-size: 0.8rem; color: #888;">▲</span>
             </h3>
             
