@@ -2261,14 +2261,12 @@ const textos = {
 
 // Función que se dispara al cambiar el desplegable
     function cambiarIdioma() {
-        // 1. Leemos qué idioma ha elegido el usuario en el HTML
+        
         idiomaActual = document.getElementById('selectorIdioma').value;
         
-        // 2. Traducimos la palabra "Idioma"
         let etiqueta = document.getElementById('label-idioma');
         if (etiqueta) etiqueta.innerText = textos[idiomaActual].etiquetaIdioma;
 
-        // 3. Traducimos el menú lateral
         let mConfig = document.getElementById('label-menu-config');
         if (mConfig) mConfig.innerText = textos[idiomaActual].menuConfiguracion;
 
@@ -2296,8 +2294,8 @@ const textos = {
         let buscador = document.getElementById('buscadorPrincipal');
         if (buscador) buscador.placeholder = textos[idiomaActual].placeholderBuscar;
         
-        let tituloEsc = document.getElementById('titulo-escuelas');
-        if (tituloEsc) tituloEsc.innerText = textos[idiomaActual].tituloEscuelas;
+       let tituloEsc = document.getElementById('titulo-escuelas');
+        if (tituloEsc) tituloEsc.textContent = textos[idiomaActual].tituloEscuelas;
 
         let nombreInput = document.getElementById('nombreUsuarioInput');
         if (nombreInput) nombreInput.placeholder = textos[idiomaActual].perfilNombre;
