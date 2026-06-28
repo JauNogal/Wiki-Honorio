@@ -185,9 +185,9 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; opacity: 0.5; cursor: not-allowed; user-select: none;">
             <div style="display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 500; color: #333;">
-                <i class="fas fa-user-plus" style="color: #7f8c8d; width: 20px;"></i> Crear cuenta
+<i class="fas fa-user-plus" style="color: #7f8c8d; width: 20px;"></i> <span id="label-crear-cuenta">Crear cuenta</span>
             </div>
-            <span style="background: #e0e0e0; color: #666; font-size: 0.75rem; padding: 3px 8px; border-radius: 12px; font-weight: bold;">Próximamente</span>
+<span id="label-proximamente" style="background: #e0e0e0; color: #666; font-size: 0.75rem; padding: 3px 8px; border-radius: 12px; font-weight: bold;">Próximamente</span>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -2298,6 +2298,15 @@ const textos = {
         
         let tituloEsc = document.getElementById('titulo-escuelas');
         if (tituloEsc) tituloEsc.innerText = textos[idiomaActual].tituloEscuelas;
+
+        let nombreInput = document.getElementById('nombreUsuarioInput');
+        if (nombreInput) nombreInput.placeholder = textos[idiomaActual].perfilNombre;
+
+        let crearCuenta = document.getElementById('label-crear-cuenta');
+        if (crearCuenta) crearCuenta.innerText = textos[idiomaActual].crearCuenta;
+
+        let proxima = document.getElementById('label-proximamente');
+        if (proxima) proxima.innerText = textos[idiomaActual].proximamente;
     }
 </script>
 </body>
