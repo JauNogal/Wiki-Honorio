@@ -206,7 +206,7 @@
 
     <div id="map"></div>
     <div class="container" id="contenido-dinamico">
-        <div class="section-title">Escuelas de escalada</div>
+<div class="section-title" id="titulo-escuelas">Escuelas de escalada</div> 
         <div id="lista-escuelas">Cargando escuelas... 🧗‍♂️</div>
     </div>
 
@@ -2289,6 +2289,9 @@ const textos = {
 
         let buscador = document.getElementById('buscadorPrincipal');
         if (buscador) buscador.placeholder = textos[idiomaActual].placeholderBuscar;
+        
+        let tituloEsc = document.getElementById('titulo-escuelas');
+        if (tituloEsc) tituloEsc.innerText = textos[idiomaActual].tituloEscuelas;
     }
 </script>
 </body>
