@@ -614,6 +614,7 @@ function actualizarGraficoPerfil() {
             if (tipo === 'escuela') seleccionarEscuela(idEscuela);
             else { seleccionarEscuela(idEscuela); setTimeout(() => { verSector(idSector); }, 50); }
         }
+        
        function mostrarDiario() {
    // 1. Ocultamos el mapa de forma segura
     let mapa = document.getElementById('map');
@@ -2262,9 +2263,25 @@ const textos = {
             menuContacto: "Contacto",
             placeholderBuscar: "Buscar...",
             perfilNombre: "Tu Nombre",
-    crearCuenta: "Crear cuenta",
-    proximamente: "Próximamente"
-        },
+            crearCuenta: "Crear cuenta",
+            proximamente: "Próximamente"
+            diarioTitulo: "Mi Diario de Escalada",
+            viasEncadenadas: "Vías Encadenadas",
+            fecha: "Fecha",
+            nombreVia: "Nombre",
+            grado: "Grado",
+            intentos: "Intentos",
+            sinVias: "No hay vías encadenadas",
+            misProyectos: "Mis Proyectos",
+            sinProyectos: "No hay proyectos apuntados",
+            placeholderNombre: "Nombre vía",
+            volverEscuelas: "Volver a Escuelas",
+            filtroAno: "Por año",
+            filtroTodos: "Todos",
+            filtroGrado: "Por grado",
+            filtroMayor: "Mayor Grado",
+            filtroMenor: "Menor Grado"
+            },
         en: {
             etiquetaIdioma: "Language",
             tituloEscuelas: "Climbing Crags",
@@ -2279,8 +2296,24 @@ const textos = {
             menuContacto: "Contact",
             placeholderBuscar: "Search...",
             perfilNombre: "Your Name",
-    crearCuenta: "Create account",
-    proximamente: "Coming soon"
+            crearCuenta: "Create account",
+            proximamente: "Coming soon",
+            diarioTitulo: "My Climbing Logbook",
+            viasEncadenadas: "Sent Routes",
+            fecha: "Date",
+            nombreVia: "Name",
+            grado: "Grade",
+            intentos: "Tries",
+            sinVias: "No routes sent yet",
+            misProyectos: "My Projects",
+            sinProyectos: "No projects saved yet",
+            placeholderNombre: "Route name",
+            volverEscuelas: "Back to Crags",
+            filtroAno: "By year",
+            filtroTodos: "All",
+            filtroGrado: "By grade",
+            filtroMayor: "Highest Grade",
+            filtroMenor: "Lowest Grade"
         }
     };
 
