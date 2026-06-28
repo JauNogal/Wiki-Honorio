@@ -2295,7 +2295,13 @@ const textos = {
         if (buscador) buscador.placeholder = textos[idiomaActual].placeholderBuscar;
         
        let tituloEsc = document.getElementById('titulo-escuelas');
-        if (tituloEsc) tituloEsc.textContent = textos[idiomaActual].tituloEscuelas;
+        console.log("1. ¿Encuentra la etiqueta en el HTML?:", tituloEsc);
+        console.log("2. ¿Encuentra la palabra en el diccionario?:", textos[idiomaActual].tituloEscuelas);
+        
+        if (tituloEsc) {
+            tituloEsc.textContent = textos[idiomaActual].tituloEscuelas;
+            console.log("3. ¡Texto cambiado con éxito!");
+        }
 
         let nombreInput = document.getElementById('nombreUsuarioInput');
         if (nombreInput) nombreInput.placeholder = textos[idiomaActual].perfilNombre;
