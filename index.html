@@ -2295,7 +2295,6 @@ const textos = {
         let buscador = document.getElementById('buscadorPrincipal');
         if (buscador) buscador.placeholder = textos[idiomaActual].placeholderBuscar;
         
-      // 5. Traducimos el título principal (Solución Ninja)
         let tituloEsc = document.querySelector('#contenido-dinamico .section-title');
         
         if (tituloEsc) {
@@ -2310,6 +2309,11 @@ const textos = {
 
         let proxima = document.getElementById('label-proximamente');
         if (proxima) proxima.innerText = textos[idiomaActual].proximamente;
+
+        let cargandoEsc = document.getElementById('lista-escuelas');
+        if (cargandoEsc) {
+            cargandoEsc.textContent = textos[idiomaActual].cargando;
+        }
     }
 </script>
 </body>
