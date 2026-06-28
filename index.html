@@ -775,7 +775,7 @@ function renderizarViasEncadenadas() {
     tbody.innerHTML = ''; // Limpiamos tabla
 
     if (!Array.isArray(lista) || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">${textos[idiomaActual].sinVias}</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">${textos[idiomaActual].sinVias}</td></tr>`;
         return;
     }
 
@@ -1673,7 +1673,7 @@ function pintarProyectosManuales() {
     try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) { proyectos = []; }
 
     if (!Array.isArray(proyectos) || proyectos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">${textos[idiomaActual].sinProyectos}</td></tr>';
+       tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: #aaa; font-style: italic;">${textos[idiomaActual].sinProyectos}</td></tr>`;
         return;
     }
 
