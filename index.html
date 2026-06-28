@@ -1759,6 +1759,9 @@ function eliminarProyectoManual(index) {
     // 2. Apagamos la pantalla de Configuración por si estuviera abierta
     let modalPerfil = document.getElementById('modalPerfilUsuario');
     if (modalPerfil) modalPerfil.style.display = 'none';
+           // Cerramos el menú de opciones al entrar en Contacto
+    let menuLateral = document.getElementById('menuOpciones');
+    if (menuLateral) menuLateral.style.display = 'none';
 
     // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
     contenedor.style.display = 'block';
