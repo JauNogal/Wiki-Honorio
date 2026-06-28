@@ -2234,7 +2234,8 @@ const textos = {
             menuRocodromos: "Rocódromos",
             menuDonaciones: "Donaciones",
             menuColaboradores: "Colaboradores",
-            menuContacto: "Contacto"
+            menuContacto: "Contacto",
+            placeholderBuscar: "Buscar..."
         },
         en: {
             etiquetaIdioma: "Language",
@@ -2247,7 +2248,8 @@ const textos = {
             menuRocodromos: "Climbing Gyms",
             menuDonaciones: "Donations",
             menuColaboradores: "Collaborators",
-            menuContacto: "Contact"
+            menuContacto: "Contact",
+            placeholderBuscar: "Search..."
         }
     };
 
@@ -2284,6 +2286,9 @@ const textos = {
 
         let mContacto = document.getElementById('label-menu-contacto');
         if (mContacto) mContacto.innerText = textos[idiomaActual].menuContacto;
+
+        let buscador = document.getElementById('buscadorPrincipal');
+        if (buscador) buscador.placeholder = textos[idiomaActual].placeholderBuscar;
     }
 </script>
 </body>
