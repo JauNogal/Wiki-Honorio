@@ -1151,7 +1151,6 @@ function mostrarEstadisticas() {
         }
     });
 
-    // Hacemos una copia y ordenamos alfabéticamente (A-Z) por el nombre
     const escuelasOrdenadas = [...database.escuelas].sort((a, b) => a.nombre.localeCompare(b.nombre));
 
     escuelasOrdenadas.forEach(escuela => { 
