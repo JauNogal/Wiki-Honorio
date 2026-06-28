@@ -674,7 +674,8 @@ function actualizarGraficoPerfil() {
                 </div>
             </div>
              <div style="margin-bottom: 16px;">
-<h3 style="margin-top: 20px;" onclick="let caja = document.getElementById('cajaProyectos'); let icono = ...    <span>🛠️ Mis Proyectos</span>
+<h3 style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="let caja = document.getElementById('cajaProyectos'); let icono = document.getElementById('flechaProy'); if(caja.style.display === 'none'){ caja.style.display = 'block'; icono.innerText = '▲'; } else { caja.style.display = 'none'; icono.innerText = '▼'; }">
+    <span>🛠️ Mis Proyectos</span>
     <span id="flechaProy" style="font-size: 0.8rem; color: #888;">▼</span>
 </h3>
 <div id="cajaProyectos" style="display: none;">
