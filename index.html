@@ -883,24 +883,24 @@ function mostrarEstadisticas() {
     // 2. Preparamos el esqueleto de la nueva pantalla
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
-            ← Volver a Escuelas
+            ← ${textos[idiomaActual].volverEscuelas}
         </button>
-        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">Mis Estadísticas</div>
+        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">${textos[idiomaActual].estadisticasTitulo}</div>
          <div style="margin-bottom: 15px;">
            
             
             
            <div style="margin-bottom: 12px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; justify-content: space-between; text-align: center; gap: 5px;">
             <div style="flex: 1;">
-                <h4 style="font-size: 0.75rem; color: #666; margin-bottom: 2px;">🏆 Grado Max</h4>
+                <h4 style="font-size: 0.75rem; color: #666; margin-bottom: 2px;">🏆 ${textos[idiomaActual].gradoMax}</h4>
                 <span id="maxGradoGeneral" style="font-size: 1.15rem; font-weight: bold; color: #e74c3c;">--</span>
             </div>
             <div style="border-left: 1px solid #ddd; padding-left: 5px; flex: 1;">
-                <h4 style="font-size: 0.75rem; color: #666; margin-bottom: 2px;">👁️ Max a vista</h4>
+                <h4 style="font-size: 0.75rem; color: #666; margin-bottom: 2px;">👁️ ${textos[idiomaActual].maxAVista}</h4>
                 <span id="maxGradoVista" style="font-size: 1.15rem; font-weight: bold; color: #3CB371;">--</span>
             </div>
             <div style="border-left: 1px solid #ddd; padding-left: 5px; flex: 1;">
-                <h4 style="font-size: 0.75rem; color: #666; margin-bottom: 2px;">🔺 Grado asentado</h4>
+                <h4 style="font-size: 0.75rem; color: #666; margin-bottom: 2px;">🔺 ${textos[idiomaActual].gradoAsentado}</h4>
                 <span id="maxGradoAsentado" style="font-size: 1.15rem; font-weight: bold; color: #3498db;">--</span>
             </div>
         </div>   
@@ -910,9 +910,9 @@ function mostrarEstadisticas() {
             
 </div>
 <div>
-            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🌍 Escuelas Visitadas</h3>
+            <h3 style="color: #2c3e50; font-size: 1.05rem; border-bottom: 2px solid #eaeaea; padding-bottom: 4px; margin-bottom: 6px;">🌍 ${textos[idiomaActual].escuelasVisitadas}</h3>
             <div style="display: flex; align-items: center; justify-content: space-between; background: #edf2f7; padding: 6px 10px; border-radius: 6px;">
-                <span id="contadorEscuelasVisitadas" style="font-size: 0.9rem; font-weight: 500; color: #333;">0 de 0 escuelas</span>
+                <span id="contadorEscuelasVisitadas" style="font-size: 0.9rem; font-weight: 500; color: #333;">0 ${textos[idiomaActual].de} 0 ${textos[idiomaActual].escuelas}</span>
                 <span id="porcentajeEscuelas" style="background: #2c3e50; color: white; padding: 2px 6px; border-radius: 12px; font-weight: bold; font-size: 0.8rem;">0%</span>
             </div>
         </div>
