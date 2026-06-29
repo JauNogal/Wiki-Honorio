@@ -1773,7 +1773,7 @@ function eliminarProyectoManual(index) {
         <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
 
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
-            ← Volver a Escuelas
+            &#8592; ${textos[idiomaActual].volverEscuelas}
         </button>
             
             <div style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
@@ -1782,38 +1782,38 @@ function eliminarProyectoManual(index) {
 
             <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.6; color: #444; font-size: 0.95rem; text-align: justify;">
                 <p style="margin-top: 0; margin-bottom: 15px;">
-                    Hacer una guía de escalada es un proceso complejo. Hay mucha información que está cambiando constantemente en el tiempo, y es fácil cometer pequeños (o grandes) errores.
-                </p>
+${textos[idiomaActual].contactoP1}
+</p>
                 <p style="margin-bottom: 15px;">
-                    Por otro lado, los equipadores, en su infinito altruismo, no paran de abrir vías y sectores nuevos. Esto nos produce como escaladores, un profundo agradecimiento, pero como desarrolladores de este proyecto, un gran dolor de cabeza. Por suerte prima con creces lo primero.
-                </p>
+${textos[idiomaActual].contactoP2}
+</p>
                 <p style="margin-bottom: 0;">
-                    Si observas en esta guía una errata en algún nombre o grado de una vía, ponte en contacto con nosotros para corregirlo. Del mismo modo, si eres equipador y has abierto nuevas vías en un sector ya existente, o incluso has desarrollado un sector nuevo y deseas darlo a conocer, estaremos encantados de incorporarlo a la web. Ponte en contacto con nosotros y actualizaremos la información con tus nuevas vías.
-                </p>
+${textos[idiomaActual].contactoP3}
+</p>
             </div>
 
             <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1rem; margin-bottom: 15px;">Envíanos un mensaje</h3>
+                <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1rem; margin-bottom: 15px;">${textos[idiomaActual].envianosMensaje}</h3>
                 
                 <form action="https://formspree.io/f/xdavdzaq" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
                     
                     <div>
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Tu Nombre</label>
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">${textos[idiomaActual].tuNombre}</label>
                         <input type="text" name="name" required style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit;">
                     </div>
 
                     <div>
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Tu Correo (para poder responderte)</label>
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">${textos[idiomaActual].tuCorreo}</label>
                         <input type="email" name="email" required style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit;">
                     </div>
 
                     <div>
-                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">Mensaje</label>
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9rem;">${textos[idiomaActual].mensajeForm}</label>
                         <textarea name="message" required rows="5" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; resize: vertical;"></textarea>
                     </div>
 
                     <button type="submit" style="background: #2980b9; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 5px; transition: background 0.2s;">
-                        Enviar Mensaje
+                        ${textos[idiomaActual].enviarMensaje}
                     </button>
                 </form>
             </div>
@@ -2309,6 +2309,15 @@ const textos = {
         marcasApoyan: "Marcas que nos apoyan",
         descTocandoCumbre: "Guía de montaña y escalada especializado en la conducción y acompañamiento de actividades en la Cordillera Cantábrica, el resto de las principales cordilleras de España y algunas de las más emblemáticas del mundo. Servicios de guía en media montaña y escalada, incluyendo ascensiones en los Picos de Europa y en otras paredes y macizos de referencia. Titulación: TD2 en Media Montaña y TD2 en Escalada.",
         descFuncionalClimbing: "Diseño y seguimiento de programas de entrenamiento adaptados a los objetivos y nivel de cada escalador. Evaluación de las capacidades físicas específicas para la escalada, elaboración de rutinas de fortalecimiento de la musculatura antagonista y planificación de ejercicios orientados a la mejora. Titulación: Técnico Deportivo Superior en Escalada (TD3).",
+            contactoTitulo: "Contacto",
+        contactoP1: "Hacer una guía de escalada es un proceso complejo. Hay mucha información que está cambiando constantemente en el tiempo, y es fácil cometer pequeños (o grandes) errores.",
+        contactoP2: "Por otro lado, los equipadores, en su infinito altruismo, no paran de abrir vías y sectores nuevos. Esto nos produce como escaladores, un profundo agradecimiento, pero como desarrolladores de este proyecto, un gran dolor de cabeza. Por suerte prima con creces lo primero.",
+        contactoP3: "Si observas en esta guía una errata en algún nombre o grado de una vía, ponte en contacto con nosotros para corregirlo. Del mismo modo, si eres equipador y has abierto nuevas vías en un sector ya existente, o incluso has desarrollado un sector nuevo y deseas darlo a conocer, estaremos encantados de incorporarlo a la web. Ponte en contacto con nosotros y actualizaremos la información con tus nuevas vías.",
+        envianosMensaje: "Envíanos un mensaje",
+        tuNombre: "Tu Nombre",
+        tuCorreo: "Tu Correo (para poder responderte)",
+        mensajeForm: "Mensaje",
+        enviarMensaje: "Enviar Mensaje",
             },
         en: {
             etiquetaIdioma: "Language",
@@ -2374,6 +2383,15 @@ const textos = {
         marcasApoyan: "Brands that support us",
         descTocandoCumbre: "Mountain and climbing guide specialized in leading and accompanying activities in the Cantabrian Mountains, the rest of the main mountain ranges in Spain, and some of the most emblematic in the world. Guiding services in mid-mountain and climbing, including ascents in the Picos de Europa and other reference walls and massifs. Qualifications: TD2 in Mid-Mountain and TD2 in Climbing.",
         descFuncionalClimbing: "Design and monitoring of training programs adapted to the objectives and level of each climber. Evaluation of physical capacities specific to climbing, development of routines to strengthen antagonist muscles, and planning of exercises aimed at improvement. Qualifications: Superior Sports Technician in Climbing (TD3).",
+            contactoTitulo: "Contact",
+        contactoP1: "Making a climbing guide is a complex process. There is a lot of information that is constantly changing over time, and it is easy to make small (or large) mistakes.",
+        contactoP2: "On the other hand, equippers, in their infinite altruism, never stop opening new routes and sectors. As climbers, this brings us profound gratitude, but as developers of this project, a major headache. Luckily, the former far outweighs the latter.",
+        contactoP3: "If you notice a typo in a route's name or grade in this guide, please contact us to correct it. Similarly, if you are an equipper and have opened new routes in an existing sector, or have even developed a new sector and want to make it known, we will be happy to add it to the website. Contact us and we will update the information with your new routes.",
+        envianosMensaje: "Send us a message",
+        tuNombre: "Your Name",
+        tuCorreo: "Your Email (so we can reply)",
+        mensajeForm: "Message",
+        enviarMensaje: "Send Message",
         }
     };
 
