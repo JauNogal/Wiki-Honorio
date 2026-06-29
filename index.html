@@ -922,7 +922,7 @@ function mostrarEstadisticas() {
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <select id="filtroGradoPerfil" onchange="actualizarGraficoPerfil()" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; color: #2c3e50; outline: none; cursor: pointer; font-size: 0.85rem; max-width: 130px;">
-                            <option value="todos">Todos los grados</option>
+                            <option value="todos">${textos[idiomaActual].todosLosGrados}</option>
                         </select>
                         <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; font-weight: bold; color: #555;">
                             <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
@@ -942,7 +942,7 @@ function mostrarEstadisticas() {
                 </div>
 
                 <div id="contenedor-barras-grados" style="margin-top: 20px; border-top: 2px solid #eaeaea; padding-top: 15px;">
-                    <h4 style="font-size: 0.95rem; color: #2c3e50; margin-bottom: 12px; text-align: center;">📈 Distribución por Grados</h4>
+                    <h4 style="font-size: 0.95rem; color: #2c3e50; margin-bottom: 12px; text-align: center;">📈 ${textos[idiomaActual].distribucionGrados}</h4>
                     <div id="grafico-barras-horizontales" style="display: flex; flex-direction: column; gap: 8px;">
                         </div>
                 </div>
@@ -1379,10 +1379,10 @@ function seleccionarEscuela(id) {
                             <div class="via-check">
                                <select class="estado-via" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
     <option value="" ${estadoGuardado === '' ? 'selected' : ''}>Sin hacer</option>
-    <option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>A vista</option>
-    <option value="a-flash" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>A flash</option>
+    <option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
+    <option value="a-flash" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
     <option value="2-pegue" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>En el día</option>
-    <option value="trabajado" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>Trabajado</option>
+    <option value="trabajado" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
     <option value="proyecto" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>Proyecto</option>
 </select>
                             </div>
