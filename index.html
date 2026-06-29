@@ -1602,8 +1602,8 @@ function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
     const contEscuelas = document.getElementById('contadorEscuelasVisitadas');
     const porcEscuelas = document.getElementById('porcentajeEscuelas');
     
-    if (contEscuelas) contEscuelas.innerText = `${numVisitadas} de ${totalEscuelasMapa} escuelas`;
-    if (porcEscuelas) porcEscuelas.innerText = `${totalEscuelasMapa > 0 ? Math.round((numVisitadas / totalEscuelasMapa) * 100) : 0}%`;
+if (contEscuelas) contEscuelas.innerText = `${numVisitadas} ${textos[idiomaActual].de} ${totalEscuelasMapa} ${textos[idiomaActual].escuelas}`;
+           if (porcEscuelas) porcEscuelas.innerText = `${totalEscuelasMapa > 0 ? Math.round((numVisitadas / totalEscuelasMapa) * 100) : 0}%`;
 
     // Activar funciones auxiliares de gráficos si existen en el documento
     if (typeof poblarSelectGrados === 'function') poblarSelectGrados();
