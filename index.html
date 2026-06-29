@@ -1842,27 +1842,26 @@ function eliminarProyectoManual(index) {
         <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
 
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
-            ← Volver a Escuelas
+            ← ${textos[idiomaActual].volverEscuelas}
         </button>
             
             <div style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                🤝 Colaboradores
+                🤝 ${textos[idiomaActual].colaboradoresTitulo}
             </div>
 
             <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.6; color: #444; font-size: 0.95rem; text-align: justify;">
     <p style="margin-top: 0; margin-bottom: 20px;">
-        ¿Te gustaría formar parte de Roca Norte? Contáctanos para explorar opciones de publicidad y descubrir cómo podemos colaborar para seguir impulsando este proyecto.
-    </p>
+${textos[idiomaActual].textoContactoColab}
+</p>
     <div style="text-align: center;">
         <button onclick="irAContactoYBajar()" style="background: #2980b9; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px;">
-            <i class="fas fa-envelope"></i> Contactar
-        </button>
+<i class="fas fa-envelope"></i> ${textos[idiomaActual].btnContactar}
+</button>
     </div>
 </div>
 
             <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1rem; margin-bottom: 15px;">Marcas que nos apoyan</h3>
-                
+<h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1rem; margin-bottom: 15px;">${textos[idiomaActual].marcasApoyan}</h3>                
                 <div style="display: flex; flex-direction: column; gap: 15px;">
 <div style="border: 1px solid #eee; padding: 15px; border-radius: 8px; background-color: #fafafa; overflow: hidden; margin-bottom: 15px;">
     
@@ -1871,8 +1870,8 @@ function eliminarProyectoManual(index) {
     <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.1rem; padding-top: 3px;">Tocando Cumbre</h4>
     
     <p style="margin: 0; font-size: 0.9rem; color: #444; line-height: 1.5; text-align: justify;">
-        Guía de montaña y escalada especializado en la conducción y acompañamiento de actividades en la Cordillera Cantábrica, el resto de las principales cordilleras de España y algunas de las más emblemáticas del mundo. Servicios de guía en media montaña y escalada, incluyendo ascensiones en los Picos de Europa y en otras paredes y macizos de referencia. Titulación: TD2 en Media Montaña y TD2en Escalada.
-    </p>
+${textos[idiomaActual].descTocandoCumbre}
+</p>
     
     <div style="margin-top: 15px; display: flex; gap: 15px; font-size: 1.4rem; clear: both; padding-top: 5px;">
         <a href="https://www.tocandocumbre.com/index.asp?lang=es" target="_blank" style="text-decoration: none; color: #2980b9;" title="Visitar página web"><i class="fas fa-globe"></i></a>
@@ -1889,8 +1888,8 @@ function eliminarProyectoManual(index) {
     <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1.1rem; padding-top: 3px;">Funcional Climbing</h4>
     
     <p style="margin: 0; font-size: 0.9rem; color: #444; line-height: 1.5; text-align: justify;">
-        Diseño y seguimiento de programas de entrenamiento adaptados a los objetivos y nivel de cada escalador. Evaluación de las capacidades físicas específicas para la escalada, elaboración de rutinas de fortalecimiento de la musculatura antagonista y planificación de ejercicios orientados a la mejora. Titulación: Técnico Deportivo Superior en Escalada (TD3).
-    </p>
+${textos[idiomaActual].descFuncionalClimbing}
+</p>
     
     <div style="margin-top: 15px; display: flex; gap: 15px; font-size: 1.4rem; clear: both; padding-top: 5px;">
         <a href="ENLACE_INSTAGRAM_AQUI" target="_blank" style="text-decoration: none; color: #E1306C;" title="Visitar Instagram"><i class="fab fa-instagram"></i></a>
@@ -2304,6 +2303,12 @@ const textos = {
         donacionesP3: "Este proyecto se lanzará inicialmente de forma gratuita, a modo de prueba. Seguramente aparecerán errores que habrá que corregir y, además, este periodo nos permitirá conocer la acogida que tenga entre la comunidad escaladora. Sin embargo, una vez finalizada esta fase (cuya duración aún está por determinar), ROCA NORTE pasará a ser un servicio de pago.",
         donacionesP4: "Con los beneficios que, esperamos, genere el proyecto, queremos recuperar la inversión realizada y compensar el tiempo dedicado a su desarrollo. Pero también queremos destinar una parte de esos beneficios a la compra de material para equipar y reequipar vías de escalada, que entregaremos a los distintos clubes y equipadores locales.",
         donacionesP5: "Porque, en definitiva, sin ellos y sin su apoyo, este proyecto nunca habría tenido razón de existir.",
+            colaboradoresTitulo: "Colaboradores",
+        textoContactoColab: "¿Te gustaría formar parte de Roca Norte? Contáctanos para explorar opciones de publicidad y descubrir cómo podemos colaborar para seguir impulsando este proyecto.",
+        btnContactar: "Contactar",
+        marcasApoyan: "Marcas que nos apoyan",
+        descTocandoCumbre: "Guía de montaña y escalada especializado en la conducción y acompañamiento de actividades en la Cordillera Cantábrica, el resto de las principales cordilleras de España y algunas de las más emblemáticas del mundo. Servicios de guía en media montaña y escalada, incluyendo ascensiones en los Picos de Europa y en otras paredes y macizos de referencia. Titulación: TD2 en Media Montaña y TD2 en Escalada.",
+        descFuncionalClimbing: "Diseño y seguimiento de programas de entrenamiento adaptados a los objetivos y nivel de cada escalador. Evaluación de las capacidades físicas específicas para la escalada, elaboración de rutinas de fortalecimiento de la musculatura antagonista y planificación de ejercicios orientados a la mejora. Titulación: Técnico Deportivo Superior en Escalada (TD3).",
             },
         en: {
             etiquetaIdioma: "Language",
@@ -2363,6 +2368,12 @@ const textos = {
         donacionesP3: "This project will initially be launched for free, as a trial. Surely errors will appear that will need to be corrected, and also, this period will allow us to gauge its reception among the climbing community. However, once this phase is over (the duration of which is yet to be determined), ROCA NORTE will become a paid service.",
         donacionesP4: "With the profits that, we hope, the project generates, we want to recover the investment made and compensate for the time dedicated to its development. But we also want to allocate a part of those profits to the purchase of hardware to equip and re-equip climbing routes, which we will deliver to different local clubs and equippers.",
         donacionesP5: "Because, ultimately, without them and without their support, this project would never have had a reason to exist.",
+            colaboradoresTitulo: "Partners",
+        textoContactoColab: "Would you like to be part of Roca Norte? Contact us to explore advertising options and discover how we can collaborate to continue driving this project forward.",
+        btnContactar: "Contact",
+        marcasApoyan: "Brands that support us",
+        descTocandoCumbre: "Mountain and climbing guide specialized in leading and accompanying activities in the Cantabrian Mountains, the rest of the main mountain ranges in Spain, and some of the most emblematic in the world. Guiding services in mid-mountain and climbing, including ascents in the Picos de Europa and other reference walls and massifs. Qualifications: TD2 in Mid-Mountain and TD2 in Climbing.",
+        descFuncionalClimbing: "Design and monitoring of training programs adapted to the objectives and level of each climber. Evaluation of physical capacities specific to climbing, development of routines to strengthen antagonist muscles, and planning of exercises aimed at improvement. Qualifications: Superior Sports Technician in Climbing (TD3).",
         }
     };
 
