@@ -364,7 +364,7 @@ function actualizarGraficoPerfil() {
 
     if (total === 0) {
         chartDiv.style.background = '#f8f9fa';
-        chartDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:0.8rem;text-align:center;font-style:italic;">Sin<br>datos</div>';
+chartDiv.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:0.8rem;text-align:center;font-style:italic;">${textos[idiomaActual].sinDatos}</div>`;
     } else {
         const pVista = (tVista / total) * 100;
         const pFlash = (tFlash / total) * 100;
