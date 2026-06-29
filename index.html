@@ -977,10 +977,10 @@ function mostrarEstadisticas() {
     // 2. Preparamos el esqueleto de la nueva pantalla
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
-            &#8592; Volver a Escuelas
+            &#8592; ${textos[idiomaActual].volverEscuelas}
         </button>
         
-        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">Rocódromos</div>
+        <div class="section-title" style="font-size: 1.4rem; margin-bottom: 20px; color: #2c3e50;">${textos[idiomaActual].rocodromosTitulo}</div>
 
         <div style="margin-bottom: 20px;">
 <img src="https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/Rocodromos%20Asturias.jpg?alt=media&token=ac76c2f9-fbbc-46ae-9918-28bf20d33de7" alt="Mapa Rocódromos Roca Norte" style="width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block;">        </div>
@@ -988,7 +988,7 @@ function mostrarEstadisticas() {
         <div id="contenedor-lista-rocodromos" style="display: flex; flex-direction: column; gap: 25px;">
             
             <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-                <h3 style="color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #eaeaea; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0;">Rocódromos Comerciales</h3>
+                <h3 style="color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #eaeaea; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0;">${textos[idiomaActual].rocodromosComerciales}</h3>
                 <ul style="list-style: none; padding: 0; margin: 0;">
                     
                     <li style="padding: 10px 0; border-bottom: 1px solid #f4f4f4; display: flex; justify-content: space-between; align-items: center;">
@@ -1045,7 +1045,7 @@ function mostrarEstadisticas() {
             </div>
 
             <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-                <h3 style="color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #eaeaea; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0;"> Rocódromos Municipales</h3>
+                <h3 style="color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #eaeaea; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0;"> ${textos[idiomaActual].rocodromosMunicipales}</h3>
                 <ul style="list-style: none; padding: 0; margin: 0;">
 
                 <li style="padding: 10px 0; border-bottom: 1px solid #f4f4f4; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
@@ -2299,6 +2299,9 @@ const textos = {
             novedadesTitulo: "Novedades",
         tituloNoticia1: "Lanzamiento de Roca Norte",
         textoNoticia1: "¡Bienvenidos a la guía! Empezamos esta aventura con la información básica de los sectores principales.",
+            rocodromosTitulo: "Rocódromos",
+        rocodromosComerciales: "Rocódromos Comerciales",
+        rocodromosMunicipales: "Rocódromos Municipales",
             },
         en: {
             etiquetaIdioma: "Language",
@@ -2349,6 +2352,9 @@ const textos = {
         novedadesTitulo: "News",
         tituloNoticia1: "Roca Norte Launch",
         textoNoticia1: "Welcome to the guide! We start this adventure with the basic information of the main sectors.",
+            rocodromosTitulo: "Climbing Gyms",
+        rocodromosComerciales: "Commercial Gyms",
+        rocodromosMunicipales: "Municipal Gyms",
         }
     };
 
