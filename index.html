@@ -2154,7 +2154,7 @@ window.addEventListener('load', () => {
     }
     // 1. TU LISTA DE NOVEDADES (Añade las nuevas siempre arriba con un 'id' mayor)
     const listaNovedades = [
-        { id: 1, fecha: "24/06/2026", titulo: "Lanzamiento de Roca Norte", texto: "¡Bienvenidos a la guía! Empezamos esta aventura con la información básica de los sectores principales." }
+{ id: 1, fecha: "24/06/2026", titulo: "tituloNoticia1", texto: "textoNoticia1" }
     ];
 
     // 2. FUNCIÓN PARA MOSTRAR LA PANTALLA
@@ -2195,8 +2195,8 @@ window.addEventListener('load', () => {
         let htmlTarjetas = listaNovedades.map(nov => `
             <div style="background: white; border-left: 4px solid #3498db; padding: 15px; margin-bottom: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                 <div style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 5px;"><i class="far fa-calendar-alt"></i> ${nov.fecha}</div>
-                <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1rem;">${nov.titulo}</h4>
-                <p style="margin: 0; font-size: 0.95rem; color: #444; line-height: 1.5;">${nov.texto}</p>
+                <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1rem;">${textos[idiomaActual][nov.titulo]}</h4>
+                <p style="margin: 0; font-size: 0.95rem; color: #444; line-height: 1.5;">${textos[idiomaActual][nov.texto]}</p>
             </div>
         `).join('');
 
@@ -2205,11 +2205,11 @@ window.addEventListener('load', () => {
             <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
 
             <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
-            ← Volver a Escuelas
+            ← ${textos[idiomaActual].volverEscuelas}
         </button>
                 <div style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-bullhorn" style="color: #f39c12;"></i> Novedades
-                </div>
+<i class="fas fa-bullhorn" style="color: #f39c12;"></i> ${textos[idiomaActual].novedadesTitulo}
+</div>
                 ${htmlTarjetas}
             </div>
         `;
