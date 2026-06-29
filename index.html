@@ -467,7 +467,7 @@ chartDiv.innerHTML = `<div style="display:flex;align-items:center;justify-conten
     });
 
     if (htmlBarras === '') {
-        htmlBarras = '<div style="text-align: center; color: #aaa; font-style: italic; font-size: 0.85rem;">No hay encadenes para mostrar</div>';
+htmlBarras = `<div style="text-align: center; color: #aaa; font-style: italic; font-size: 0.85rem;">${textos[idiomaActual].sinEncadenes}</div>`;
     }
 
     document.getElementById('grafico-barras-horizontales').innerHTML = htmlBarras;
