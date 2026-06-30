@@ -169,8 +169,8 @@
 
  <div id="modalPerfilUsuario" style="display: none; width: 100%; max-width: 650px; margin: 0 auto; padding: 15px; box-sizing: border-box; font-family: sans-serif;">
      <button class="btn-volver" onclick="mostrarInicio(); document.getElementById('modalPerfilUsuario').style.display='none';" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
-        ← Volver a Escuelas
-    </button>
+        ← <span id="texto-volver-perfil">Volver a Escuelas</span>
+     </button>
     <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; color: #444;">
         <button class="close-modal" onclick="cerrarPerfil()">&times;</button>
         
@@ -2436,6 +2436,11 @@ const textos = {
             tituloEsc.textContent = textos[idiomaActual].tituloEscuelas;
         }
 
+        let btnVolverPerfil = document.getElementById('texto-volver-perfil');
+    if (btnVolverPerfil) {
+        btnVolverPerfil.innerText = textos[idiomaActual].volverEscuelas;
+    }
+        
         let nombreInput = document.getElementById('nombreUsuarioInput');
         if (nombreInput) nombreInput.placeholder = textos[idiomaActual].perfilNombre;
 
