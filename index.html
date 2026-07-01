@@ -1352,16 +1352,16 @@ html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinSec
             const sector = database.sectores.find(s => s.idEscuela === escuelaActualId && s.idSector === idSector);
             if (!sector) return;
 
-            let html = `<button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">← Atrás</button><div class="section-title">${sector.nombreSector}</div>`;
+let html = `<button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">${textos[idiomaActual].atras}</button><div class="section-title">${sector.nombreSector}</div>`;
             const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
             
             if (viasFiltradas.length > 0 && viasFiltradas[0].fotoCroquis) html += `<img src="${viasFiltradas[0].fotoCroquis}" class="foto-guia" alt="Croquis" onerror="this.style.display='none'">`;
             else if (sector.fotoSector) html += `<img src="${sector.fotoSector}" class="foto-guia" alt="Croquis" onerror="this.style.display='none'">`;
 
-            html += `<div class="section-title" style="font-size:1rem;">Vías</div>`;
-
-            if (viasFiltradas.length === 0) html += `<p style="color:#777; font-style:italic;">Aún no hay vías registradas.</p>`;
-            else {
+html += `<div class="section-title" style="font-size:1rem;">${textos[idiomaActual].vias}</div>`;
+            
+if (viasFiltradas.length === 0) html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinVias}</p>`;
+else {
                 viasFiltradas.forEach(via => {
                     const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
                     const estadoGuardado = getLocal(storageKey) || "";
@@ -1379,11 +1379,11 @@ html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinSec
                     </div>
                             <div class="via-check">
                                <select class="estado-via" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
-    <option value="" ${estadoGuardado === '' ? 'selected' : ''}>Sin hacer</option>
-    <option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
+<option value="" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
+<option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
     <option value="a-flash" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
-    <option value="2-pegue" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>En el día</option>
-    <option value="trabajado" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
+<option value="2-pegue" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
+<option value="trabajado" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
     <option value="proyecto" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>Proyecto</option>
 </select>
                             </div>
