@@ -1242,14 +1242,14 @@ function generarAvisoNidificacion(idEscuela) {
         return `
         <div id="fondo-cartel" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
             <div id="cartel-nidificacion" style="position: relative; background: #fee2e2; border: 2px solid #ef4444; padding: 25px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: 90%; max-width: 400px; text-align: center;">
-                <span onclick="document.getElementById('fondo-cartel').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 1.8rem; color: #b91c1c; font-weight: bold; line-height: 1;">×</span>
-                <div style="font-size: 1.3rem; color: #b91c1c; font-weight: bold; margin-bottom: 12px; padding-top: 5px;">🦅 ¡Atención! Escalada Prohibida</div>
-                <div style="color: #7f1d1d; font-size: 1rem; margin-bottom: 20px; line-height: 1.4;">
-                    Por nidificación, la escalada en <b>${aviso.sectores}</b> está prohibida desde el ${diaIni}/${mesIni} hasta el ${diaFin}/${mesFin}.
-                </div>
+             <span onclick="document.getElementById('fondo-cartel').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 1.8rem; color: #b91c1c; font-weight: bold; line-height: 1;">×</span>
+<div style="font-size: 1.3rem; color: #b91c1c; font-weight: bold; margin-bottom: 12px; padding-top: 5px;">🦅 ${textos[idiomaActual].tituloProhibido}</div>   
+<div style="color: #7f1d1d; font-size: 1rem; margin-bottom: 20px; line-height: 1.4;">
+${textos[idiomaActual].textoProhibido1}<b>${aviso.sectores}</b>${textos[idiomaActual].textoProhibido2}${diaIni}/${mesIni}${textos[idiomaActual].textoProhibido3}${diaFin}/${mesFin}.   
+</div>
                 <div>
-                    <span style="display:inline-block; background:#ef4444; color:white; padding:8px 16px; border-radius:25px; font-size: 0.95rem; font-weight:bold; box-shadow: 0 2px 5px rgba(239,68,68,0.4); text-transform: uppercase; letter-spacing: 0.5px;">Faltan ${diasFaltantes} días para escalar</span>
-                </div>
+<span style="display:inline-block; background:#ef4444; color:white; padding:8px 16px; border-radius:25px; font-size: 0.95rem; font-weight:bold; box-shadow: 0 2px 5px rgba(239,68,68,0.4); text-transform: uppercase; letter-spacing: 0.5px;">${textos[idiomaActual].faltan}${diasFaltantes}${textos[idiomaActual].diasParaEscalar}</span>
+</div>
             </div>
         </div>`;
     } else {
@@ -1257,13 +1257,13 @@ function generarAvisoNidificacion(idEscuela) {
         <div id="fondo-cartel" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
             <div id="cartel-nidificacion" style="position: relative; background: #eaf7f0; border: 2px solid #27ae60; padding: 25px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: 90%; max-width: 400px; text-align: center;">
                 <span onclick="document.getElementById('fondo-cartel').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 1.8rem; color: #166534; font-weight: bold; line-height: 1;">×</span>
-                <div style="font-size: 1.3rem; color: #166534; font-weight: bold; margin-bottom: 12px; padding-top: 5px;">🦅 Escalada Permitida</div>
-                <div style="color: #14532d; font-size: 1rem; margin-bottom: 20px; line-height: 1.4;">
-                    Actualmente se permite escalar en <b>${aviso.sectores}</b>. Recuerda que se prohibirá por nidificación desde el ${diaIni}/${mesIni} hasta el ${diaFin}/${mesFin}.
-                </div>
+<div style="font-size: 1.3rem; color: #166534; font-weight: bold; margin-bottom: 12px; padding-top: 5px;">🦅 ${textos[idiomaActual].tituloPermitido}</div>
+<div style="color: #14532d; font-size: 1rem; margin-bottom: 20px; line-height: 1.4;">
+${textos[idiomaActual].textoPermitido1}<b>${aviso.sectores}</b>${textos[idiomaActual].textoPermitido2}${diaIni}/${mesIni}${textos[idiomaActual].textoProhibido3}${diaFin}/${mesFin}.
+</div>
                 <div>
-                    <span style="display:inline-block; background:#27ae60; color:white; padding:8px 16px; border-radius:25px; font-size: 0.95rem; font-weight:bold; box-shadow: 0 2px 5px rgba(39,174,96,0.4); text-transform: uppercase; letter-spacing: 0.5px;">Quedan ${diasFaltantes} días libres</span>
-                </div>
+<span style="display:inline-block; background:#27ae60; color:white; padding:8px 16px; border-radius:25px; font-size: 0.95rem; font-weight:bold; box-shadow: 0 2px 5px rgba(39,174,96,0.4); text-transform: uppercase; letter-spacing: 0.5px;">${textos[idiomaActual].quedan}${diasFaltantes}${textos[idiomaActual].diasLibres}</span>
+</div>
             </div>
         </div>`;
     }
