@@ -2471,6 +2471,11 @@ const textos = {
         if (cargandoEsc) {
             cargandoEsc.textContent = textos[idiomaActual].cargando;
         }
+        // Recargar la escuela actual para aplicar los textos dinámicos al instante
+    let contenido = document.getElementById('contenido-dinamico');
+    if (typeof escuelaActualId !== 'undefined' && contenido && contenido.innerHTML.includes('mostrarInicio()')) {
+        seleccionarEscuela(escuelaActualId);
+    }
     }
 </script>
 </body>
