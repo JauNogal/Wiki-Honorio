@@ -1298,13 +1298,13 @@ function seleccionarEscuela(id) {
     </div>
     `;
 
-    html += `<div class="section-title" style="font-size:1rem;">Sectores</div>`;
+   html += `<div class="section-title" style="font-size:1rem;">${textos[idiomaActual].sectoresTitulo}</div>`;
                 
     const sectoresFiltrados = database.sectores.filter(s => Number(s.idEscuela) === Number(id));
     sectoresFiltrados.sort((a, b) => parseInt(a.idSector) - parseInt(b.idSector));
     
     if (sectoresFiltrados.length === 0) {
-        html += `<p style="color:#777; font-style:italic;">No hay sectores.</p>`;
+html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinSectores}</p>`;
     } else {
         let encadenesPorSector = {};
         database.vias.forEach(via => {
@@ -1331,14 +1331,15 @@ function seleccionarEscuela(id) {
                         ${sector.idSector}. ${sector.nombreSector}
                         ${etiquetaPorcentajeSector}
                     </h3>
-                    <span style="font-size: 0.85em; font-weight: bold; color: #777; flex-grow: 1; text-align: center;">Rango de grados</span>
-                    <span style="font-size: 0.85em; color: #666; white-space: nowrap;">Vías: <span class="info-tag">${sector.vias || 0}</span></span>
-                </div>
+<span style="font-size: 0.85em; font-weight: bold; color: #777; flex-grow: 1; text-align: center;">${textos[idiomaActual].rangoGrados}</span>
+<span style="font-size: 0.85em; color: #666; white-space: nowrap;">${textos[idiomaActual].vias}: <span class="info-tag">${sector.vias || 0}</span></span>
+</div>
                 <div style="display: flex; justify-content: space-between; gap: 4px; width: 100%;">
-                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">Hasta V+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo1 || 0}</span></div>
-                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">6a a 6c+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo2 || 0}</span></div>
-                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">7a a 7c+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo3 || 0}</span></div>
-                    <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">8a o ><br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo4 || 0}</span></div>
+                <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">${textos[idiomaActual].hasta} V+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo1 || 0}</span></div>
+                <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">6a ${textos[idiomaActual].aRango} 6c+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo2 || 0}</span></div>
+                <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">7a ${textos[idiomaActual].aRango} 7c+<br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo3 || 0}</span></div>
+                <div style="background: #f8f9fa; padding: 4px; border-radius: 6px; border: 1px solid #eaeaea; text-align:center; flex: 1; font-size:0.75em;">8a ${textos[idiomaActual].oRango} ><br><span class="info-tag" style="font-weight:bold;">${sector.vias_grupo4 || 0}</span></div>
+                
                 </div>
             </div>`;
         });
@@ -2324,6 +2325,8 @@ const textos = {
         vias: "Vías",
         hasta: "Hasta",
             aRango: "a",
+            sinSectores: "No hay sectores.",
+        oRango: "o"
             },
         en: {
             etiquetaIdioma: "Language",
@@ -2404,6 +2407,8 @@ const textos = {
         vias: "Routes",
         hasta: "Up to",
             aRango: "to",
+            sinSectores: "No sectors found.",
+        oRango: "or"
         }
     };
 
