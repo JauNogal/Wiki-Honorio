@@ -1278,7 +1278,7 @@ function seleccionarEscuela(id) {
     if (!escuela) return;
     document.getElementById('leyenda-container').style.display = 'flex';
 
-    let html = `<button class="btn-volver" onclick="mostrarInicio()">← Escuelas</button><div class="section-title">${escuela.nombre}</div>`;
+let html = `<button class="btn-volver" onclick="mostrarInicio()">${textos[idiomaActual].botonEscuelas}</button><div class="section-title">${escuela.nombre}</div>`;
     if (escuela.foto) html += `<img src="${escuela.foto}" class="foto-guia" alt="Foto Escuela" style="margin-bottom: 10px;">`;
 
     // INYECTAMOS EL AVISO DE NIDIFICACIÓN AQUÍ
