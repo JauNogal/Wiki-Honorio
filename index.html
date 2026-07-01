@@ -2515,6 +2515,10 @@ const textos = {
     if (typeof escuelaActualId !== 'undefined' && contenido && contenido.innerHTML.includes('mostrarInicio()')) {
         seleccionarEscuela(escuelaActualId);
     }
+        // Inyección mínima: si estamos en un sector, lo refrescamos
+    if (typeof window.sectorActual !== 'undefined') {
+        verSector(window.sectorActual);
+    }
     }
 </script>
 </body>
