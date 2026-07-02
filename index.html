@@ -2575,6 +2575,19 @@ botonEscuelas: "← Back to crags",
     if (typeof window.sectorActual !== 'undefined') {
         verSector(window.sectorActual);
     }
+
+        // Traducir el título de la leyenda
+    let tituloLeyenda = document.getElementById('titulo-leyenda');
+    if (tituloLeyenda) tituloLeyenda.innerText = textos[idiomaActual].leyendaTitulo;
+
+    // Traducir todos los símbolos de la leyenda de un plumazo
+    let spansLeyenda = document.querySelectorAll('.leyenda-desc');
+    spansLeyenda.forEach(span => {
+        let clave = span.getAttribute('data-id');
+        if (clave && textos[idiomaActual][clave]) {
+            span.innerText = textos[idiomaActual][clave];
+        }
+    });
     }
 </script>
 </body>
