@@ -219,10 +219,17 @@
         function setLocal(key, val) { try { localStorage.setItem(key, val); } catch(e) { } }
         function removeLocal(key) { try { localStorage.removeItem(key); } catch(e) { } }
 
-        function toggleMenu() {
-            const menu = document.getElementById('menuOpciones');
-            if (menu) menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
-        }
+      function toggleMenu() {
+    // 1. Forzar el cierre de la leyenda si está abierta para que no se pisen
+    const contenedorLeyenda = document.getElementById('leyenda-container');
+    if (contenedorLeyenda && contenedorLeyenda.classList.contains('abierto')) {
+        contenedorLeyenda.classList.remove('abierto');
+    }
+
+    // 2. Abrir o cerrar el menú principal (tu código original intacto)
+    const menu = document.getElementById('menuOpciones');
+    if (menu) menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+}
 function abrirPerfil() {
     document.getElementById('menuOpciones').style.display = 'none';
     let mapa = document.getElementById('map');
