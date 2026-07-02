@@ -2590,6 +2590,9 @@ botonEscuelas: "← Back to crags",
             span.innerText = textos[idiomaActual][clave];
         }
     });
+        // Traducir la pestaña lateral negra
+    let pestanaLeyenda = document.getElementById('leyenda-tab');
+    if (pestanaLeyenda) pestanaLeyenda.innerText = textos[idiomaActual].leyendaTab;
     }
 </script>
 </body>
