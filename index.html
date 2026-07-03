@@ -1441,13 +1441,13 @@ else {
     caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
 
     caja.innerHTML = `
-        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">¿Deseas anotar <b>${nombre}</b> en tu lista de proyectos?</div>
+        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">${textos[idiomaActual].modalProyectos1}<b>${nombre}</b>${textos[idiomaActual].modalProyectos2}</div>
         <label style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; font-size: 0.85em; color: #666; cursor: pointer;">
-            <input type="checkbox" id="checkNoPreguntarProy"> No volver a preguntar
+            <input type="checkbox" id="checkNoPreguntarProy"> ${textos[idiomaActual].modalNoVolver}
         </label>
         <div style="display: flex; gap: 10px; justify-content: center;">
             <button id="btnNoProy" style="flex: 1; padding: 10px; border: none; background: #eee; border-radius: 5px; cursor: pointer; color: #333; font-weight: bold;">No</button>
-            <button id="btnSiProy" style="flex: 1; padding: 10px; border: none; background: #3498db; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Sí, anotar</button>
+            <button id="btnSiProy" style="flex: 1; padding: 10px; border: none; background: #3498db; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">${textos[idiomaActual].modalBtnAnotar}</button>
         </div>
     `;
 
@@ -2388,6 +2388,10 @@ const textos = {
         modalApuntar2: " en tu diario?",
         modalPropuesta: "TU PROPUESTA DE GRADO",
         modalBtnSi: "Sí, apuntar",
+            modalProyectos1: "¿Deseas anotar ",
+        modalProyectos2: " en tu lista de proyectos?",
+        modalNoVolver: "No volver a preguntar",
+        modalBtnAnotar: "Sí, anotar",
             },
 
 
@@ -2524,6 +2528,10 @@ botonEscuelas: "← Back to crags",
         modalApuntar2: " in your logbook?",
         modalPropuesta: "YOUR PROPOSED GRADE",
         modalBtnSi: "Yes, log it",
+            modalProyectos1: "Do you want to add ",
+        modalProyectos2: " to your projects list?",
+        modalNoVolver: "Do not ask again",
+        modalBtnAnotar: "Yes, add",
         }
     };
 
