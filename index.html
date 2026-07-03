@@ -1500,10 +1500,10 @@ function guardarEnDiarioProyectos(nombre, grado) {
     caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; width:90%; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
 
     caja.innerHTML = `
-        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">¿Quieres apuntar <b>${nombre}</b> en tu diario?</div>
+        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">${textos[idiomaActual].modalApuntar1}<b>${nombre}</b>${textos[idiomaActual].modalApuntar2}</div>
         
         <div style="background: #f8f9fa; border: 1px solid #eaeaea; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-            <div style="font-size: 0.85em; color: #666; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Tu Propuesta de Grado</div>
+            <div style="font-size: 0.85em; color: #666; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">${textos[idiomaActual].modalPropuesta}</div>
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                 <button id="btnMenosGrado" style="width: 35px; height: 35px; font-size: 1.2em; font-weight: bold; border: none; border-radius: 5px; background: #e0e0e0; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center;">&minus;</button>
                 <div id="gradoMostrado" style="font-size: 1.4em; font-weight: bold; color: #2980b9; width: 60px; text-align: center;">${escalaGrados[indiceActual]}</div>
@@ -1513,7 +1513,7 @@ function guardarEnDiarioProyectos(nombre, grado) {
 
         <div style="display: flex; gap: 10px; justify-content: center;">
             <button id="btnNoEnc" style="flex: 1; padding: 12px; border: none; background: #eee; border-radius: 6px; cursor: pointer; color: #333; font-weight: bold; font-size: 1em;">No</button>
-            <button id="btnSiEnc" style="flex: 1; padding: 12px; border: none; background: #27ae60; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;">Sí, apuntar</button>
+            <button id="btnSiEnc" style="flex: 1; padding: 12px; border: none; background: #27ae60; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;">${textos[idiomaActual].modalBtnSi}</button>
         </div>
     `;
 
@@ -2387,7 +2387,6 @@ const textos = {
             leyendaTab: "L E Y E N D A",modalApuntar1: "¿Quieres apuntar ",
         modalApuntar2: " en tu diario?",
         modalPropuesta: "TU PROPUESTA DE GRADO",
-        modalBtnNo: "No",
         modalBtnSi: "Sí, apuntar",
             },
 
@@ -2524,7 +2523,6 @@ botonEscuelas: "← Back to crags",
             modalApuntar1: "Do you want to log ",
         modalApuntar2: " in your logbook?",
         modalPropuesta: "YOUR PROPOSED GRADE",
-        modalBtnNo: "No",
         modalBtnSi: "Yes, log it",
         }
     };
