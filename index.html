@@ -1358,7 +1358,11 @@ html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinSec
         function verSector(idSector) {
             const sector = database.sectores.find(s => s.idEscuela === escuelaActualId && s.idSector === idSector);
             if (!sector) return;
-
+// Forzar el cierre de la leyenda al entrar a las vías
+    const contenedorLeyenda = document.getElementById('leyenda-container');
+    if (contenedorLeyenda && contenedorLeyenda.classList.contains('abierto')) {
+        contenedorLeyenda.classList.remove('abierto');
+    }
 let html = `<button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})">${textos[idiomaActual].atras}</button><div class="section-title">${sector.nombreSector}</div>`;
             const viasFiltradas = database.vias.filter(v => v.idEscuela === escuelaActualId && v.idSector === idSector);
             
