@@ -408,7 +408,7 @@ chartDiv.innerHTML = `<div style="display:flex;align-items:center;justify-conten
 
     database.vias.forEach(via => {
         const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
-        if (estado) {
+       if (estado && estado !== 'proyecto') {
             // Agrupamos todo en minúsculas temporalmente para evitar duplicados (ej: "IV" y "iv")
             let gradoClave = (via.grado || "N/A").trim().toLowerCase(); 
             
