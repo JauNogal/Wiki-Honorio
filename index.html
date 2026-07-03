@@ -1466,7 +1466,7 @@ else {
         }
         guardarEnDiarioProyectos(nombre, grado);
         document.body.removeChild(fondo);
-        alert('¡' + nombre + ' añadida a Mis Proyectos!');
+        alert(textos[idiomaActual].alertaProyectos.replace('$VIA', nombre));
     };
 }
 
@@ -2392,6 +2392,7 @@ const textos = {
         modalProyectos2: " en tu lista de proyectos?",
         modalNoVolver: "No volver a preguntar",
         modalBtnAnotar: "Sí, anotar",
+            alertaProyectos: "¡$VIA añadida a Mis Proyectos!",
             },
 
 
@@ -2532,6 +2533,7 @@ botonEscuelas: "← Back to crags",
         modalProyectos2: " to your projects list?",
         modalNoVolver: "Do not ask again",
         modalBtnAnotar: "Yes, add",
+            alertaProyectos: "$VIA added to My Projects!",
         }
     };
 
