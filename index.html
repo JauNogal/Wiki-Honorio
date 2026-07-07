@@ -1391,12 +1391,12 @@ else {
                     </div>
                             <div class="via-check">
                                <select class="estado-via" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
-<option value="" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
-<option value="a-vista" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
-    <option value="a-flash" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
-<option value="2-pegue" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
-<option value="trabajado" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
-<option value="proyecto" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>${textos[idiomaActual].estadoProyecto}</option>
+<option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
+<option value="a-vista" style="background-color: #3CB371; color: white;" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
+<option value="a-flash" style="background-color: #00CED1; color: white;" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
+<option value="2-pegue" style="background-color: #FFA500; color: white;" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
+<option value="trabajado" style="background-color: #FF6347; color: white;" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
+<option value="proyecto" style="background-color: #FFD700; color: #333;" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>${textos[idiomaActual].estadoProyecto}</option>
 </select>
                             </div>
                         </div>`;
