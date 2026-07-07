@@ -1568,23 +1568,18 @@ function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
     lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0', estilo: estilo });
     setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
 }
-       function actualizarEstiloSelect(elemento) {
-    const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', '2-pegue': '#FFA500', 'trabajado': '#FF6347' };
+   function actualizarEstiloSelect(elemento) {
+    const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', '2-pegue': '#FFA500', 'trabajado': '#FF6347', 'proyecto': '#FFD700' };
     const valor = elemento.value;
     
     if (valor && colores[valor]) {
         elemento.style.backgroundColor = colores[valor]; 
-        elemento.style.color = 'white'; 
+        elemento.style.color = (valor === 'proyecto') ? 'black' : 'white'; 
         elemento.style.border = 'none';
     } else {
         elemento.style.backgroundColor = ''; 
         elemento.style.color = 'black'; 
         elemento.style.border = '1px solid #ccc';
-    }
-
-    for (let i = 0; i < elemento.options.length; i++) {
-        elemento.options[i].style.backgroundColor = '#ffffff';
-        elemento.options[i].style.color = '#333333';
     }
 }
 
