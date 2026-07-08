@@ -1,13 +1,13 @@
-const CACHE_NAME = 'roca-norte-v1';
+const CACHE_NAME = 'roca-norte-v2';
 const urlsToCache = [
   './',
   './index.html',
+  './admin.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
 ];
 
-// Durante la instalación, guarda los archivos en la caché del móvil
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -15,14 +15,53 @@ self.addEventListener('install', event => {
         return cache.addAll(urlsToCache);
       })
   );
+  // Fuerza al Service Worker a activarse inmediatamente
+  self.skipWaiting();
 });
 
-// Cuando no hay internet, busca en la caché antes de dar error
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName); // Borra la versión v1 antigua
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim();
+});
+
 self.addEventListener('fetch', event => {
+  // Solo interceptamos peticiones normales (GET)
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        return response || fetch(event.request);
+        // 1. Si ya lo tenemos en la mochila, lo devolvemos offline
+        if (response) {
+          return response;
+        }
+
+        // 2. Si no lo tenemos, vamos a buscarlo a internet
+        return fetch(event.request).then(networkResponse => {
+          // Si algo falla en la red, devolvemos lo que haya
+          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic' && networkResponse.type !== 'cors') {
+            return networkResponse;
+          }
+
+          // 3. ¡El truco! Guardamos una copia exacta "al vuelo" para la próxima vez
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+
+          return networkResponse;
+        });
       })
   );
 });
