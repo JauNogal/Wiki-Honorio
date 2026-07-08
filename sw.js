@@ -1,4 +1,4 @@
-const CACHE_NAME = 'roca-norte-v4';
+const CACHE_NAME = 'roca-norte-v5';
 const urlsToCache = [
   './',
   './index.html',
