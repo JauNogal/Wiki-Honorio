@@ -509,8 +509,8 @@ htmlBarras = `<div style="text-align: center; color: #aaa; font-style: italic; f
             try {
                 // Exactamente la conexión de tu código original (v1.0)
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
-                const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-
+const { getFirestore, collection, getDocs, enableIndexedDbPersistence } = await import("https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js");
+                
                 const firebaseConfig = {
                     apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
                     authDomain: "wiki-honorio.firebaseapp.com",
@@ -522,7 +522,14 @@ htmlBarras = `<div style="text-align: center; color: #aaa; font-style: italic; f
 
                 const app = initializeApp(firebaseConfig);
                 const db = getFirestore(app);
-
+                enableIndexedDbPersistence(db)
+  .catch((err) => {
+    if (err.code == 'failed-precondition') {
+      console.log("Múltiples pestañas abiertas, persistencia fallida");
+    } else if (err.code == 'unimplemented') {
+      console.log("El navegador no soporta el modo offline");
+    }
+  });
                 function arreglarUrl(url) {
                     if (!url) return '';
                     if (url.includes('/file/d/')) return `https://drive.google.com/uc?export=view&id=${url.split('/file/d/')[1].split('/')[0]}`;
