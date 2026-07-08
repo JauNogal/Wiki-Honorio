@@ -1,11 +1,12 @@
-const CACHE_NAME = 'roca-norte-v2';
+const CACHE_NAME = 'roca-norte-v4';
 const urlsToCache = [
   './',
   './index.html',
   './admin.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  'https://firebasestorage.googleapis.com/v0/b/wiki-honorio.firebasestorage.app/o/LogoCabecera.png?alt=media&token=fcfd1dbc-953d-4812-b2f9-42b464d51b53'
 ];
 
 self.addEventListener('install', event => {
