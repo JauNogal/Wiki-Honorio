@@ -1435,6 +1435,19 @@ else {
     } else if (valor === 'a-vista' || valor === 'a-flash' || valor === '2-pegue' || valor === 'trabajado') {
         lanzarModalEncadenada(nombre, grado, valor);
     }
+            // Truco para ocultar la vía solo si estamos en la vista del Diario/Proyectos
+        let tituloPantalla = document.querySelector('.section-title');
+        if (tituloPantalla) {
+            let textoTitulo = tituloPantalla.innerText.toLowerCase();
+            if (textoTitulo.includes('diario') || textoTitulo.includes('proyecto') || textoTitulo.includes('mis vías')) {
+                if (valor !== 'proyecto') {
+                    let filaVia = elemento.closest('.via-item');
+                    if (filaVia) {
+                        filaVia.style.display = 'none';
+                    }
+                }
+            }
+        }
 }
 
 
