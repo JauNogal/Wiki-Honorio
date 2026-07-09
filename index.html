@@ -1435,17 +1435,16 @@ else {
     } else if (valor === 'a-vista' || valor === 'a-flash' || valor === '2-pegue' || valor === 'trabajado') {
         lanzarModalEncadenada(nombre, grado, valor);
     }
-            // Truco para ocultar la vía solo si estamos en la vista del Diario/Proyectos
-        let tituloPantalla = document.querySelector('.section-title');
-        if (tituloPantalla) {
-            let textoTitulo = tituloPantalla.innerText.toLowerCase();
-            if (textoTitulo.includes('diario') || textoTitulo.includes('proyecto') || textoTitulo.includes('mis vías')) {
-                if (valor !== 'proyecto') {
-                    let filaVia = elemento.closest('.via-item');
-                    if (filaVia) {
-                        filaVia.style.display = 'none';
-                    }
-                }
+            // Limpieza automática: Si la vía ya no es un proyecto, la borramos de la base de datos del diario
+        if (valor !== 'proyecto') {
+            let proyectosGuardados = getLocal('proyectos-manuales-lista');
+            if (proyectosGuardados) {
+                try {
+                    let lista = JSON.parse(proyectosGuardados);
+                    // Filtramos la lista para destruir el clon: nos quedamos con todas las vías MENOS la actual
+                    let listaLimpia = lista.filter(p => p.nombre !== nombre);
+                    setLocal('proyectos-manuales-lista', JSON.stringify(listaLimpia));
+                } catch(e) {}
             }
         }
 }
