@@ -839,15 +839,15 @@ function renderizarViasEncadenadas() {
         let tr = document.createElement('tr');
         tr.style.borderBottom = "1px solid #eaeaea";
         
-        // --- MAGIA DE COLORES: Asignamos fondo claro y texto oscuro según el estilo ---
-        let bgEstilo = '#e8f4f8', textEstilo = '#2980b9'; // Azul por defecto
-        if (via.estilo === 'a-vista') { bgEstilo = '#eaf7f0'; textEstilo = '#27ae60'; } // Verde
-        else if (via.estilo === 'a-flash') { bgEstilo = '#e0f8f8'; textEstilo = '#008b8b'; } // Turquesa
-        else if (via.estilo === '2-pegue') { bgEstilo = '#fff4e0'; textEstilo = '#d35400'; } // Naranja
-        else if (via.estilo === 'trabajado') { bgEstilo = '#ffebea'; textEstilo = '#c0392b'; } // Rojo
+      // --- MAGIA DE COLORES Y ETIQUETAS ---
+        let bgEstilo = '#e8f4f8', textEstilo = '#2980b9', nombreDisplay = via.estilo;
+        if (via.estilo === 'a-vista') { bgEstilo = '#eaf7f0'; textEstilo = '#27ae60'; nombreDisplay = 'A vista'; }
+        else if (via.estilo === 'a-flash') { bgEstilo = '#e0f8f8'; textEstilo = '#008b8b'; nombreDisplay = 'A flash'; }
+        else if (via.estilo === 'en-el-dia') { bgEstilo = '#fff4e0'; textEstilo = '#d35400'; nombreDisplay = 'En el día'; }
+        else if (via.estilo === 'trabajado') { bgEstilo = '#ffebea'; textEstilo = '#c0392b'; nombreDisplay = 'Trabajado'; }
 
-        // Construimos la pastilla solo si la vía tiene un estilo guardado
-let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; white-space: nowrap;">${via.estilo.charAt(0).toUpperCase() + via.estilo.slice(1).replace('-', ' ')}</span>` : '';
+        let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; white-space: nowrap;">${nombreDisplay}</span>` : '';
+        
       // Forzamos 1 intento y bloqueamos el campo si la vía es A Vista o A Flash
         let esBloqueado = (via.estilo === 'a-vista' || via.estilo === 'a-flash');
         let valorIntentos = esBloqueado ? '1' : via.intentos;
@@ -1414,7 +1414,7 @@ else {
 <option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
 <option value="a-vista" style="background-color: #3CB371; color: white;" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
 <option value="a-flash" style="background-color: #00CED1; color: white;" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
-<option value="2-pegue" style="background-color: #FFA500; color: white;" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
+<option value="en-el-día" style="background-color: #FFA500; color: white;" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
 <option value="trabajado" style="background-color: #FF6347; color: white;" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
 <option value="proyecto" style="background-color: #FFD700; color: #333;" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>${textos[idiomaActual].estadoProyecto}</option>
 </select>
@@ -1440,7 +1440,7 @@ else {
     // Si es proyecto, lanza su cuadro. Si es un encadene, lanza el nuevo cuadro.
     if (valor === 'proyecto') {
         lanzarModalProyecto(nombre, grado);
-    } else if (valor === 'a-vista' || valor === 'a-flash' || valor === '2-pegue' || valor === 'trabajado') {
+    } else if (valor === 'a-vista' || valor === 'a-flash' || valor === 'en-el-día' || valor === 'trabajado') {
         lanzarModalEncadenada(nombre, grado, valor);
     }
             // Limpieza automática: Si la vía ya no es un proyecto, la borramos de la base de datos del diario
@@ -1615,7 +1615,7 @@ function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
     setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
 }
    function actualizarEstiloSelect(elemento) {
-    const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', '2-pegue': '#FFA500', 'trabajado': '#FF6347', 'proyecto': '#FFD700' };
+    const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', 'en-el-día': '#FFA500', 'trabajado': '#FF6347', 'proyecto': '#FFD700' };
     const valor = elemento.value;
     
     if (valor && colores[valor]) {
