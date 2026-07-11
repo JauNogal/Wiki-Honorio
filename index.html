@@ -853,9 +853,11 @@ let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgE
                 <input type="text" value="${via.fecha}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'fecha', this.value)" style="width: 70px; border: none; background: transparent; color: inherit; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
             </td>
            <td style="padding: 6px 8px; font-weight: 500;">
-                ${via.nombre}
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                <span style="line-height: 1.2; text-align: left;">${via.nombre}</span>
                 ${pillEstilo}
-            </td>
+            </div>
+        </td>
             <td style="padding: 6px 8px; text-align: center; font-weight: bold; color: #2c3e50;">${via.grado}</td>
             <td style="padding: 6px 8px; text-align: center;">
                 <input type="number" min="0" value="${via.intentos}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'intentos', this.value)" style="width: 45px; border: none; background: transparent; color: inherit; font-weight: inherit; text-align: center; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
