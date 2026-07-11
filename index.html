@@ -848,7 +848,13 @@ function renderizarViasEncadenadas() {
 
         // Construimos la pastilla solo si la vía tiene un estilo guardado
 let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; white-space: nowrap;">${via.estilo.charAt(0).toUpperCase() + via.estilo.slice(1).replace('-', ' ')}</span>` : '';
-       tr.innerHTML = `
+      // Forzamos 1 intento y bloqueamos el campo si la vía es A Vista o A Flash
+        let esBloqueado = (via.estilo === 'a-vista' || via.estilo === 'a-flash');
+        let valorIntentos = esBloqueado ? '1' : via.intentos;
+        let campoDeshabilitado = esBloqueado ? 'disabled' : '';
+        let cursorEstilo = esBloqueado ? 'cursor: not-allowed; opacity: 0.7;' : 'cursor: text;';
+
+        tr.innerHTML = `
             <td style="padding: 6px 2px; width: 1%; white-space: nowrap;">
                 <input type="text" value="${via.fecha}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'fecha', this.value)" style="width: 65px; border: none; background: transparent; color: inherit; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
             </td>
@@ -860,7 +866,7 @@ let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgE
             </td>
             <td style="padding: 6px 2px; text-align: center; font-weight: bold; color: #2c3e50; width: 1%; white-space: nowrap;">${via.grado}</td>
             <td style="padding: 6px 0px; text-align: center; width: 1%; white-space: nowrap;">
-                <input type="number" min="0" value="${via.intentos}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'intentos', this.value)" style="width: 28px; border: none; background: transparent; color: inherit; font-weight: inherit; text-align: center; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
+                <input type="number" min="0" value="${valorIntentos}" ${campoDeshabilitado} onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'intentos', this.value)" style="width: 28px; border: none; background: transparent; color: inherit; font-weight: inherit; text-align: center; font-size: inherit; font-family: inherit; outline: none; ${cursorEstilo}">
             </td>
             <td style="padding: 6px 2px 6px 4px; text-align: center; cursor: pointer; color: #e74c3c; font-weight: bold; width: 1%; white-space: nowrap;" onclick="eliminarViaEncadenada(${via.indiceOriginal})">X</td>
         `;
