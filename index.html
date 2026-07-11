@@ -1587,8 +1587,17 @@ function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
     let hoy = new Date();
     let fecha = ('0' + hoy.getDate()).slice(-2) + '/' + ('0' + (hoy.getMonth()+1)).slice(-2) + '/' + hoy.getFullYear().toString().slice(-2);
 
-    // Guardamos la vía con los intentos a 0 por defecto para que tú los edites
-    lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0', estilo: estilo });
+   // Comprobamos si la vía ya existe en el diario
+    let indiceExistente = lista.findIndex(via => via.nombre === nombre);
+
+    if (indiceExistente !== -1) {
+        // Si ya existe, le actualizamos solo el estilo y la fecha (sin borrar tus intentos)
+        lista[indiceExistente].estilo = estilo;
+        lista[indiceExistente].fecha = fecha;
+    } else {
+        // Si es una vía nueva, la metemos en el saco por primera vez
+        lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0', estilo: estilo });
+    }
     setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
 }
    function actualizarEstiloSelect(elemento) {
