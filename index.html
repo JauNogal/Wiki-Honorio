@@ -1595,16 +1595,22 @@ function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
     let hoy = new Date();
     let fecha = ('0' + hoy.getDate()).slice(-2) + '/' + ('0' + (hoy.getMonth()+1)).slice(-2) + '/' + hoy.getFullYear().toString().slice(-2);
 
-   // Comprobamos si la vía ya existe en el diario
+  // Comprobamos si la vía ya existe en el diario
     let indiceExistente = lista.findIndex(via => via.nombre === nombre);
+    
+    // Si el estilo es a-vista o a-flash, obligamos a que sea 1 intento. Si no, empieza en 0.
+    let intentosIniciales = (estilo === 'a-vista' || estilo === 'a-flash') ? '1' : '0';
 
     if (indiceExistente !== -1) {
-        // Si ya existe, le actualizamos solo el estilo y la fecha (sin borrar tus intentos)
+        // Si ya existe, actualizamos estilo, fecha y forzamos el 1 si pasa a ser a-vista/a-flash
         lista[indiceExistente].estilo = estilo;
         lista[indiceExistente].fecha = fecha;
+        if (estilo === 'a-vista' || estilo === 'a-flash') {
+            lista[indiceExistente].intentos = '1';
+        }
     } else {
-        // Si es una vía nueva, la metemos en el saco por primera vez
-        lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0', estilo: estilo });
+        // Si es una vía nueva, la metemos con los intentos automáticos correspondientes
+        lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: intentosIniciales, estilo: estilo });
     }
     setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
 }
