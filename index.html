@@ -847,8 +847,7 @@ function renderizarViasEncadenadas() {
         else if (via.estilo === 'trabajado') { bgEstilo = '#ffebea'; textEstilo = '#c0392b'; } // Rojo
 
         // Construimos la pastilla solo si la vía tiene un estilo guardado
-        let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold;">${via.estilo.charAt(0).toUpperCase() + via.estilo.slice(1).replace('-', ' ')}</span>` : '';
-
+let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; white-space: nowrap;">${via.estilo.charAt(0).toUpperCase() + via.estilo.slice(1).replace('-', ' ')}</span>` : '';
         tr.innerHTML = `
             <td style="padding: 6px 8px;">
                 <input type="text" value="${via.fecha}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'fecha', this.value)" style="width: 70px; border: none; background: transparent; color: inherit; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
