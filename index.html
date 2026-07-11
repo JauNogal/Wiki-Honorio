@@ -848,22 +848,23 @@ function renderizarViasEncadenadas() {
 
         // Construimos la pastilla solo si la vía tiene un estilo guardado
 let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; white-space: nowrap;">${via.estilo.charAt(0).toUpperCase() + via.estilo.slice(1).replace('-', ' ')}</span>` : '';
-        tr.innerHTML = `
-            <td style="padding: 6px 8px;">
-                <input type="text" value="${via.fecha}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'fecha', this.value)" style="width: 70px; border: none; background: transparent; color: inherit; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
+       tr.innerHTML = `
+            <td style="padding: 6px 2px; width: 1%; white-space: nowrap;">
+                <input type="text" value="${via.fecha}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'fecha', this.value)" style="width: 65px; border: none; background: transparent; color: inherit; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
             </td>
-           <td style="padding: 6px 8px; font-weight: 500;">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                <span style="line-height: 1.2; text-align: left;">${via.nombre}</span>
-                ${pillEstilo}
-            </div>
-        </td>
-            <td style="padding: 6px 8px; text-align: center; font-weight: bold; color: #2c3e50;">${via.grado}</td>
-            <td style="padding: 6px 8px; text-align: center;">
-                <input type="number" min="0" value="${via.intentos}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'intentos', this.value)" style="width: 45px; border: none; background: transparent; color: inherit; font-weight: inherit; text-align: center; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
+            <td style="padding: 6px 4px; font-weight: 500; width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                    <span style="line-height: 1.2; text-align: left;">${via.nombre}</span>
+                    ${pillEstilo}
+                </div>
             </td>
-            <td style="padding: 6px 8px; text-align: center; cursor: pointer; color: #e74c3c; font-weight: bold;" onclick="eliminarViaEncadenada(${via.indiceOriginal})">X</td>
+            <td style="padding: 6px 4px; text-align: center; font-weight: bold; color: #2c3e50; width: 1%; white-space: nowrap;">${via.grado}</td>
+            <td style="padding: 6px 2px; text-align: center; width: 1%; white-space: nowrap;">
+                <input type="number" min="0" value="${via.intentos}" onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'intentos', this.value)" style="width: 35px; border: none; background: transparent; color: inherit; font-weight: inherit; text-align: center; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
+            </td>
+            <td style="padding: 6px 4px; text-align: center; cursor: pointer; color: #e74c3c; font-weight: bold; width: 1%; white-space: nowrap;" onclick="eliminarViaEncadenada(${via.indiceOriginal})">X</td>
         `;
+        
         tbody.appendChild(tr);
     });
 }
