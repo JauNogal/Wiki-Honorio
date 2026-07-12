@@ -839,12 +839,21 @@ function renderizarViasEncadenadas() {
         let tr = document.createElement('tr');
         tr.style.borderBottom = "1px solid #eaeaea";
         
-      // --- MAGIA DE COLORES Y ETIQUETAS ---
+     // --- MAGIA DE COLORES Y ETIQUETAS BILINGÜES ---
         let bgEstilo = '#e8f4f8', textEstilo = '#2980b9', nombreDisplay = via.estilo;
-        if (via.estilo === 'a-vista') { bgEstilo = '#eaf7f0'; textEstilo = '#27ae60'; nombreDisplay = 'A vista'; }
-        else if (via.estilo === 'a-flash') { bgEstilo = '#e0f8f8'; textEstilo = '#008b8b'; nombreDisplay = 'A flash'; }
-        else if (via.estilo === 'en-el-dia') { bgEstilo = '#fff4e0'; textEstilo = '#d35400'; nombreDisplay = 'En el día'; }
-        else if (via.estilo === 'trabajado') { bgEstilo = '#ffebea'; textEstilo = '#c0392b'; nombreDisplay = 'Trabajado'; }
+        
+        if (via.estilo === 'a-vista') { 
+            bgEstilo = '#eaf7f0'; textEstilo = '#27ae60'; nombreDisplay = textos[idiomaActual].estiloAVista; 
+        }
+        else if (via.estilo === 'a-flash') { 
+            bgEstilo = '#e0f8f8'; textEstilo = '#008b8b'; nombreDisplay = textos[idiomaActual].estiloAFlash; 
+        }
+        else if (via.estilo === 'en-el-dia') { 
+            bgEstilo = '#fff4e0'; textEstilo = '#d35400'; nombreDisplay = textos[idiomaActual].estiloEnElDia; 
+        }
+        else if (via.estilo === 'trabajado') { 
+            bgEstilo = '#ffebea'; textEstilo = '#c0392b'; nombreDisplay = textos[idiomaActual].estiloTrabajado; 
+        }
 
         let pillEstilo = via.estilo ? `<span style="font-size: 0.75em; background: ${bgEstilo}; color: ${textEstilo}; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: bold; white-space: nowrap;">${nombreDisplay}</span>` : '';
         
@@ -2440,10 +2449,14 @@ const textos = {
         modalApuntar2: " en tu diario?",
         modalPropuesta: "TU PROPUESTA DE GRADO",
         modalBtnSi: "Sí, apuntar",
-            modalProyectos1: "¿Deseas anotar ",
+        modalProyectos1: "¿Deseas anotar ",
         modalProyectos2: " en tu lista de proyectos?",
         modalNoVolver: "No volver a preguntar",
         modalBtnAnotar: "Sí, anotar",
+        estiloAVista: "A vista",
+        estiloAFlash: "A flash",
+        estiloEnElDia: "En el día",
+        estiloTrabajado: "Trabajado",
             },
 
 
@@ -2584,6 +2597,10 @@ botonEscuelas: "← Back to crags",
         modalProyectos2: " to your projects list?",
         modalNoVolver: "Do not ask again",
         modalBtnAnotar: "Yes, add",
+        estiloAVista: "Onsight",
+        estiloAFlash: "Flash",
+        estiloEnElDia: "In a day",
+        estiloTrabajado: "Redpoint",
         }
     };
 
