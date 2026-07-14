@@ -123,7 +123,7 @@
        <div style="display: flex; align-items: center;">
             <a href="#" onclick="mostrarInicio(); return false;" class="marco-blanco" style="text-decoration: none;">
 <img src="./icon-192.png" alt="Roca Norte" style="width: 45px; height: 45px; object-fit: contain; border-radius: 50%;">
-                <span style="color: white; font-size: 1.4rem; font-weight: bold; font-family: 'Arial Black', sans-serif; letter-spacing: 1px; margin-left: 12px; white-space: nowrap;">Roca Norte v4</span>
+                <span style="color: white; font-size: 1.4rem; font-weight: bold; font-family: 'Arial Black', sans-serif; letter-spacing: 1px; margin-left: 12px; white-space: nowrap;">Roca Norte</span>
                 </a>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; position: relative;">
@@ -1174,6 +1174,10 @@ function mostrarEstadisticas() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
         function mostrarInicio() {
+            // --- ROMPEMOS EL POST-IT: Olvidamos los avisos de nidificación al volver al menú ---
+    Object.keys(sessionStorage).forEach(key => {
+        if (key.startsWith('avisoMostrado_')) sessionStorage.removeItem(key);
+    });
             // Apagamos la pantalla de Configuración por si estuviera abierta
     let modalPerfil = document.getElementById('modalPerfilUsuario');
     if (modalPerfil) modalPerfil.style.display = 'none';
@@ -1241,6 +1245,9 @@ function generarAvisoNidificacion(idEscuela) {
 
     const aviso = restricciones[idEscuela];
     if (!aviso) return ""; 
+    // --- PORTERO: Si ya vimos el cartel de esta escuela en esta sesión, no lo mostramos más ---
+if (sessionStorage.getItem('avisoMostrado_' + idEscuela)) return "";
+sessionStorage.setItem('avisoMostrado_' + idEscuela, 'true');
 
     let hoy = new Date();
     let anioActual = hoy.getFullYear();
