@@ -2464,6 +2464,12 @@ const textos = {
         estiloAFlash: "A flash",
         estiloEnElDia: "En el día",
         estiloTrabajado: "Trabajado",
+        loginSubtitulo: "Inicia sesión para guardar tus encadenes y estadísticas.",
+        loginEmail: "Tu correo electrónico",
+        loginPass: "Tu contraseña (mín. 6 letras/números)",
+        loginEntrar: "Entrar",
+        loginCrear: "Crear nueva cuenta",
+        loginCerrar: "Cerrar",
             },
 
 
@@ -2608,6 +2614,12 @@ botonEscuelas: "← Back to crags",
         estiloAFlash: "Flash",
         estiloEnElDia: "In a day",
         estiloTrabajado: "Redpoint",
+        loginSubtitulo: "Log in to save your ascents and statistics.",
+        loginEmail: "Your email address",
+        loginPass: "Your password (min. 6 characters/numbers)",
+        loginEntrar: "Log in",
+        loginCrear: "Create new account",
+        loginCerrar: "Close",    
         }
     };
 
@@ -2710,22 +2722,24 @@ botonEscuelas: "← Back to crags",
     });
   }
 </script>
-    <!-- MODAL DE LOGIN Y REGISTRO ROCA NORTE -->
+    
+  <!-- MODAL DE LOGIN Y REGISTRO ROCA NORTE -->
     <div id="modalLogin" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
             <h2 style="color: #2c3e50; margin-top: 0; margin-bottom: 5px;">Roca Norte</h2>
-            <p style="color: #555; margin-bottom: 20px; font-size: 0.95rem;">Inicia sesión para guardar tus encadenes y estadísticas.</p>
+            
+            <p id="txtLoginSubtitulo" style="color: #555; margin-bottom: 20px; font-size: 0.95rem;">Inicia sesión para guardar tus encadenes y estadísticas.</p>
 
             <input type="email" id="emailLogin" placeholder="Tu correo electrónico" style="width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem;">
             
             <input type="password" id="passLogin" placeholder="Tu contraseña (mín. 6 letras/números)" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem;">
 
-            <button onclick="iniciarSesionUsuario()" style="width: 100%; padding: 12px; background: #2980b9; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer; margin-bottom: 12px;">Entrar</button>
+            <button id="btnEntrar" onclick="iniciarSesionUsuario()" style="width: 100%; padding: 12px; background: #2980b9; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer; margin-bottom: 12px;">Entrar</button>
             
-            <button onclick="registrarNuevoUsuario()" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">Crear nueva cuenta</button>
+            <button id="btnCrearCuenta" onclick="registrarNuevoUsuario()" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">Crear nueva cuenta</button>
 
             <div style="margin-top: 20px; text-align: right;">
-<button onclick="document.getElementById('modalLogin').style.display='none'; document.getElementById('modalPerfilUsuario').style.display='block';" style="background: none; border: none; color: #777; text-decoration: underline; cursor: pointer; font-size: 0.9rem;">Cerrar</button>
+                <button id="btnCerrarLogin" onclick="document.getElementById('modalLogin').style.display='none'; document.getElementById('modalPerfilUsuario').style.display='block';" style="background: none; border: none; color: #777; text-decoration: underline; cursor: pointer; font-size: 0.9rem;">Cerrar</button>
             </div>
         </div>
     </div>
