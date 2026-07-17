@@ -2657,6 +2657,25 @@ botonEscuelas: "← Back to crags",
 
         let buscador = document.getElementById('buscadorPrincipal');
         if (buscador) buscador.placeholder = textos[idiomaActual].placeholderBuscar;
+
+        // Traducción del modal de Login
+    let txtLoginSubtitulo = document.getElementById('txtLoginSubtitulo');
+    if (txtLoginSubtitulo) txtLoginSubtitulo.innerText = textos[idiomaActual].loginSubtitulo;
+    
+    let emailLogin = document.getElementById('emailLogin');
+    if (emailLogin) emailLogin.placeholder = textos[idiomaActual].loginEmail;
+    
+    let passLogin = document.getElementById('passLogin');
+    if (passLogin) passLogin.placeholder = textos[idiomaActual].loginPass;
+    
+    let btnEntrar = document.getElementById('btnEntrar');
+    if (btnEntrar) btnEntrar.innerText = textos[idiomaActual].loginEntrar;
+    
+    let btnCrearCuenta = document.getElementById('btnCrearCuenta');
+    if (btnCrearCuenta) btnCrearCuenta.innerText = textos[idiomaActual].loginCrear;
+    
+    let btnCerrarLogin = document.getElementById('btnCerrarLogin');
+    if (btnCerrarLogin) btnCerrarLogin.innerText = textos[idiomaActual].loginCerrar;
         
         let tituloEsc = document.querySelector('#contenido-dinamico .section-title');
         
