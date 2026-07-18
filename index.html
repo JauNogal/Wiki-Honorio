@@ -524,6 +524,57 @@ const { getFirestore, collection, getDocs, enableIndexedDbPersistence } = await 
                 const app = initializeApp(firebaseConfig);
                 const db = getFirestore(app);
                 const auth = getAuth(app);
+                 // =======================================================
+// LÓGICA DE USUARIOS (FIREBASE AUTH V9+)
+// =======================================================
+
+window.registrarNuevoUsuario = function() {
+    let email = document.getElementById('emailLogin').value;
+    let pass = document.getElementById('passLogin').value;
+
+    if (email === '' || pass === '') {
+        alert("Por favor, rellena el correo y la contraseña.");
+        return;
+    }
+    if (pass.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres.");
+        return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, pass)
+        .then((userCredential) => {
+            alert("¡Cuenta creada con éxito! Bienvenido a Roca Norte.");
+            document.getElementById('modalLogin').style.display = 'none';
+            document.getElementById('modalPerfilUsuario').style.display = 'block';
+            document.getElementById('emailLogin').value = '';
+            document.getElementById('passLogin').value = '';
+        })
+        .catch((error) => {
+            alert("Error al crear la cuenta: " + error.message);
+        });
+}
+
+window.iniciarSesionUsuario = function() {
+    let email = document.getElementById('emailLogin').value;
+    let pass = document.getElementById('passLogin').value;
+
+    if (email === '' || pass === '') {
+        alert("Por favor, rellena el correo y la contraseña.");
+        return;
+    }
+
+    signInWithEmailAndPassword(auth, email, pass)
+        .then((userCredential) => {
+            alert("¡Sesión iniciada correctamente!");
+            document.getElementById('modalLogin').style.display = 'none';
+            document.getElementById('modalPerfilUsuario').style.display = 'block';
+            document.getElementById('emailLogin').value = '';
+            document.getElementById('passLogin').value = '';
+        })
+        .catch((error) => {
+            alert("Error al iniciar sesión. Comprueba tu correo y contraseña.");
+        });
+}
                 enableIndexedDbPersistence(db)
   .catch((err) => {
     if (err.code == 'failed-precondition') {
@@ -2742,57 +2793,7 @@ botonEscuelas: "← Back to crags",
         });
     });
   }
-        // =======================================================
-// LÓGICA DE USUARIOS (FIREBASE AUTH V9+)
-// =======================================================
-
-window.registrarNuevoUsuario = function() {
-    let email = document.getElementById('emailLogin').value;
-    let pass = document.getElementById('passLogin').value;
-
-    if (email === '' || pass === '') {
-        alert("Por favor, rellena el correo y la contraseña.");
-        return;
-    }
-    if (pass.length < 6) {
-        alert("La contraseña debe tener al menos 6 caracteres.");
-        return;
-    }
-
-    createUserWithEmailAndPassword(auth, email, pass)
-        .then((userCredential) => {
-            alert("¡Cuenta creada con éxito! Bienvenido a Roca Norte.");
-            document.getElementById('modalLogin').style.display = 'none';
-            document.getElementById('modalPerfilUsuario').style.display = 'block';
-            document.getElementById('emailLogin').value = '';
-            document.getElementById('passLogin').value = '';
-        })
-        .catch((error) => {
-            alert("Error al crear la cuenta: " + error.message);
-        });
-}
-
-window.iniciarSesionUsuario = function() {
-    let email = document.getElementById('emailLogin').value;
-    let pass = document.getElementById('passLogin').value;
-
-    if (email === '' || pass === '') {
-        alert("Por favor, rellena el correo y la contraseña.");
-        return;
-    }
-
-    signInWithEmailAndPassword(auth, email, pass)
-        .then((userCredential) => {
-            alert("¡Sesión iniciada correctamente!");
-            document.getElementById('modalLogin').style.display = 'none';
-            document.getElementById('modalPerfilUsuario').style.display = 'block';
-            document.getElementById('emailLogin').value = '';
-            document.getElementById('passLogin').value = '';
-        })
-        .catch((error) => {
-            alert("Error al iniciar sesión. Comprueba tu correo y contraseña.");
-        });
-}
+       
 </script>
     
   <!-- MODAL DE LOGIN Y REGISTRO ROCA NORTE -->
