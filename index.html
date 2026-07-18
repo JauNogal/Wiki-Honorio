@@ -509,8 +509,8 @@ htmlBarras = `<div style="text-align: center; color: #aaa; font-style: italic; f
             try {
                 // Exactamente la conexión de tu código original (v1.0)
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
-const { getFirestore, collection, getDocs, enableIndexedDbPersistence, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");                
+                const { getFirestore, collection, getDocs, enableIndexedDbPersistence, doc, getDoc, setDoc, updateDoc, arrayUnion } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");                
                 const firebaseConfig = {
                     apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
                     authDomain: "wiki-honorio.firebaseapp.com",
@@ -560,7 +560,49 @@ onAuthStateChanged(auth, async (user) => {
         if (labelCuenta) labelCuenta.innerText = "Iniciar sesión / Registro";
     }
 });
-                 // =======================================================
+
+                // =======================================================
+// GUARDAR ENCADENES EN FIREBASE
+// =======================================================
+window.guardarEncadeneEnNube = async function() {
+    // 1. Comprobamos si el usuario tiene las llaves (está logueado)
+    const usuarioActual = auth.currentUser;
+    
+    if (!usuarioActual) {
+        alert("Debes iniciar sesión en Roca Norte para guardar tus encadenes.");
+        return;
+    }
+
+    // 2. Aquí recogeremos los datos de tu formulario HTML
+    // (De momento pongo unos de prueba para que veas cómo funciona)
+    let nombreVia = "Vía de Prueba";
+    let gradoVia = "6a";
+    let estiloVia = "A vista";
+
+    // 3. Empaquetamos el encadene
+    const nuevoEncadene = {
+        via: nombreVia,
+        grado: gradoVia,
+        estilo: estiloVia,
+        fecha: new Date().toISOString() // Guarda el día y la hora exacta
+    };
+
+    // 4. Lo enviamos a su taquilla
+    const taquillaRef = doc(db, "usuarios", usuarioActual.uid);
+    
+    try {
+        await updateDoc(taquillaRef, {
+            // arrayUnion mete el nuevo encadene al final de la lista sin borrar los anteriores
+            encadenes: arrayUnion(nuevoEncadene) 
+        });
+        alert("¡Encadene guardado en la nube con éxito!");
+    } catch (error) {
+        console.error("Error al guardar el encadene: ", error);
+        alert("Hubo un fallo al guardar. Revisa la consola.");
+    }
+}
+                
+// =======================================================
 // LÓGICA DE USUARIOS (FIREBASE AUTH V9+)
 // =======================================================
 
