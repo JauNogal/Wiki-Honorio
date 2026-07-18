@@ -561,44 +561,33 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-                // =======================================================
-// GUARDAR ENCADENES EN FIREBASE
 // =======================================================
-window.guardarEncadeneEnNube = async function() {
-    // 1. Comprobamos si el usuario tiene las llaves (está logueado)
+// GUARDAR ENCADENES EN FIREBASE (Versión Definitiva)
+// =======================================================
+window.guardarEncadeneEnNube = async function(nombreVia, gradoVia, estiloVia) {
     const usuarioActual = auth.currentUser;
     
     if (!usuarioActual) {
-        alert("Debes iniciar sesión en Roca Norte para guardar tus encadenes.");
+        console.log("Modo offline: Guardado solo en el móvil porque no hay sesión iniciada.");
         return;
     }
 
-    // 2. Aquí recogeremos los datos de tu formulario HTML
-    // (De momento pongo unos de prueba para que veas cómo funciona)
-    let nombreVia = "Vía de Prueba";
-    let gradoVia = "6a";
-    let estiloVia = "A vista";
-
-    // 3. Empaquetamos el encadene
     const nuevoEncadene = {
         via: nombreVia,
         grado: gradoVia,
         estilo: estiloVia,
-        fecha: new Date().toISOString() // Guarda el día y la hora exacta
+        fecha: new Date().toISOString()
     };
 
-    // 4. Lo enviamos a su taquilla
     const taquillaRef = doc(db, "usuarios", usuarioActual.uid);
     
     try {
         await updateDoc(taquillaRef, {
-            // arrayUnion mete el nuevo encadene al final de la lista sin borrar los anteriores
             encadenes: arrayUnion(nuevoEncadene) 
         });
-        alert("¡Encadene guardado en la nube con éxito!");
+        console.log("¡Éxito! Vía '" + nombreVia + "' subida a la nube de Roca Norte.");
     } catch (error) {
-        console.error("Error al guardar el encadene: ", error);
-        alert("Hubo un fallo al guardar. Revisa la consola.");
+        console.error("Error al guardar en la nube: ", error);
     }
 }
                 
@@ -1726,6 +1715,10 @@ function guardarEnDiarioProyectos(nombre, grado) {
         
         // Guardamos en tu diario el grado OFICIAL de la guía, no la propuesta
         guardarEnDiarioEncadenadas(nombre, grado, estilo);
+        
+        // Guardamos en tu diario el grado OFICIAL de la guía, no la propuesta
+guardarEnDiarioEncadenadas(nombre, grado, estilo);
+guardarEncadeneEnNube(nombre, grado, estilo);
         
         document.body.removeChild(fondo);
     };
