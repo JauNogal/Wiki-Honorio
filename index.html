@@ -550,8 +550,21 @@ onAuthStateChanged(auth, async (user) => {
             });
             console.log("¡Taquilla nueva creada en la nube!");
         } else {
-            console.log("El usuario ya tiene taquilla. Todo listo.");
-        }
+          } else {
+    console.log("El usuario ya tiene taquilla. Descargando datos...");
+    
+    // 1. Abrimos el documento de Firebase y sacamos la información
+    const datosNube = taquillaSnap.data();
+    const misEncadenesNube = datosNube.encadenes || []; 
+    
+    // 2. Sincronizamos con la memoria de la app
+    setLocal('astur_vertical_encadenadas', JSON.stringify(misEncadenesNube));
+    
+    console.log("¡Descargados " + misEncadenesNube.length + " encadenes de la nube!");
+
+    // 3. AQUÍ FALTA LA ORDEN DE REPINTAR LOS COLORES
+    // repintarPantalla(); 
+}
 
     } else {
         // Nadie ha iniciado sesión
