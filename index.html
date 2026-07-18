@@ -509,7 +509,7 @@ htmlBarras = `<div style="text-align: center; color: #aaa; font-style: italic; f
             try {
                 // Exactamente la conexión de tu código original (v1.0)
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
-const { getFirestore, collection, getDocs, enableIndexedDbPersistence } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+const { getFirestore, collection, getDocs, enableIndexedDbPersistence, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");                
                 const firebaseConfig = {
                     apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
@@ -523,23 +523,39 @@ const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onA
                 const app = initializeApp(firebaseConfig);
                 const db = getFirestore(app);
                 const auth = getAuth(app);
-                // =======================================================
+               // =======================================================
 // VIGILANTE DE SESIÓN (Sabe quién está conectado)
 // =======================================================
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
         // ¡Alguien ha iniciado sesión!
         const uidUsuario = user.uid;
         console.log("Usuario conectado con ID:", uidUsuario);
         
-        // Cambiamos el texto del menú para que vea que está dentro
         let labelCuenta = document.getElementById('label-crear-cuenta');
         if (labelCuenta) labelCuenta.innerText = "Conectado: " + user.email;
 
-    } else {
-        // Nadie ha iniciado sesión o se han desconectado
-        console.log("No hay ningún usuario conectado.");
+        // --- MAGIA: CREAR LA TAQUILLA ---
+        const taquillaRef = doc(db, "usuarios", uidUsuario); // Apuntamos a su DNI
+        const taquillaSnap = await getDoc(taquillaRef); // Miramos si existe
         
+        if (!taquillaSnap.exists()) {
+            // Si no existe, le creamos los "cajones" vacíos
+            await setDoc(taquillaRef, {
+                email: user.email,
+                nombre: "",
+                encadenes: [],
+                diario: [],
+                fechaRegistro: new Date().toISOString()
+            });
+            console.log("¡Taquilla nueva creada en la nube!");
+        } else {
+            console.log("El usuario ya tiene taquilla. Todo listo.");
+        }
+
+    } else {
+        // Nadie ha iniciado sesión
+        console.log("No hay ningún usuario conectado.");
         let labelCuenta = document.getElementById('label-crear-cuenta');
         if (labelCuenta) labelCuenta.innerText = "Iniciar sesión / Registro";
     }
