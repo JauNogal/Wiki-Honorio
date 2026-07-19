@@ -1041,12 +1041,34 @@ function actualizarViaEncadenada(index, campo, valor) {
     }
 }
 
-function eliminarViaEncadenada(index) {
+async function eliminarViaEncadenada(index) {
     if(confirm('¿Seguro que quieres borrar esta vía de tu lista de encadenes?')) {
         let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
-        lista.splice(index, 1); // Borramos la vía exacta de la memoria
+        
+        // 1. Buscamos la vía y le borramos su color para que vuelva a estar gris
+        const viaABorrar = lista[index];
+        if (viaABorrar && viaABorrar.llaveColor) {
+            removeLocal(viaABorrar.llaveColor);
+        }
+
+        // 2. La borramos de la memoria local
+        lista.splice(index, 1);
         setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
-        renderizarViasEncadenadas(); // Refrescamos la vista
+        
+        // 3. ¡EL GOLPE FINAL! Avisamos a Firebase para que la borre de la taquilla
+        if (typeof auth !== 'undefined' && auth.currentUser) {
+            try {
+                const taquillaRef = doc(db, "usuarios", auth.currentUser.uid);
+                // Actualizamos la nube enviando la lista ya limpia
+                await setDoc(taquillaRef, { encadenes: lista }, { merge: true });
+                console.log("¡Zombi eliminado! Vía borrada de la nube.");
+            } catch(error) {
+                console.error("Error al intentar borrar en la nube:", error);
+            }
+        }
+
+        // 4. Refrescamos la vista del diario
+        renderizarViasEncadenadas(); 
     }
 }
 function mostrarEstadisticas() {
