@@ -531,6 +531,7 @@ onAuthStateChanged(auth, async (user) => {
         // ¡Alguien ha iniciado sesión!
         const uidUsuario = user.uid;
         console.log("Usuario conectado con ID:", uidUsuario);
+        window.idUsuarioActivo = uidUsuario;
         
         let labelCuenta = document.getElementById('label-crear-cuenta');
         if (labelCuenta) labelCuenta.innerText = "Conectado: " + user.email;
@@ -1060,13 +1061,13 @@ window.eliminarViaEncadenada = async function(index) {
         console.log("☁️ 3. Contactando con Firebase para borrar...");
         
         try {
-            // Usamos tu variable 'usuarioActual'
-            if (typeof usuarioActual !== 'undefined' && usuarioActual) {
-                const taquillaRef = doc(db, "usuarios", usuarioActual.uid);
+            // ¡AQUÍ USAMOS EL NUEVO PUENTE GLOBAL!
+            if (window.idUsuarioActivo) {
+                const taquillaRef = doc(db, "usuarios", window.idUsuarioActivo);
                 await setDoc(taquillaRef, { encadenes: lista }, { merge: true });
                 console.log("✅ 4. ¡Zombi eliminado de la nube con éxito!");
             } else {
-                console.error("❌ Error: La variable 'usuarioActual' está vacía o no existe aquí.");
+                console.error("❌ Error: El puente global está vacío. No se detecta usuario.");
             }
         } catch (error) {
             console.error("❌ Fallo crítico al borrar en Firebase:", error);
