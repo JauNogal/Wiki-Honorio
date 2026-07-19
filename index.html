@@ -1041,33 +1041,36 @@ function actualizarViaEncadenada(index, campo, valor) {
     }
 }
 
-async function eliminarViaEncadenada(index) {
+window.eliminarViaEncadenada = async function(index) {
+    console.log("🔫 1. Has pulsado la X para borrar la vía índice:", index);
+    
     if(confirm('¿Seguro que quieres borrar esta vía de tu lista de encadenes?')) {
-        let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
+        console.log("🗑️ 2. Confirmado. Borrando de la memoria local...");
         
-        // 1. Buscamos la vía y le borramos su color para que vuelva a estar gris
+        let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
         const viaABorrar = lista[index];
+        
         if (viaABorrar && viaABorrar.llaveColor) {
             removeLocal(viaABorrar.llaveColor);
         }
-
-        // 2. La borramos de la memoria local
+        
         lista.splice(index, 1);
         setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
         
-        // 3. ¡EL GOLPE FINAL! Avisamos a Firebase para que la borre de la taquilla
-        if (typeof auth !== 'undefined' && auth.currentUser) {
-            try {
+        console.log("☁️ 3. Contactando con Firebase para borrar...");
+        
+        try {
+            if (typeof auth !== 'undefined' && auth.currentUser) {
                 const taquillaRef = doc(db, "usuarios", auth.currentUser.uid);
-                // Actualizamos la nube enviando la lista ya limpia
                 await setDoc(taquillaRef, { encadenes: lista }, { merge: true });
-                console.log("¡Zombi eliminado! Vía borrada de la nube.");
-            } catch(error) {
-                console.error("Error al intentar borrar en la nube:", error);
+                console.log("✅ 4. ¡Zombi eliminado de la nube con éxito!");
+            } else {
+                console.error("❌ Error: El código no encuentra tu sesión de usuario.");
             }
+        } catch (error) {
+            console.error("❌ Fallo crítico al borrar en Firebase:", error);
         }
-
-        // 4. Refrescamos la vista del diario
+        
         renderizarViasEncadenadas(); 
     }
 }
