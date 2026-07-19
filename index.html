@@ -556,8 +556,15 @@ onAuthStateChanged(auth, async (user) => {
     const datosNube = taquillaSnap.data();
     const misEncadenesNube = datosNube.encadenes || []; 
     
-    // 2. Sincronizamos con la memoria de la app
-    setLocal('astur_vertical_encadenadas', JSON.stringify(misEncadenesNube));
+   // 2. Sincronizamos con la memoria de la app
+setLocal('astur_vertical_encadenadas', JSON.stringify(misEncadenesNube));
+
+// NUEVO: Recrear las "notitas" de color para pintar la pantalla
+misEncadenesNube.forEach(via => {
+    if (via.llaveColor) {
+        setLocal(via.llaveColor, via.estilo);
+    }
+});
     
     console.log("¡Descargados " + misEncadenesNube.length + " encadenes de la nube!");
 
@@ -589,11 +596,12 @@ window.guardarEncadeneEnNube = async function(nombreVia, gradoVia, estiloVia) {
         return;
     }
 
-    const nuevoEncadene = {
+   const nuevoEncadene = {
         nombre: nombreVia,
         grado: gradoVia,
         estilo: estiloVia,
-        fecha: new Date().toISOString()
+        fecha: new Date().toISOString(),
+        llaveColor: window.llaveColorVia
     };
 
     const taquillaRef = doc(db, "usuarios", usuarioActual.uid);
@@ -1585,6 +1593,7 @@ else {
     const storageKey = `estado-via-${idEscuela}-${idSector}-${numeroVia}`;
     if (valor === "") removeLocal(storageKey); else setLocal(storageKey, valor);
     actualizarEstiloSelect(elemento);
+            window.llaveColorVia = storageKey;
 
     // Extraemos el nombre y el grado de la vía seleccionada
     const nombre = elemento.getAttribute('data-nombre') || 'Vía';
