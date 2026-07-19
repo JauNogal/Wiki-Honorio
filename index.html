@@ -549,8 +549,7 @@ onAuthStateChanged(auth, async (user) => {
                 fechaRegistro: new Date().toISOString()
             });
             console.log("¡Taquilla nueva creada en la nube!");
-        } else {
-          } else {
+       } else {
     console.log("El usuario ya tiene taquilla. Descargando datos...");
     
     // 1. Abrimos el documento de Firebase y sacamos la información
@@ -562,6 +561,14 @@ onAuthStateChanged(auth, async (user) => {
     
     console.log("¡Descargados " + misEncadenesNube.length + " encadenes de la nube!");
 
+    // 3. REPINTAR PANTALLA INTELIGENTE
+    try {
+        if (typeof escuelaActualId !== 'undefined' && escuelaActualId) {
+            document.getElementById('contenido-dinamico').style.display = 'none';
+            setTimeout(() => { document.getElementById('contenido-dinamico').style.display = 'block'; }, 50);
+        }
+    } catch(e) {}
+}
     // 3. AQUÍ FALTA LA ORDEN DE REPINTAR LOS COLORES
     // repintarPantalla(); 
 }
