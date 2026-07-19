@@ -544,7 +544,7 @@ htmlBarras = `<div style="text-align: center; color: #aaa; font-style: italic; f
                 // Exactamente la conexión de tu código original (v1.0)
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
                 const { getFirestore, collection, getDocs, enableIndexedDbPersistence, doc, getDoc, setDoc, updateDoc, arrayUnion } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-                const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");                
+                const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
                 const firebaseConfig = {
                     apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
                     authDomain: "wiki-honorio.firebaseapp.com",
@@ -1121,6 +1121,34 @@ window.eliminarViaEncadenada = async function(index) {
         }
         
         renderizarViasEncadenadas(); 
+    }
+}
+
+        window.cerrarSesionApp = async function() {
+    try {
+        // 1. Avisamos a Firebase de que cerramos la puerta
+        if (typeof auth !== 'undefined') {
+            await signOut(auth);
+        }
+        
+        console.log("🚪 Sesión cerrada correctamente");
+
+        // 2. MAGIA INVERSA: Ocultamos tu perfil y volvemos a mostrar la invitación
+        let vistaInvitado = document.getElementById('vista-invitado');
+        let vistaUsuario = document.getElementById('vista-usuario');
+        
+        if(vistaUsuario) vistaUsuario.style.display = 'none';
+        if(vistaInvitado) vistaInvitado.style.display = 'block';
+
+        // 3. Borramos el puente global por seguridad
+        window.idUsuarioActivo = null;
+
+        // 4. (Opcional) Refrescar la página para limpiar la memoria visual
+        alert("Has cerrado sesión correctamente.");
+        window.location.reload();
+
+    } catch (error) {
+        console.error("❌ Error al cerrar sesión:", error);
     }
 }
 function mostrarEstadisticas() {
