@@ -532,6 +532,9 @@ onAuthStateChanged(auth, async (user) => {
         const uidUsuario = user.uid;
         console.log("Usuario conectado con ID:", uidUsuario);
         window.idUsuarioActivo = uidUsuario;
+        window.fbDoc = doc;
+        window.fbSetDoc = setDoc;
+        window.fbDb = db;
         
         let labelCuenta = document.getElementById('label-crear-cuenta');
         if (labelCuenta) labelCuenta.innerText = "Conectado: " + user.email;
@@ -1061,13 +1064,13 @@ window.eliminarViaEncadenada = async function(index) {
         console.log("☁️ 3. Contactando con Firebase para borrar...");
         
         try {
-            // ¡AQUÍ USAMOS EL NUEVO PUENTE GLOBAL!
-            if (window.idUsuarioActivo) {
-                const taquillaRef = doc(db, "usuarios", window.idUsuarioActivo);
-                await setDoc(taquillaRef, { encadenes: lista }, { merge: true });
+            // AQUÍ USAMOS LAS HERRAMIENTAS GLOBALES DEL PUENTE
+            if (window.idUsuarioActivo && window.fbDoc && window.fbSetDoc && window.fbDb) {
+                const taquillaRef = window.fbDoc(window.fbDb, "usuarios", window.idUsuarioActivo);
+                await window.fbSetDoc(taquillaRef, { encadenes: lista }, { merge: true });
                 console.log("✅ 4. ¡Zombi eliminado de la nube con éxito!");
             } else {
-                console.error("❌ Error: El puente global está vacío. No se detecta usuario.");
+                console.error("❌ Error: Faltan herramientas de Firebase en el puente.");
             }
         } catch (error) {
             console.error("❌ Fallo crítico al borrar en Firebase:", error);
