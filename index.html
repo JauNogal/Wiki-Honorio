@@ -570,8 +570,18 @@ onAuthStateChanged(auth, async (user) => {
         window.fbSetDoc = setDoc;
         window.fbDb = db;
         
-        let labelCuenta = document.getElementById('label-crear-cuenta');
-        if (labelCuenta) labelCuenta.innerText = "Conectado: " + user.email;
+        // --- MAGIA DEL PERFIL: Mostrar vista usuario y ocultar invitado ---
+let vistaInvitado = document.getElementById('vista-invitado');
+let vistaUsuario = document.getElementById('vista-usuario');
+if(vistaInvitado) vistaInvitado.style.display = 'none';
+if(vistaUsuario) vistaUsuario.style.display = 'block';
+
+// Rellenar tus datos reales
+let emailReal = document.getElementById('perfil-email-real');
+let nombreReal = document.getElementById('perfil-nombre-real');
+if(emailReal) emailReal.innerText = user.email;
+if(nombreReal) nombreReal.innerText = user.displayName || "Escalador";
+// ------------------------------------------------------------------
 
         // --- MAGIA: CREAR LA TAQUILLA ---
         const taquillaRef = doc(db, "usuarios", uidUsuario); // Apuntamos a su DNI
