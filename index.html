@@ -620,7 +620,30 @@ if(vistaUsuario) vistaUsuario.style.display = 'block';
 let emailReal = document.getElementById('perfil-email-real');
 let nombreReal = document.getElementById('perfil-nombre-real');
 if(emailReal) emailReal.innerText = user.email;
-if(nombreReal) nombreReal.value = user.displayName || localStorage.getItem('nombre-usuario-escalador') || "Escalador";
+let fotoMostrar = document.getElementById('perfilFotoMostrar');
+let fotoDefecto = document.getElementById('perfilFotoDefecto');
+
+// Ponemos un nombre por defecto rápido mientras carga
+if(nombreReal) nombreReal.value = user.displayName || "Escalador";
+
+// Descargamos tu nombre y foto reales de la base de datos
+getDoc(doc(db, "usuarios", uidUsuario)).then((docSnap) => {
+    if (docSnap.exists()) {
+        const datosNube = docSnap.data();
+        
+        // Si hay nombre guardado, lo actualizamos
+        if(nombreReal && datosNube.nombre) {
+            nombreReal.value = datosNube.nombre;
+        }
+        
+        // Si hay foto guardada, la mostramos
+        if(fotoMostrar && fotoDefecto && datosNube.fotoPerfil) {
+            fotoMostrar.src = datosNube.fotoPerfil;
+            fotoMostrar.style.display = 'block';
+            fotoDefecto.style.display = 'none';
+        }
+    }
+});
 // ------------------------------------------------------------------
 
         // --- MAGIA: CREAR LA TAQUILLA ---
