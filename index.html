@@ -1124,31 +1124,40 @@ window.eliminarViaEncadenada = async function(index) {
     }
 }
 
-        window.cerrarSesionApp = async function() {
+       window.cerrarSesionApp = async function() {
     try {
-        // 1. Avisamos a Firebase de que cerramos la puerta
-        if (typeof auth !== 'undefined') {
-            await signOut(auth);
+        console.log("🚪 Iniciando proceso de cierre de sesión...");
+
+        // 1. Traemos las herramientas de Firebase directamente aquí para que no haya "muros invisibles"
+        const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
+        const auth = getAuth(); 
+        
+        // 2. Cerramos la sesión en la nube de verdad
+        await signOut(auth);
+        console.log("✅ Sesión cerrada en Firebase.");
+
+        // 3. LIMPIEZA A FONDO: Borramos las vías y los colores del móvil/PC
+        let listaLocal = localStorage.getItem('astur_vertical_encadenadas');
+        if (listaLocal) {
+            let lista = JSON.parse(listaLocal);
+            // Borramos las notitas de color de cada vía
+            lista.forEach(via => {
+                if(via.llaveColor) localStorage.removeItem(via.llaveColor);
+            });
+            // Borramos el diario local
+            localStorage.removeItem('astur_vertical_encadenadas');
         }
-        
-        console.log("🚪 Sesión cerrada correctamente");
 
-        // 2. MAGIA INVERSA: Ocultamos tu perfil y volvemos a mostrar la invitación
-        let vistaInvitado = document.getElementById('vista-invitado');
-        let vistaUsuario = document.getElementById('vista-usuario');
-        
-        if(vistaUsuario) vistaUsuario.style.display = 'none';
-        if(vistaInvitado) vistaInvitado.style.display = 'block';
-
-        // 3. Borramos el puente global por seguridad
+        // 4. Limpiamos tu puente de seguridad
         window.idUsuarioActivo = null;
 
-        // 4. (Opcional) Refrescar la página para limpiar la memoria visual
-        alert("Has cerrado sesión correctamente.");
-        window.location.reload();
+        // 5. Borrón y cuenta nueva visual
+        alert("Sesión cerrada correctamente. Volviendo al inicio...");
+        window.location.reload(); // Esto recargará la app totalmente limpia
 
     } catch (error) {
-        console.error("❌ Error al cerrar sesión:", error);
+        console.error("❌ Fallo crítico al intentar cerrar sesión:", error);
+        alert("Hubo un problema al cerrar sesión. Revisa la consola.");
     }
 }
 function mostrarEstadisticas() {
