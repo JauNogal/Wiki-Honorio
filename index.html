@@ -219,8 +219,13 @@
 <!-- Oculto por defecto con display: none -->
 <div id="vista-usuario" style="display: none; text-align: center; margin-bottom: 20px;">
     <div style="margin-bottom: 15px;">
-        <div style="font-size: 4rem; color: #2980b9; margin-bottom: 5px;"><i class="fas fa-user-circle"></i></div> 
-        <h3 id="perfil-nombre-real" style="margin: 0; color: #333;">Cargando...</h3>
+        <div onclick="document.getElementById('perfilFotoInput').click()" style="position: relative; width: 80px; height: 80px; margin: 0 auto 10px auto; cursor: pointer; border-radius: 50%; background-color: #2980b9; color: white; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+    <img id="perfilFotoMostrar" src="" alt="Tu Foto" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+    <i id="perfilFotoDefecto" class="fas fa-user" style="font-size: 3rem;"></i>
+    <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); padding: 3px 0; font-size: 0.7rem; color: white; text-align: center;"><i class="fas fa-camera"></i></div>
+</div>
+<input type="file" id="perfilFotoInput" style="display: none;" accept="image/*" onchange="guardarFotoFirestore(this)">
+<input type="text" id="perfil-nombre-real" onchange="guardarNombreFirestore(this.value)" placeholder="Escribe tu nombre y pulsa Enter..." style="font-size: 1.3rem; font-weight: bold; text-align: center; border: none; border-bottom: 2px dashed #ccc; outline: none; padding: 4px; width: 80%; color: #333; background: transparent; margin-bottom: 5px; font-family: inherit;">
         <p id="perfil-email-real" style="color: gray; margin: 5px 0 0 0; font-size: 0.9rem;"></p>
     </div>
     
