@@ -278,22 +278,40 @@ window.guardarFotoFirestore = function(input) {
     if (!window.idUsuarioActivo || !window.fbDb) return;
     const file = input.files[0];
     if (!file) return;
+    
     const reader = new FileReader();
-    reader.onload = async function(e) {
-        const fotoTexto = e.target.result;
-        
-        // Lo mostramos en pantalla al instante
-        document.getElementById('perfilFotoMostrar').src = fotoTexto;
-        document.getElementById('perfilFotoMostrar').style.display = 'block';
-        document.getElementById('perfilFotoDefecto').style.display = 'none';
-        
-        // Lo subimos a la nube
-        try {
-            const userRef = window.fbDoc(window.fbDb, "usuarios", window.idUsuarioActivo);
-            await window.fbSetDoc(userRef, { fotoPerfil: fotoTexto }, { merge: true });
-        } catch (error) {
-            console.error("Error al guardar foto:", error);
-        }
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+            // 1. Creamos un lienzo invisible para comprimir la imagen
+            const canvas = document.createElement("canvas");
+            const MAX_WIDTH = 300; // Tamaño máximo en píxeles
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // 2. Convertimos a texto ligero (calidad JPEG al 70%)
+            const fotoComprimida = canvas.toDataURL("image/jpeg", 0.7);
+            
+            // 3. La mostramos en pantalla al instante
+            document.getElementById('perfilFotoMostrar').src = fotoComprimida;
+            document.getElementById('perfilFotoMostrar').style.display = 'block';
+            document.getElementById('perfilFotoDefecto').style.display = 'none';
+            
+            // 4. La subimos a la nube
+            try {
+                const userRef = window.fbDoc(window.fbDb, "usuarios", window.idUsuarioActivo);
+                await window.fbSetDoc(userRef, { fotoPerfil: fotoComprimida }, { merge: true });
+                alert("¡Foto guardada correctamente!");
+            } catch (error) {
+                console.error("Error al guardar foto:", error);
+                alert("Error al guardar. Inténtalo de nuevo.");
+            }
+        };
+        img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 };
