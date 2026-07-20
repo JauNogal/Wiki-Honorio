@@ -580,7 +580,7 @@ if(vistaUsuario) vistaUsuario.style.display = 'block';
 let emailReal = document.getElementById('perfil-email-real');
 let nombreReal = document.getElementById('perfil-nombre-real');
 if(emailReal) emailReal.innerText = user.email;
-if(nombreReal) nombreReal.innerText = user.displayName || "Escalador";
+if(nombreReal) nombreReal.value = user.displayName || localStorage.getItem('nombre-usuario-escalador') || "Escalador";
 // ------------------------------------------------------------------
 
         // --- MAGIA: CREAR LA TAQUILLA ---
