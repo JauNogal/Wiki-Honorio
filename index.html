@@ -3082,7 +3082,21 @@ botonEscuelas: "← Back to crags",
         });
     });
   }
-       
+function mostrarOcultarPass(idCaja, idIcono) {
+    const cajaPass = document.getElementById(idCaja);
+    const icono = document.getElementById(idIcono);
+    
+    if (cajaPass.type === "password") {
+        cajaPass.type = "text";
+        icono.classList.remove("fa-eye");
+        icono.classList.add("fa-eye-slash");
+    } else {
+        cajaPass.type = "password";
+        icono.classList.remove("fa-eye-slash");
+        icono.classList.add("fa-eye");
+    }
+}
+        
 </script>
     
   <!-- MODAL DE LOGIN Y REGISTRO ROCA NORTE -->
@@ -3094,8 +3108,10 @@ botonEscuelas: "← Back to crags",
 
             <input type="email" id="emailLogin" placeholder="Tu correo electrónico" style="width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem;">
             
-            <input type="password" id="passLogin" placeholder="Tu contraseña (mín. 6 letras/números)" style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem;">
-
+<div style="position: relative; width: 100%; margin-bottom: 20px;">
+    <input type="password" id="passLogin" placeholder="Tu contraseña (mín. 6 letras/números)" style="width: 100%; padding: 12px; padding-right: 40px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; font-family: inherit;">
+    <i class="fas fa-eye" id="iconoOjoLogin" onclick="mostrarOcultarPass('passLogin', 'iconoOjoLogin')" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
+</div>
             <button id="btnEntrar" onclick="iniciarSesionUsuario()" style="width: 100%; padding: 12px; background: #2980b9; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer; margin-bottom: 12px;">Entrar</button>
             
             <button id="btnCrearCuenta" onclick="registrarNuevoUsuario()" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">Crear nueva cuenta</button>
