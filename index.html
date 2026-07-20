@@ -263,6 +263,41 @@
         function setLocal(key, val) { try { localStorage.setItem(key, val); } catch(e) { } }
         function removeLocal(key) { try { localStorage.removeItem(key); } catch(e) { } }
 
+window.guardarNombreFirestore = async function(nuevoNombre) {
+    if (!window.idUsuarioActivo || !window.fbDb) return;
+    try {
+        const userRef = window.fbDoc(window.fbDb, "usuarios", window.idUsuarioActivo);
+        await window.fbSetDoc(userRef, { nombre: nuevoNombre }, { merge: true });
+        alert("¡Nombre guardado en Roca Norte!");
+    } catch (error) {
+        console.error("Error al guardar:", error);
+    }
+};
+
+window.guardarFotoFirestore = function(input) {
+    if (!window.idUsuarioActivo || !window.fbDb) return;
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const fotoTexto = e.target.result;
+        
+        // Lo mostramos en pantalla al instante
+        document.getElementById('perfilFotoMostrar').src = fotoTexto;
+        document.getElementById('perfilFotoMostrar').style.display = 'block';
+        document.getElementById('perfilFotoDefecto').style.display = 'none';
+        
+        // Lo subimos a la nube
+        try {
+            const userRef = window.fbDoc(window.fbDb, "usuarios", window.idUsuarioActivo);
+            await window.fbSetDoc(userRef, { fotoPerfil: fotoTexto }, { merge: true });
+        } catch (error) {
+            console.error("Error al guardar foto:", error);
+        }
+    };
+    reader.readAsDataURL(file);
+};
+        
       function toggleMenu() {
     // 1. Forzar el cierre de la leyenda si está abierta para que no se pisen
     const contenedorLeyenda = document.getElementById('leyenda-container');
