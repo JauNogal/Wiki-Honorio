@@ -199,6 +199,7 @@
             document.getElementById('passLogin').type='password';
             document.getElementById('iconoOjoLogin').classList.remove('fa-eye-slash');
             document.getElementById('iconoOjoLogin').classList.add('fa-eye');
+            document.getElementById('contenedorMantenerSesion').style.display='flex';
         " style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; background: #f9f9f9;">
             <span><i class="fas fa-sign-in-alt" style="color: #2980b9; width: 20px;"></i> Ya tengo cuenta</span>
             <i class="fas fa-chevron-right" style="color: #ccc; font-size: 0.9rem;"></i>
@@ -216,6 +217,7 @@
             document.getElementById('passLogin').type='password';
             document.getElementById('iconoOjoLogin').classList.remove('fa-eye-slash');
             document.getElementById('iconoOjoLogin').classList.add('fa-eye');
+            document.getElementById('contenedorMantenerSesion').style.display='none';
         " style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #2980b9; border-radius: 8px; cursor: pointer; background: white;">
             <span style="color: #2980b9; font-weight: bold;"><i class="fas fa-user-plus" style="width: 20px;"></i> Crear cuenta nueva</span>
             <i class="fas fa-chevron-right" style="color: #2980b9; font-size: 0.9rem;"></i>
@@ -280,7 +282,7 @@
     <input type="password" id="passLogin" placeholder="Tu contraseña (mín. 6 letras/números)" style="width: 100%; padding: 12px; padding-right: 40px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; font-family: inherit;">
     <i class="fas fa-eye" id="iconoOjoLogin" onclick="mostrarOcultarPass('passLogin', 'iconoOjoLogin')" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
 </div>
-            <div style="display: flex; align-items: center; margin-bottom: 20px; text-align: left;">
+            <div id="contenedorMantenerSesion" style="display: flex; align-items: center; margin-bottom: 20px; text-align: left;">
     <input type="checkbox" id="checkMantenerSesion" checked style="cursor: pointer; width: 16px; height: 16px; margin: 0 8px 0 0;">
     <label for="checkMantenerSesion" style="font-size: 0.95rem; color: #555; cursor: pointer; user-select: none;">Mantener la sesión iniciada</label>
 </div>
@@ -639,7 +641,7 @@ htmlBarras = `<div style="text-align: center; color: #aaa; font-style: italic; f
                 // Exactamente la conexión de tu código original (v1.0)
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
                 const { getFirestore, collection, getDocs, enableIndexedDbPersistence, doc, getDoc, setDoc, updateDoc, arrayUnion } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-                const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
+                const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, browserSessionPersistence } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
                 const firebaseConfig = {
                     apiKey: "AIzaSyAKFD-lU2qwl_bnmhe9KGWBnlWWwhqx1W0",
                     authDomain: "wiki-honorio.firebaseapp.com",
