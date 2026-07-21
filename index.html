@@ -280,6 +280,10 @@
     <input type="password" id="passLogin" placeholder="Tu contraseña (mín. 6 letras/números)" style="width: 100%; padding: 12px; padding-right: 40px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; font-family: inherit;">
     <i class="fas fa-eye" id="iconoOjoLogin" onclick="mostrarOcultarPass('passLogin', 'iconoOjoLogin')" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
 </div>
+            <div style="display: flex; align-items: center; margin-bottom: 20px; text-align: left;">
+    <input type="checkbox" id="checkMantenerSesion" checked style="cursor: pointer; width: 16px; height: 16px; margin: 0 8px 0 0;">
+    <label for="checkMantenerSesion" style="font-size: 0.95rem; color: #555; cursor: pointer; user-select: none;">Mantener la sesión iniciada</label>
+</div>
             <button id="btnEntrar" onclick="iniciarSesionUsuario()" style="width: 100%; padding: 12px; background: #2980b9; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer; margin-bottom: 12px;">Entrar</button>
             
             <button id="btnCrearCuenta" onclick="registrarNuevoUsuario()" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">Crear nueva cuenta</button>
@@ -811,24 +815,41 @@ window.registrarNuevoUsuario = function() {
 window.iniciarSesionUsuario = function() {
     let email = document.getElementById('emailLogin').value;
     let pass = document.getElementById('passLogin').value;
+    let mantenerSesion = document.getElementById('checkMantenerSesion').checked;
 
     if (email === '' || pass === '') {
         alert("Por favor, rellena el correo y la contraseña.");
         return;
     }
 
-    signInWithEmailAndPassword(auth, email, pass)
+    // Le decimos a Firebase qué tipo de memoria queremos usar
+    const tipoMemoria = mantenerSesion ? browserLocalPersistence : browserSessionPersistence;
+    
+    setPersistence(auth, tipoMemoria)
+        .then(() => {
+            // Una vez configurada la memoria, iniciamos sesión normal
+            return signInWithEmailAndPassword(auth, email, pass);
+        })
         .then((userCredential) => {
             alert("¡Sesión iniciada correctamente!");
             document.getElementById('modalLogin').style.display = 'none';
             document.getElementById('modalPerfilUsuario').style.display = 'block';
             document.getElementById('emailLogin').value = '';
             document.getElementById('passLogin').value = '';
+            document.getElementById('passLogin').type = 'password';
+            
+            // Reiniciamos el ojo visualmente
+            let iconoOjo = document.getElementById('iconoOjoLogin');
+            if(iconoOjo) {
+                iconoOjo.classList.remove('fa-eye-slash');
+                iconoOjo.classList.add('fa-eye');
+            }
         })
         .catch((error) => {
+            console.error(error);
             alert("Error al iniciar sesión. Comprueba tu correo y contraseña.");
         });
-}
+};
                 enableIndexedDbPersistence(db)
   .catch((err) => {
     if (err.code == 'failed-precondition') {
