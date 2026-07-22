@@ -508,6 +508,7 @@ if (document.getElementById('leyenda-flash')) document.getElementById('leyenda-f
 if (document.getElementById('leyenda-trabajado')) document.getElementById('leyenda-trabajado').innerText = tTrabajado;
 
     const chartDiv = document.getElementById('grafico-circular');
+    if (!chartDiv) return;
     const total = tVista + tFlash + tTrabajado;
 
     if (total === 0) {
