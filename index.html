@@ -467,7 +467,11 @@ const ordenGradosGlobal = ["iii", "iii+", "iv", "iv+", "v", "v+", "6a", "6a+", "
 // 1. Rellena el desplegable con la escala francesa y clásica
 function poblarSelectGrados() {
     const select = document.getElementById('filtroGradoPerfil');
-    if(select.options.length <= 1) { 
+    
+    // Si no existe el desplegable, detenemos la función aquí mismo sin error
+    if (!select) return; 
+
+    if(select.options.length <= 1) {
         ordenGradosGlobal.forEach(grado => {
             let gradoLimpio = grado.trim();
             // Si no empieza por un número, lo ponemos en mayúsculas para el menú
@@ -480,9 +484,10 @@ function poblarSelectGrados() {
 // 2. Calcula los datos, pinta el gráfico de colores y posiciona los números
 // 2. Calcula los datos, pinta el gráfico de colores y posiciona los números
 function actualizarGraficoPerfil() {
-    const gradoFiltro = document.getElementById('filtroGradoPerfil').value;
+    const selectFiltro = document.getElementById('filtroGradoPerfil');
+    const gradoFiltro = selectFiltro ? selectFiltro.value : 'todos'; // Si no hay desplegable, asume 'todos'
     let tVista = 0, tFlash = 0, tTrabajado = 0;
-
+    
     // --- 1. LÓGICA DEL GRÁFICO CIRCULAR ---
     database.vias.forEach(via => {
         // Compara ignorando si está escrito en mayúsculas o minúsculas
