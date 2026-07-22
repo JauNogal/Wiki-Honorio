@@ -1829,8 +1829,8 @@ else {
             let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
 
             html += `
-                <div class="via-item">
-                    <div class="via-detalles">
+            <div class="via-item ${ (estadoGuardado !== '' && estadoGuardado !== 'proyecto') ? 'via-encadenada' : '' }">
+            <div class="via-detalles">
                         <div class="via-numero">${via.numero}.</div>
                         <div class="via-nombre">${via.nombreVia}</div>
                         <div class="via-grado">${gradoDisplay}</div>
