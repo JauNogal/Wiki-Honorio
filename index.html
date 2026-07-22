@@ -2058,15 +2058,14 @@ function guardarEnDiarioEncadenadas(nombre, grado, estilo, intentos) {
     let indiceExistente = lista.findIndex(via => via.nombre === nombre);
     
     // Si el estilo es a-vista o a-flash, obligamos a que sea 1 intento. Si no, empieza en 0.
-    let intentosIniciales = (estilo === 'a-vista' || estilo === 'a-flash') ? '1' : '0';
-
+let intentosIniciales = (estilo === 'a-vista' || estilo === 'a-flash') ? '1' : (intentos || 'indefinidos');
+    
     if (indiceExistente !== -1) {
         // Si ya existe, actualizamos estilo, fecha y forzamos el 1 si pasa a ser a-vista/a-flash
         lista[indiceExistente].estilo = estilo;
         lista[indiceExistente].fecha = fecha;
-        if (estilo === 'a-vista' || estilo === 'a-flash') {
-            lista[indiceExistente].intentos = '1';
-        }
+       lista[indiceExistente].intentos = intentosIniciales;
+        
     } else {
         // Si es una vía nueva, la metemos con los intentos automáticos correspondientes
         lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: intentosIniciales, estilo: estilo });
