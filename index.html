@@ -503,9 +503,9 @@ function actualizarGraficoPerfil() {
         }
     });
 
-    document.getElementById('leyenda-vista').innerText = tVista;
-    document.getElementById('leyenda-flash').innerText = tFlash;
-    document.getElementById('leyenda-trabajado').innerText = tTrabajado;
+   if (document.getElementById('leyenda-vista')) document.getElementById('leyenda-vista').innerText = tVista;
+if (document.getElementById('leyenda-flash')) document.getElementById('leyenda-flash').innerText = tFlash;
+if (document.getElementById('leyenda-trabajado')) document.getElementById('leyenda-trabajado').innerText = tTrabajado;
 
     const chartDiv = document.getElementById('grafico-circular');
     const total = tVista + tFlash + tTrabajado;
