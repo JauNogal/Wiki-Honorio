@@ -1980,6 +1980,23 @@ function guardarEnDiarioProyectos(nombre, grado) {
             </div>
         </div>
 
+        <div id="bloqueIntentos" style="margin-top: 20px; margin-bottom: 20px;">
+            <div style="font-size: 0.85em; color: #666; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Nº DE INTENTOS</div>
+            <select id="selectIntentos" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 1.1em; text-align: center; background: white; cursor: pointer;">
+                <option value="1">1 intento (A vista / Flash)</option>
+                <option value="2">2 intentos</option>
+                <option value="3">3 intentos</option>
+                <option value="4">4 intentos</option>
+                <option value="5">5 intentos</option>
+                <option value="6">6 intentos</option>
+                <option value="7">7 intentos</option>
+                <option value="8">8 intentos</option>
+                <option value="9">9 intentos</option>
+                <option value="10">10 intentos</option>
+                <option value="mas_de_10">Más de 10</option>
+                <option value="indefinidos" selected>Indefinidos / No lo recuerdo</option>
+            </select>
+        </div>
         <div style="display: flex; gap: 10px; justify-content: center;">
             <button id="btnNoEnc" style="flex: 1; padding: 12px; border: none; background: #eee; border-radius: 6px; cursor: pointer; color: #333; font-weight: bold; font-size: 1em;">No</button>
             <button id="btnSiEnc" style="flex: 1; padding: 12px; border: none; background: #27ae60; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;">${textos[idiomaActual].modalBtnSi}</button>
@@ -2010,23 +2027,24 @@ function guardarEnDiarioProyectos(nombre, grado) {
     };
 
   // 4. Acción al pulsar "Sí, apuntar"
-    document.getElementById('btnSiEnc').onclick = () => {
-        // Leemos el grado propuesto (preparado para la Fase 2)
-        const gradoPropuestoFinal = document.getElementById('gradoMostrado').innerText;
-        
-        // Guardamos en tu diario el grado OFICIAL de la guía, no la propuesta
-        guardarEnDiarioEncadenadas(nombre, grado, estilo);
-        
-        // Guardamos en tu diario el grado OFICIAL de la guía, no la propuesta
-guardarEnDiarioEncadenadas(nombre, grado, estilo);
-guardarEncadeneEnNube(nombre, grado, estilo);
-        
-        document.body.removeChild(fondo);
-    };
-}
+   document.getElementById('btnSiEnc').onclick = () => {
+    // Leemos el grado propuesto
+    const gradoPropuestoFinal = document.getElementById('gradoMostrado').innerText;
+    
+    // NUEVO: Leemos los intentos del selector que acabamos de crear
+    let intentosSeleccionados = "indefinidos";
+    let cajaIntentos = document.getElementById('selectIntentos');
+    if (cajaIntentos) intentosSeleccionados = cajaIntentos.value;
+
+    // Guardamos en tu diario y en la nube (pasándole también los intentos)
+    guardarEnDiarioEncadenadas(nombre, grado, estilo, intentosSeleccionados);
+    guardarEncadeneEnNube(nombre, grado, estilo, intentosSeleccionados);
+
+    document.body.removeChild(fondo);
+};
 
 // Función que inyecta la vía en la memoria (Versión limpia, con intentos a 0)
-function guardarEnDiarioEncadenadas(nombre, grado, estilo) {
+function guardarEnDiarioEncadenadas(nombre, grado, estilo, intentos) {
     let listaRaw = getLocal('astur_vertical_encadenadas');
     let lista = [];
     try { if (listaRaw) lista = JSON.parse(listaRaw); } catch(e) { lista = []; }
