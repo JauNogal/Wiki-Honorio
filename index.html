@@ -1858,6 +1858,16 @@ else {
     const storageKey = `estado-via-${idEscuela}-${idSector}-${numeroVia}`;
     if (valor === "") removeLocal(storageKey); else setLocal(storageKey, valor);
     actualizarEstiloSelect(elemento);
+            // --- NUEVO: Cambiar el fondo de la vía en directo al seleccionar ---
+    let cajaVia = elemento.closest('.via-item');
+    if (cajaVia) {
+        if (valor !== "" && valor !== "proyecto") {
+            cajaVia.classList.add("via-encadenada");
+        } else {
+            cajaVia.classList.remove("via-encadenada");
+        }
+    }
+    // -------------------------------------------------------------------
             window.llaveColorVia = storageKey;
 
     // Extraemos el nombre y el grado de la vía seleccionada
