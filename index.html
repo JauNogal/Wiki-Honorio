@@ -694,11 +694,16 @@ getDoc(doc(db, "usuarios", uidUsuario)).then((docSnap) => {
         }
         
         // Si hay foto guardada, la mostramos
-        if(fotoMostrar && fotoDefecto && datosNube.fotoPerfil) {
-            fotoMostrar.src = datosNube.fotoPerfil;
-            fotoMostrar.style.display = 'block';
-            fotoDefecto.style.display = 'none';
-        }
+        if (fotoMostrar && fotoDefecto && datosNube.fotoPerfil) {
+        fotoMostrar.src = datosNube.fotoPerfil;
+        fotoMostrar.style.display = 'block';
+        fotoDefecto.style.display = 'none';
+    } else if (fotoMostrar && fotoDefecto) {
+        // Si no hay foto en la nube, nos aseguramos de limpiar la anterior y mostrar el icono por defecto
+        fotoMostrar.style.display = 'none';
+        fotoMostrar.src = '';
+        fotoDefecto.style.display = 'block';
+    }
     }
 });
 // ------------------------------------------------------------------
