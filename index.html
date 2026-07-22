@@ -712,6 +712,14 @@ getDoc(doc(db, "usuarios", uidUsuario)).then((docSnap) => {
         fotoMostrar.src = '';
         fotoDefecto.style.display = 'block';
     }
+ } else {
+        // Si el usuario es 100% nuevo y aún no tiene documento
+        console.log("¡Chivato! Cuenta nueva sin documento, poniendo icono por defecto...");
+        if (fotoMostrar && fotoDefecto) {
+            fotoMostrar.style.display = 'none';
+            fotoMostrar.src = '';
+            fotoDefecto.style.display = 'block';
+        }
     }
 });
 // ------------------------------------------------------------------
