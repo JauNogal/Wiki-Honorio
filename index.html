@@ -372,11 +372,7 @@ function abrirPerfil() {
     if (mapa) mapa.style.display = 'none';
     let contenido = document.getElementById('contenido-dinamico');
     if (contenido) contenido.style.display = 'none';
-    try {
-        // Cargar la foto de perfil de la memoria antes de mostrar la ventana
-        const savedFoto = getLocal('perfil-foto-escalador');
-        actualizarFotoPerfilDisplay(savedFoto);
-
+   try {
         // Función maestra con la 'Y' mayúscula corregida
         calcularYMostrarPerfil();
         actualizarMaximosPerfil();
