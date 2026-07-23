@@ -2013,14 +2013,13 @@ function guardarEnDiarioProyectos(nombre, grado) {
     };
 
     // 3. Acción al pulsar "No"
-    document.getElementById('btnNoEnc').onclick = () => {
+  document.getElementById('btnNoEnc').onclick = () => {
     document.body.removeChild(fondo); // Cierra la ventana
     
-    // Y ahora le decimos al desplegable que se resetee y se quite el color
+    // Y ahora le decimos al desplegable que se resetee y se "despinte"
     if (elementoSelect) {
-        elementoSelect.value = ''; 
-        elementoSelect.style.backgroundColor = 'transparent'; 
-        elementoSelect.style.color = 'inherit'; 
+        elementoSelect.value = ''; // Lo devuelve a "Sin hacer"
+        cambiarColorEstado(elementoSelect); // Tu motor de colores recalcula y le quita el dorado
     }
 };
 
