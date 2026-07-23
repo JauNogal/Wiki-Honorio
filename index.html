@@ -2262,39 +2262,57 @@ function pintarProyectosManuales() {
     document.getElementById('btnCancelarProy').onclick = () => {
         document.body.removeChild(fondo);
     };
-
-    document.getElementById('btnBorrarProy').onclick = () => {
+document.getElementById('btnBorrarProy').onclick = () => {
         document.body.removeChild(fondo);
         
-        // Buscamos el selector de la vía en la guía principal y lo reseteamos a "Sin hacer"
-        let selectVia = document.querySelector('select[data-nombre="' + proyecto.nombre + '"]');
+        let selectVia = Array.from(document.querySelectorAll('select')).find(s => s.getAttribute('data-nombre') === proyecto.nombre);
+        
         if (selectVia) {
             selectVia.value = ''; 
-            cambiarColorEstado(selectVia); // Magia: Al llamarlo, quita el fondo rosa automáticamente
+            
+            const modalEnc = window.lanzarModalEncadenada;
+            const modalProy = window.lanzarModalProyecto;
+            window.lanzarModalEncadenada = () => {}; 
+            window.lanzarModalProyecto = () => {}; 
+            
+            if (typeof selectVia.onchange === 'function') selectVia.onchange();
+            else selectVia.dispatchEvent(new Event('change'));
+            
+            window.lanzarModalEncadenada = modalEnc;
+            window.lanzarModalProyecto = modalProy;
         }
-        // Finalmente borramos el proyecto de la lista (tu función original)
+        
         eliminarProyectoManual(index);
     };
 
     document.getElementById('btnEncadenarProy').onclick = () => {
         document.body.removeChild(fondo);
         
-        // Al ser un proyecto, el estilo del encadene será "Trabajado"
+        let selectVia = Array.from(document.querySelectorAll('select')).find(s => s.getAttribute('data-nombre') === proyecto.nombre);
         let estiloEncadene = 'trabajado'; 
         
-        // Mandamos los datos al diario de encadenes con los intentos actuales
-        guardarEnDiarioEncadenadas(proyecto.nombre, proyecto.grado, estiloEncadene, proyecto.intentos || 'indefinidos');
+        guardarEnDiarioEncadenadas(proyecto.nombre, proyecto.grado, estiloEncadene, String(proyecto.intentos || 'indefinidos'));
         
-        // Buscamos el selector en la guía principal y lo actualizamos para que se pinte dorado/verde
-        let selectVia = document.querySelector('select[data-nombre="' + proyecto.nombre + '"]');
         if (selectVia) {
             selectVia.value = estiloEncadene;
-            cambiarColorEstado(selectVia); 
+            
+            const modalEnc = window.lanzarModalEncadenada;
+            const modalProy = window.lanzarModalProyecto;
+            window.lanzarModalEncadenada = () => {}; 
+            window.lanzarModalProyecto = () => {}; 
+            
+            if (typeof selectVia.onchange === 'function') selectVia.onchange();
+            else selectVia.dispatchEvent(new Event('change'));
+            
+            window.lanzarModalEncadenada = modalEnc;
+            window.lanzarModalProyecto = modalProy;
         }
         
-        // Borramos el proyecto de la lista de tareas pendientes
         eliminarProyectoManual(index);
+        
+        setTimeout(() => { window.location.reload(); }, 100);
     };
+   
 }
 function actualizarProyectoManual(index, campo, valor) {
     let proyectosRaw = getLocal('proyectos-manuales-lista');
