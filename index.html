@@ -1864,18 +1864,22 @@ else {
         // 1. Si está encadenada (tiene valor y no es proyecto)
         if (valor !== "" && valor !== "proyecto") {
             cajaVia.classList.add("via-encadenada");
-            cajaVia.style.backgroundColor = ''; // Limpiamos el rosa si lo tuviera de antes
+            cajaVia.style.backgroundColor = ''; 
+            cajaVia.style.borderLeft = ''; // Limpiamos el borde rosa por si venía de ser proyecto
         } 
         // 2. Si la marcamos como proyecto
         else if (valor === "proyecto") {
             cajaVia.classList.remove("via-encadenada");
-            cajaVia.style.backgroundColor = '#ffe8ec'; // Fondo rosa clarito y elegante
+            cajaVia.style.backgroundColor = '#ffe8ec'; // Fondo rosa clarito
+            cajaVia.style.borderLeft = '5px solid #ff6b81'; // Borde lateral rosa intenso
         } 
         // 3. Si la devolvemos a "Sin hacer"
         else {
             cajaVia.classList.remove("via-encadenada");
-            cajaVia.style.backgroundColor = ''; // Le quitamos cualquier color para dejarla normal
+            cajaVia.style.backgroundColor = ''; 
+            cajaVia.style.borderLeft = ''; // Limpiamos cualquier borde extra
         }
+    }
     }
     // -------------------------------------------------------------------
             window.llaveColorVia = storageKey;
