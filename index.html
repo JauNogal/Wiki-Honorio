@@ -1222,8 +1222,8 @@ function renderizarViasEncadenadas() {
             </td>
             <td style="padding: 6px 2px; text-align: center; font-weight: bold; color: #2c3e50; width: 1%; white-space: nowrap;">${via.grado}</td>
             <td style="padding: 6px 0px; text-align: center; width: 1%; white-space: nowrap;">
-                <input type="number" min="0" value="${valorIntentos}" ${campoDeshabilitado} onchange="actualizarViaEncadenada(${via.indiceOriginal}, 'intentos', this.value)" style="width: 28px; border: none; background: transparent; color: inherit; font-weight: inherit; text-align: center; font-size: inherit; font-family: inherit; outline: none; ${cursorEstilo}">
-            </td>
+<span style="color: #4a5568; font-size: 0.95em; font-weight: 600; text-transform: capitalize;">${valorIntentos}</span>
+</td>
             <td style="padding: 6px 2px 6px 4px; text-align: center; cursor: pointer; color: #e74c3c; font-weight: bold; width: 1%; white-space: nowrap;" onclick="eliminarViaEncadenada(${via.indiceOriginal})">X</td>
         `;
         
