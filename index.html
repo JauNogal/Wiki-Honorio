@@ -2222,14 +2222,80 @@ function pintarProyectosManuales() {
                     <input type="number" value="${p.intentos}" min="0" onchange="actualizarProyectoManual(${index}, 'intentos', this.value)" style="width: 45px; border: none; background: transparent; color: #3498db; font-weight: bold; text-align: center; font-size: inherit; font-family: inherit; outline: none; cursor: text;">
                 </td>
                 <td style="padding: 6px 8px; text-align: center;">
-                    <span onclick="eliminarProyectoManual(${index})" style="color: #e74c3c; cursor: pointer; font-weight: bold; font-size: 1rem; line-height: 1;">&times;</span>
-                </td>
+<span onclick="gestionarCierreProyecto(${index})" style="color: #e74c3c; cursor: pointer; font-weight: bold; font-size: 1rem; line-height: 1;">&times;</span>
+</td>
             </tr>
         `;
     });
     tbody.innerHTML = html;
 }
 
+        function gestionarCierreProyecto(index) {
+    // 1. Obtenemos los datos del proyecto en este mismo instante para no perder los intentos que hayas escrito
+    let proyectosRaw = getLocal('proyectos-manuales-lista');
+    let proyectos = [];
+    try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) {}
+    
+    let proyecto = proyectos[index];
+    if (!proyecto) return;
+
+    // 2. Creamos la pantalla oscura y la caja blanca del menú
+    const fondo = document.createElement('div');
+    fondo.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999;";
+
+    const caja = document.createElement('div');
+    caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; width:90%; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
+
+    caja.innerHTML = `
+        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">¿Qué quieres hacer con el proyecto <b>${proyecto.nombre}</b>?</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button id="btnEncadenarProy" style="padding: 12px; border: none; background: #27ae60; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;">¡La he encadenado!</button>
+            <button id="btnBorrarProy" style="padding: 12px; border: none; background: #e74c3c; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;">Solo eliminar de la lista</button>
+            <button id="btnCancelarProy" style="padding: 12px; border: none; background: #eee; color: #333; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em;">Cancelar</button>
+        </div>
+    `;
+
+    fondo.appendChild(caja);
+    document.body.appendChild(fondo);
+
+    // 3. Lógica de los tres botones
+    document.getElementById('btnCancelarProy').onclick = () => {
+        document.body.removeChild(fondo);
+    };
+
+    document.getElementById('btnBorrarProy').onclick = () => {
+        document.body.removeChild(fondo);
+        
+        // Buscamos el selector de la vía en la guía principal y lo reseteamos a "Sin hacer"
+        let selectVia = document.querySelector('select[data-nombre="' + proyecto.nombre + '"]');
+        if (selectVia) {
+            selectVia.value = ''; 
+            cambiarColorEstado(selectVia); // Magia: Al llamarlo, quita el fondo rosa automáticamente
+        }
+        // Finalmente borramos el proyecto de la lista (tu función original)
+        eliminarProyectoManual(index);
+    };
+
+    document.getElementById('btnEncadenarProy').onclick = () => {
+        document.body.removeChild(fondo);
+        
+        // Al ser un proyecto, el estilo del encadene será "Trabajado"
+        let estiloEncadene = 'trabajado'; 
+        
+        // Mandamos los datos al diario de encadenes con los intentos actuales
+        guardarEnDiarioEncadenadas(proyecto.nombre, proyecto.grado, estiloEncadene, proyecto.intentos || 'indefinidos');
+        
+        // Buscamos el selector en la guía principal y lo actualizamos para que se pinte dorado/verde
+        let selectVia = document.querySelector('select[data-nombre="' + proyecto.nombre + '"]');
+        if (selectVia) {
+            selectVia.value = estiloEncadene;
+            cambiarColorEstado(selectVia); 
+        }
+        
+        // Borramos el proyecto de la lista de tareas pendientes
+        eliminarProyectoManual(index);
+    };
+}
 function actualizarProyectoManual(index, campo, valor) {
     let proyectosRaw = getLocal('proyectos-manuales-lista');
     let proyectos = [];
