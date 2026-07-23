@@ -1980,7 +1980,7 @@ function guardarEnDiarioProyectos(nombre, grado) {
             </div>
         </div>
 
-        <div id="bloqueIntentos" style="margin-top: 20px; margin-bottom: 20px;">
+        <div id="bloqueIntentos" style="margin-top: 20px; margin-bottom: 20px; display: ${ (estilo === 'a-vista' || estilo === 'a-flash') ? 'none' : 'block' };">
             <div style="font-size: 0.85em; color: #666; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Nº DE INTENTOS</div>
             <select id="selectIntentos" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 1.1em; text-align: center; background: white; cursor: pointer;">
                 <option value="2">2 intentos</option>
@@ -1992,8 +1992,9 @@ function guardarEnDiarioProyectos(nombre, grado) {
                 <option value="8">8 intentos</option>
                 <option value="9">9 intentos</option>
                 <option value="10">10 intentos</option>
-                <option value="mas_de_10">Más de 10</option>
-                    </select>
+                <option value="Más de 10">Más de 10</option>
+            </select>
+        </div>
         </div>
         <div style="display: flex; gap: 10px; justify-content: center;">
             <button id="btnNoEnc" style="flex: 1; padding: 12px; border: none; background: #eee; border-radius: 6px; cursor: pointer; color: #333; font-weight: bold; font-size: 1em;">No</button>
