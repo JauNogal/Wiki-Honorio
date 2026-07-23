@@ -1861,10 +1861,20 @@ else {
             // --- NUEVO: Cambiar el fondo de la vía en directo al seleccionar ---
     let cajaVia = elemento.closest('.via-item');
     if (cajaVia) {
+        // 1. Si está encadenada (tiene valor y no es proyecto)
         if (valor !== "" && valor !== "proyecto") {
             cajaVia.classList.add("via-encadenada");
-        } else {
+            cajaVia.style.backgroundColor = ''; // Limpiamos el rosa si lo tuviera de antes
+        } 
+        // 2. Si la marcamos como proyecto
+        else if (valor === "proyecto") {
             cajaVia.classList.remove("via-encadenada");
+            cajaVia.style.backgroundColor = '#ffe8ec'; // Fondo rosa clarito y elegante
+        } 
+        // 3. Si la devolvemos a "Sin hacer"
+        else {
+            cajaVia.classList.remove("via-encadenada");
+            cajaVia.style.backgroundColor = ''; // Le quitamos cualquier color para dejarla normal
         }
     }
     // -------------------------------------------------------------------
