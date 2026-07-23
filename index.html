@@ -982,7 +982,7 @@ window.iniciarSesionUsuario = function() {
             else { seleccionarEscuela(idEscuela); setTimeout(() => { verSector(idSector); }, 50); }
         }
         
-       function mostrarDiario() {
+      function mostrarDiario() {
    // 1. Ocultamos el mapa de forma segura
     let mapa = document.getElementById('map');
     if (mapa) mapa.style.display = 'none';
@@ -2309,8 +2309,7 @@ document.getElementById('btnBorrarProy').onclick = () => {
         }
         
         eliminarProyectoManual(index);
-        
-        setTimeout(() => { window.location.reload(); }, 100);
+        renderizarViasEncadenadas();
     };
    
 }
