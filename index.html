@@ -1824,9 +1824,34 @@ html += `<div class="section-title" style="font-size:1rem;">${textos[idiomaActua
             
 if (viasFiltradas.length === 0) html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinVias}</p>`;
 else {
-                viasFiltradas.forEach(via => {
-                    const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
-                    const estadoGuardado = getLocal(storageKey) || "";
+               // 1. Cargamos el Diario y los Proyectos (nuestra Única Fuente de Verdad)
+        let listaEncadenadas = [];
+        try { listaEncadenadas = JSON.parse(getLocal('astur_vertical_encadenadas')) || []; } catch(e) {}
+        
+        let listaProyectos = [];
+        try { listaProyectos = JSON.parse(getLocal('proyectos-manuales-lista')) || []; } catch(e) {}
+
+        viasFiltradas.forEach(via => {
+            const storageKey = `estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`;
+            let estadoGuardado = ""; // Por defecto, la vía nace "Sin hacer"
+
+            // 2. ¿Manda el Diario? Buscamos si la vía está encadenada
+            let enDiario = listaEncadenadas.find(v => v.nombre === via.nombreVia);
+            
+            if (enDiario) {
+                estadoGuardado = enDiario.estilo; // Obedecemos al estilo del diario (a-vista, trabajado...)
+                setLocal(storageKey, estadoGuardado); // Forzamos la actualización de la memoria local
+            } else {
+                // 3. ¿Mandan los Proyectos? Buscamos si la vía está en proyectos
+                let enProyectos = listaProyectos.find(v => v.nombre === via.nombreVia);
+                if (enProyectos) {
+                    estadoGuardado = 'proyecto';
+                    setLocal(storageKey, estadoGuardado); // Forzamos la actualización
+                } else {
+                    // 4. Si la vía no está ni en el Diario ni en Proyectos, purgamos cualquier error antiguo
+                    removeLocal(storageKey); 
+                }
+            }
 
                     // Aplicamos el truco de los números romanos antes de pintar
             let gradoLimpio = (via.grado || "").toString().trim();
