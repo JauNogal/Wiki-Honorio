@@ -1865,24 +1865,25 @@ else {
             let gradoLimpio = (via.grado || "").toString().trim();
             let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
 
-            html += `
-            <div class="via-item ${ (estadoGuardado !== '' && estadoGuardado !== 'proyecto') ? 'via-encadenada' : '' }">
+           html += `
+        <div class="via-item ${ estadoGuardado !== '' ? (estadoGuardado === 'proyecto' ? 'via-proyecto' : 'via-encadenada') : '' }" ${estadoGuardado === 'proyecto' ? 'style="background-color: #ffe6eb; border-left: 4px solid #ff6347;"' : ''}>
             <div class="via-detalles">
-                        <div class="via-numero">${via.numero}.</div>
-                        <div class="via-nombre">${via.nombreVia}</div>
-                        <div class="via-grado">${gradoDisplay}</div>
-                    </div>
-                            <div class="via-check">
-                               <select class="estado-via" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.9em;">
-<option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
-<option value="a-vista" style="background-color: #3CB371; color: white;" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
-<option value="a-flash" style="background-color: #00CED1; color: white;" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
-<option value="en-el-dia" style="background-color: #FFA500; color: white;" ${estadoGuardado === '2-pegue' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
-<option value="trabajado" style="background-color: #FF6347; color: white;" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
-<option value="proyecto" style="background-color: #FFD700; color: #333;" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>${textos[idiomaActual].estadoProyecto}</option>
-</select>
-                            </div>
-                        </div>`;
+                <div class="via-numero">${via.numero}.</div>
+                <div class="via-nombre">${via.nombreVia}</div>
+                <div class="via-grado">${gradoDisplay}</div>
+            </div>
+            <div class="via-check">
+                <select class="estado-via" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.85rem; width: 100px;">
+                    <option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
+                    <option value="a-vista" style="background-color: #3CB371; color: white;" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
+                    <option value="a-flash" style="background-color: #00CED1; color: white;" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
+                    <option value="en-el-dia" style="background-color: #FFA500; color: white;" ${estadoGuardado === 'en-el-dia' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
+                    <option value="trabajado" style="background-color: #FFD700; color: #333;" ${estadoGuardado === 'trabajado' ? 'selected' : ''}>${textos[idiomaActual].trabajado}</option>
+                    <option value="proyecto" style="background-color: #FF6347; color: white;" ${estadoGuardado === 'proyecto' ? 'selected' : ''}>${textos[idiomaActual].estadoProyecto}</option>
+                </select>
+            </div>
+        </div>
+        `;
                 });
             }
             document.getElementById('contenido-dinamico').innerHTML = html;
