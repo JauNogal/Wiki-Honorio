@@ -1896,29 +1896,7 @@ else {
     const storageKey = `estado-via-${idEscuela}-${idSector}-${numeroVia}`;
     if (valor === "") removeLocal(storageKey); else setLocal(storageKey, valor);
     actualizarEstiloSelect(elemento);
-            // --- NUEVO: Cambiar el fondo de la vía en directo al seleccionar ---
-    let cajaVia = elemento.closest('.via-item');
-    if (cajaVia) {
-        // 1. Si está encadenada (tiene valor y no es proyecto)
-        if (valor !== "" && valor !== "proyecto") {
-            cajaVia.classList.add("via-encadenada");
-            cajaVia.style.backgroundColor = ''; 
-            cajaVia.style.borderLeft = ''; // Limpiamos el borde rosa por si venía de ser proyecto
-        } 
-        // 2. Si la marcamos como proyecto
-        else if (valor === "proyecto") {
-            cajaVia.classList.remove("via-encadenada");
-            cajaVia.style.backgroundColor = '#ffe8ec'; // Fondo rosa clarito
-            cajaVia.style.borderLeft = '5px solid #ff6b81'; // Borde lateral rosa intenso
-        } 
-        // 3. Si la devolvemos a "Sin hacer"
-        else {
-            cajaVia.classList.remove("via-encadenada");
-            cajaVia.style.backgroundColor = ''; 
-            cajaVia.style.borderLeft = ''; // Limpiamos cualquier borde extra
-        }
-    }
-    // -------------------------------------------------------------------
+          
             window.llaveColorVia = storageKey;
 
     // Extraemos el nombre y el grado de la vía seleccionada
