@@ -1866,7 +1866,7 @@ else {
             let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
 
            html += `
-<div class="via-item" ${ estadoGuardado === 'proyecto' ? 'style="background-color: #fffce0 !important; border-left: 4px solid #FFD700 !important;"' : (estadoGuardado !== '' ? 'style="background-color: #ffe6eb !important; border-left: 4px solid #FF6347 !important;"' : '') }>
+<div class="via-item" style="${ estadoGuardado === 'proyecto' ? 'background-color: #fffce0 !important; border-left: 4px solid #FFD700 !important;' : (estadoGuardado !== '' ? 'background-color: #ffe6eb !important; border-left: 4px solid #FF6347 !important;' : '') }">
 <div class="via-detalles">
                 <div class="via-numero">${via.numero}.</div>
                 <div class="via-nombre">${via.nombreVia}</div>
@@ -2135,36 +2135,36 @@ let intentosIniciales = (estilo === 'a-vista' || estilo === 'a-flash') ? '1' : (
     }
     setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
 }
-   function actualizarEstiloSelect(elemento) {
-    const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', 'en-el-dia': '#FFA500', 'trabajado': '#FF6347', 'proyecto': '#FFD700' };
+  function actualizarEstiloSelect(elemento) {
+    // 1. Desplegables: Trabajado = Dorado (#FFD700), Proyecto = Rosa (#FF6347)
+    const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', 'en-el-dia': '#FFA500', 'trabajado': '#FFD700', 'proyecto': '#FF6347' };
     const valor = elemento.value;
-    const fila = elemento.closest('.via-item'); // Atrapamos el recuadro de la fila entera
+    const fila = elemento.closest('.via-item');
 
     if (valor && colores[valor]) {
-        // 1. Pintamos el botón desplegable
+        // Pintamos el botón desplegable
         elemento.style.backgroundColor = colores[valor];
-        elemento.style.color = (valor === 'proyecto') ? 'black' : 'white';
+        elemento.style.color = (valor === 'trabajado') ? 'black' : 'white';
         elemento.style.border = 'none';
 
-        // 2. Pintamos el recuadro forzando exactamente los colores que quieres
+        // 2. Pintamos el recuadro de la vía asegurando tus reglas
         if (fila) {
             if (valor === 'proyecto') {
-                fila.style.setProperty('background-color', '#fffce0', 'important'); // Fondo dorado
-                fila.style.setProperty('border-left', '4px solid #FFD700', 'important'); 
-            } else { // Cualquier otro estado (trabajado, a-vista, etc.)
-                fila.style.setProperty('background-color', '#ffe6eb', 'important'); // Fondo rosa claro
-                fila.style.setProperty('border-left', '4px solid #FF6347', 'important');
+                // Si es Proyecto: Recuadro con fondo y borde Dorado
+                fila.style.cssText = 'background-color: #fffce0 !important; border-left: 4px solid #FFD700 !important;';
+            } else {
+                // Resto de estilos (incluido Trabajado): Recuadro con fondo y borde Rosa
+                fila.style.cssText = 'background-color: #ffe6eb !important; border-left: 4px solid #FF6347 !important;';
             }
         }
     } else {
-        // 3. Si se marca como "Sin hacer", lo dejamos todo en blanco
+        // 3. Estado "Sin hacer": Se limpia todo
         elemento.style.backgroundColor = '';
         elemento.style.color = 'black';
         elemento.style.border = '1px solid #ccc';
         
         if (fila) {
-            fila.style.setProperty('background-color', 'transparent', 'important');
-            fila.style.setProperty('border-left', 'none', 'important');
+            fila.style.cssText = 'background-color: transparent !important; border-left: none !important;';
         }
     }
 }
