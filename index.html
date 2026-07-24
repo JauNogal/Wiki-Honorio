@@ -2138,15 +2138,34 @@ let intentosIniciales = (estilo === 'a-vista' || estilo === 'a-flash') ? '1' : (
    function actualizarEstiloSelect(elemento) {
     const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', 'en-el-dia': '#FFA500', 'trabajado': '#FF6347', 'proyecto': '#FFD700' };
     const valor = elemento.value;
-    
+    const fila = elemento.closest('.via-item'); // Atrapamos el recuadro de la fila entera
+
     if (valor && colores[valor]) {
-        elemento.style.backgroundColor = colores[valor]; 
-        elemento.style.color = (valor === 'proyecto') ? 'black' : 'white'; 
+        // 1. Pintamos el botón desplegable
+        elemento.style.backgroundColor = colores[valor];
+        elemento.style.color = (valor === 'proyecto') ? 'black' : 'white';
         elemento.style.border = 'none';
+
+        // 2. Pintamos el recuadro forzando exactamente los colores que quieres
+        if (fila) {
+            if (valor === 'proyecto') {
+                fila.style.setProperty('background-color', '#fffce0', 'important'); // Fondo dorado
+                fila.style.setProperty('border-left', '4px solid #FFD700', 'important'); 
+            } else { // Cualquier otro estado (trabajado, a-vista, etc.)
+                fila.style.setProperty('background-color', '#ffe6eb', 'important'); // Fondo rosa claro
+                fila.style.setProperty('border-left', '4px solid #FF6347', 'important');
+            }
+        }
     } else {
-        elemento.style.backgroundColor = ''; 
-        elemento.style.color = 'black'; 
+        // 3. Si se marca como "Sin hacer", lo dejamos todo en blanco
+        elemento.style.backgroundColor = '';
+        elemento.style.color = 'black';
         elemento.style.border = '1px solid #ccc';
+        
+        if (fila) {
+            fila.style.setProperty('background-color', 'transparent', 'important');
+            fila.style.setProperty('border-left', 'none', 'important');
+        }
     }
 }
 
