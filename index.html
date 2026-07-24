@@ -1866,8 +1866,8 @@ else {
             let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
 
            html += `
-            <div class="via-item ${ estadoGuardado !== '' ? (estadoGuardado === 'proyecto' ? 'via-proyecto' : 'via-encadenada') : '' }" ${ estadoGuardado !== '' ? (estadoGuardado === 'proyecto' ? 'style="background-color: #fffce0; border-left: 4px solid #FFD700;"' : 'style="background-color: #ffe6eb; border-left: 4px solid #FF6347;"') : '' }>
-            <div class="via-detalles">
+<div class="via-item" ${ estadoGuardado === 'proyecto' ? 'style="background-color: #fffce0 !important; border-left: 4px solid #FFD700 !important;"' : (estadoGuardado !== '' ? 'style="background-color: #ffe6eb !important; border-left: 4px solid #FF6347 !important;"' : '') }>
+<div class="via-detalles">
                 <div class="via-numero">${via.numero}.</div>
                 <div class="via-nombre">${via.nombreVia}</div>
                 <div class="via-grado">${gradoDisplay}</div>
