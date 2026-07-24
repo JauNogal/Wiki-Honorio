@@ -1907,51 +1907,66 @@ else {
         }
 }
 
+function lanzarModalProyecto(nombre, grado) {
+        // --- NUEVO: Función secreta para atrapar el DNI interno de la vía ---
+        const guardarDniInterno = () => {
+            let datos = getLocal('proyectos-manuales-lista');
+            if (datos) {
+                let lista = JSON.parse(datos);
+                // Buscamos el proyecto recién añadido y le inyectamos la llave de memoria
+                let p = lista.slice().reverse().find(x => x.nombre === nombre);
+                if (p) {
+                    p.llaveInterna = window.llaveColorVia; 
+                    setLocal('proyectos-manuales-lista', JSON.stringify(lista));
+                }
+            }
+        };
 
-        function lanzarModalProyecto(nombre, grado) {
-    // 1. Si en el pasado marcó la casilla, guarda directo y no saca el cartel
-    if (localStorage.getItem('noPreguntarProyecto') === 'true') {
-        guardarEnDiarioProyectos(nombre, grado);
-        return;
-    }
-
-    // 2. Creamos el fondo oscuro que bloquea la pantalla
-    const fondo = document.createElement('div');
-    fondo.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999;";
-
-    // 3. Creamos el cuadro blanco central
-    const caja = document.createElement('div');
-    caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
-
-    caja.innerHTML = `
-        <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">${textos[idiomaActual].modalProyectos1}<b>${nombre}</b>${textos[idiomaActual].modalProyectos2}</div>
-        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; font-size: 0.85em; color: #666; cursor: pointer;">
-            <input type="checkbox" id="checkNoPreguntarProy"> ${textos[idiomaActual].modalNoVolver}
-        </label>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button id="btnNoProy" style="flex: 1; padding: 10px; border: none; background: #eee; border-radius: 5px; cursor: pointer; color: #333; font-weight: bold;">No</button>
-            <button id="btnSiProy" style="flex: 1; padding: 10px; border: none; background: #3498db; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">${textos[idiomaActual].modalBtnAnotar}</button>
-        </div>
-    `;
-
-    fondo.appendChild(caja);
-    document.body.appendChild(fondo);
-
-    // 4. Acción al pulsar "No"
-    document.getElementById('btnNoProy').onclick = () => {
-        document.body.removeChild(fondo);
-    };
-
-    // 5. Acción al pulsar "Sí, anotar"
-    document.getElementById('btnSiProy').onclick = () => {
-        if (document.getElementById('checkNoPreguntarProy').checked) {
-            localStorage.setItem('noPreguntarProyecto', 'true');
+        // 1. Si en el pasado marcó la casilla...
+        if (localStorage.getItem('noPreguntarProyecto') === 'true') {
+            guardarEnDiarioProyectos(nombre, grado);
+            guardarDniInterno(); // Magia: inyectamos el DNI aquí
+            return;
         }
-        guardarEnDiarioProyectos(nombre, grado);
-        document.body.removeChild(fondo);
-    };
-}
 
+        // 2. Creamos el fondo oscuro que bloquea la pantalla
+        const fondo = document.createElement('div');
+        fondo.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999;";
+
+        // 3. Creamos el cuadro blanco central
+        const caja = document.createElement('div');
+        caja.style.cssText = "background:white; padding:25px; border-radius:10px; max-width:320px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.2); font-family:sans-serif;";
+
+        caja.innerHTML = `
+            <div style="font-size: 1.1em; color: #2c3e50; margin-bottom: 15px;">${textos[idiomaActual].modalProyectos1}<b>${nombre}</b>${textos[idiomaActual].modalProyectos2}</div>
+            <label style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; font-size: 0.85em; color: #666; cursor: pointer;">
+                <input type="checkbox" id="checkNoPreguntarProy"> ${textos[idiomaActual].modalNoVolver}
+            </label>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="btnNoProy" style="flex: 1; padding: 10px; border: none; background: #eee; border-radius: 5px; cursor: pointer; color: #333; font-weight: bold;">No</button>
+                <button id="btnSiProy" style="flex: 1; padding: 10px; border: none; background: #3498db; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">${textos[idiomaActual].modalBtnAnotar}</button>
+            </div>
+        `;
+
+        fondo.appendChild(caja);
+        document.body.appendChild(fondo);
+
+        // 4. Acción al pulsar "No"
+        document.getElementById('btnNoProy').onclick = () => {
+            document.body.removeChild(fondo);
+        };
+
+        // 5. Acción al pulsar "Sí, anotar"
+        document.getElementById('btnSiProy').onclick = () => {
+            if (document.getElementById('checkNoPreguntarProy').checked) {
+                localStorage.setItem('noPreguntarProyecto', 'true');
+            }
+            guardarEnDiarioProyectos(nombre, grado);
+            guardarDniInterno(); // Magia: inyectamos el DNI aquí también
+            document.body.removeChild(fondo);
+        };
+    }
+       
 // Función que inyecta la vía directamente en la memoria de tu Diario
 function guardarEnDiarioProyectos(nombre, grado) {
     let lista = localStorage.getItem('proyectos-manuales-lista');
@@ -2265,49 +2280,29 @@ function pintarProyectosManuales() {
 document.getElementById('btnBorrarProy').onclick = () => {
         document.body.removeChild(fondo);
         
-        let selectVia = Array.from(document.querySelectorAll('select')).find(s => s.getAttribute('data-nombre') === proyecto.nombre);
-        
-        if (selectVia) {
-            selectVia.value = ''; 
-            
-            const modalEnc = window.lanzarModalEncadenada;
-            const modalProy = window.lanzarModalProyecto;
-            window.lanzarModalEncadenada = () => {}; 
-            window.lanzarModalProyecto = () => {}; 
-            
-            if (typeof selectVia.onchange === 'function') selectVia.onchange();
-            else selectVia.dispatchEvent(new Event('change'));
-            
-            window.lanzarModalEncadenada = modalEnc;
-            window.lanzarModalProyecto = modalProy;
+        // 1. Borramos la vía de la memoria del sector usando su DNI
+        if (proyecto.llaveInterna) {
+            removeLocal(proyecto.llaveInterna);
         }
         
+        // 2. La quitamos de la lista visual
         eliminarProyectoManual(index);
     };
 
     document.getElementById('btnEncadenarProy').onclick = () => {
         document.body.removeChild(fondo);
         
-        let selectVia = Array.from(document.querySelectorAll('select')).find(s => s.getAttribute('data-nombre') === proyecto.nombre);
         let estiloEncadene = 'trabajado'; 
         
+        // 1. Apuntamos en la tabla de encadenes
         guardarEnDiarioEncadenadas(proyecto.nombre, proyecto.grado, estiloEncadene, String(proyecto.intentos || 'indefinidos'));
         
-        if (selectVia) {
-            selectVia.value = estiloEncadene;
-            
-            const modalEnc = window.lanzarModalEncadenada;
-            const modalProy = window.lanzarModalProyecto;
-            window.lanzarModalEncadenada = () => {}; 
-            window.lanzarModalProyecto = () => {}; 
-            
-            if (typeof selectVia.onchange === 'function') selectVia.onchange();
-            else selectVia.dispatchEvent(new Event('change'));
-            
-            window.lanzarModalEncadenada = modalEnc;
-            window.lanzarModalProyecto = modalProy;
+        // 2. Sobrescribimos la memoria del sector a "trabajado" usando su DNI
+        if (proyecto.llaveInterna) {
+            setLocal(proyecto.llaveInterna, estiloEncadene);
         }
         
+        // 3. Borramos el proyecto y refrescamos la vista del diario
         eliminarProyectoManual(index);
         renderizarViasEncadenadas();
     };
