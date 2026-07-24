@@ -1252,8 +1252,26 @@ window.eliminarViaEncadenada = async function(index) {
         let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
         const viaABorrar = lista[index];
         
-        if (viaABorrar && viaABorrar.llaveColor) {
-            removeLocal(viaABorrar.llaveColor);
+        if (viaABorrar) {
+            // 1. Si de casualidad tiene la llave guardada, la borramos (tu idea original)
+            if (viaABorrar.llaveColor) {
+                removeLocal(viaABorrar.llaveColor);
+            }
+            
+            // 2. Escáner a prueba de balas: buscamos su estado en la memoria y lo reseteamos
+            if (viaABorrar.nombre) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    let clave = localStorage.key(i);
+                    // Si la memoria tiene un registro con el nombre de esta vía...
+                    if (clave && clave.includes(viaABorrar.nombre)) {
+                        let valor = localStorage.getItem(clave);
+                        // Y si resulta que es un estado de escalada, lo eliminamos
+                        if (['a-vista', 'a-flash', 'en-el-dia', 'trabajado', 'proyecto'].includes(valor)) {
+                            localStorage.removeItem(clave);
+                        }
+                    }
+                }
+            }
         }
         
         lista.splice(index, 1);
