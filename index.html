@@ -2114,35 +2114,45 @@ let intentosIniciales = (estilo === 'a-vista' || estilo === 'a-flash') ? '1' : (
     setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
 }
   function actualizarEstiloSelect(elemento) {
-    // 1. Desplegables: Trabajado = Dorado (#FFD700), Proyecto = Rosa (#FF6347)
-    const colores = { 'a-vista': '#3CB371', 'a-flash': '#00CED1', 'en-el-dia': '#FFA500', 'trabajado': '#FFD700', 'proyecto': '#FF6347' };
+    // 1. Colores de los BOTONES DESPLEGABLES 
+    const colores = { 
+        'a-vista': '#3CB371', 
+        'a-flash': '#00CED1', 
+        'en-el-dia': '#FFA500', 
+        'trabajado': '#FFD700', // Botón amarillo/dorado
+        'proyecto': '#FF6347'   // Botón rosa/rojo
+    };
+    
     const valor = elemento.value;
     const fila = elemento.closest('.via-item');
 
     if (valor && colores[valor]) {
         // Pintamos el botón desplegable
         elemento.style.backgroundColor = colores[valor];
-        elemento.style.color = (valor === 'trabajado') ? 'black' : 'white';
+        elemento.style.color = (valor === 'proyecto') ? 'white' : ((valor === 'trabajado') ? 'black' : 'white');
         elemento.style.border = 'none';
 
-        // 2. Pintamos el recuadro de la vía asegurando tus reglas
+        // 2. Pintamos los RECUADROS DE LA VÍA
         if (fila) {
             if (valor === 'proyecto') {
-                // Si es Proyecto: Recuadro con fondo y borde Dorado
-                fila.style.cssText = 'background-color: #fffce0 !important; border-left: 4px solid #FFD700 !important;';
+                // Proyecto: RECUADRO DORADO
+                fila.style.setProperty('background-color', '#fffce0', 'important');
+                fila.style.setProperty('border-left', '4px solid #FFD700', 'important');
             } else {
-                // Resto de estilos (incluido Trabajado): Recuadro con fondo y borde Rosa
-                fila.style.cssText = 'background-color: #ffe6eb !important; border-left: 4px solid #FF6347 !important;';
+                // Trabajado (y demás estilos): RECUADRO ROSA
+                fila.style.setProperty('background-color', '#ffe6eb', 'important');
+                fila.style.setProperty('border-left', '4px solid #FF6347', 'important');
             }
         }
     } else {
-        // 3. Estado "Sin hacer": Se limpia todo
+        // Estado "Sin hacer"
         elemento.style.backgroundColor = '';
         elemento.style.color = 'black';
         elemento.style.border = '1px solid #ccc';
         
         if (fila) {
-            fila.style.cssText = 'background-color: transparent !important; border-left: none !important;';
+            fila.style.setProperty('background-color', 'transparent', 'important');
+            fila.style.setProperty('border-left', 'none', 'important');
         }
     }
 }
