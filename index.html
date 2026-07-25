@@ -1764,11 +1764,24 @@ let html = `<button class="btn-volver" onclick="mostrarInicio()">${textos[idioma
     if (sectoresFiltrados.length === 0) {
 html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinSectores}</p>`;
     } else {
-        let encadenesPorSector = {};
+       let encadenesPorSector = {};
+        
+        // 1. Cargamos el Diario maestro (Nuestra Única Fuente de Verdad)
+        let listaEncadenadas = [];
+        try { 
+            listaEncadenadas = JSON.parse(getLocal('astur_vertical_encadenadas')) || []; 
+        } catch(e) {}
+
         database.vias.forEach(via => {
             if (Number(via.idEscuela) === Number(id)) {
-                const estado = getLocal(`estado-via-${via.idEscuela}-${via.idSector}-${via.numero}`);
-                if (estado && estado !== 'proyecto') {
+                // Acorazamos el nombre exactamente igual que lo haces por dentro
+                let nombreLimpioVia = (via.nombreVia || "").trim().toLowerCase();
+                
+                // Comprobamos si la vía existe en tu Diario
+                let enDiario = listaEncadenadas.find(v => (v.nombre || "").trim().toLowerCase() === nombreLimpioVia);
+                
+                // Si la vía está en el Diario, sumamos el encadene matemáticamente
+                if (enDiario) {
                     encadenesPorSector[via.idSector] = (encadenesPorSector[via.idSector] || 0) + 1;
                 }
             }
