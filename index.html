@@ -1934,6 +1934,18 @@ else {
                 } catch(e) {}
             }
         }
+            // --- NUEVO: Purga total del Diario si marcamos la vía como "Sin hacer" ---
+        if (valor === "") {
+            let diarioGuardado = getLocal('astur_vertical_encadenadas');
+            if (diarioGuardado) {
+                try {
+                    let listaDiario = JSON.parse(diarioGuardado);
+                    // Filtramos para conservar todas las vías MENOS la que acabamos de anular
+                    let listaDiarioLimpia = listaDiario.filter(v => v.nombre !== nombre);
+                    setLocal('astur_vertical_encadenadas', JSON.stringify(listaDiarioLimpia));
+                } catch(e) {}
+            }
+        }
 }
 
 function lanzarModalProyecto(nombre, grado) {
