@@ -1935,7 +1935,7 @@ else {
             }
         }
             // --- NUEVO: Purga total del Diario si marcamos la vía como "Sin hacer" ---
-        if (valor === "") {
+        if (valor === "" || valor === 'proyecto') {
             let diarioGuardado = getLocal('astur_vertical_encadenadas');
             if (diarioGuardado) {
                 try {
