@@ -1750,6 +1750,9 @@ let html = `<button class="btn-volver" onclick="mostrarInicio()">${textos[idioma
        <a href="https://maps.google.com/?q=${escuela.lat},${escuela.lng}" target="_blank" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 6px; background-color: #1976D2; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
             <span style="color: white; font-family: Arial, sans-serif; font-weight: bold; font-size: 20px; line-height: 1;">P</span>
         </a>
+        <button onclick="abrirMenuFavoritos('${escuela.nombre || 'esta escuela'}')" style="border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background-color: #FFC107; color: white; font-size: 22px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); margin-left: auto;">
+    ★
+</button>
     </div>
     <div id="info-escuela-bloque" style="display: none; background-color: white; border-left: 4px solid #3498db; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.95rem; line-height: 1.5; color: #333;">
         <p><b>Información de la escuela:</b><br><br>${escuela.informacion || 'No hay información detallada para esta escuela todavía.'}</p>
