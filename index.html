@@ -683,6 +683,7 @@ onAuthStateChanged(auth, async (user) => {
         window.fbDoc = doc;
         window.fbSetDoc = setDoc;
         window.fbDb = db;
+        window.fbArrayUnion = arrayUnion;
         
         // --- MAGIA DEL PERFIL: Mostrar vista usuario y ocultar invitado ---
 let vistaInvitado = document.getElementById('vista-invitado');
@@ -3433,7 +3434,55 @@ function abrirMenuFavoritos(tipo, id1 = null, id2 = null) {
 function cerrarMenuFavoritos() {
     document.getElementById('modalFavoritos').style.display = 'none';
 }
+
+        // Función para guardar en Firestore (Adaptada a Roca Norte V9)
+async function guardarFavorito(tipo, id1, id2 = null) {
+    // 1. Comprobamos tu variable global de usuario (línea 682)
+    const uid = window.idUsuarioActivo; 
+    
+    if (!uid) {
+        cerrarMenuFavoritos(); // Escondemos la estrellita
+        // Y le sacamos tu modal de login directamente
+        const modalLogin = document.getElementById('modalLogin');
+        if (modalLogin) {
+            modalLogin.style.display = 'flex';
+        } else {
+            alert("Necesitas iniciar sesión en Roca Norte para guardar favoritos.");
+        }
+        return; // Paramos aquí, no guardamos nada
+    }
+
+    // 2. Preparamos el "paquete" de datos
+    let nuevoFavorito = {
+        tipo: tipo,
+        fechaAñadido: new Date().getTime() // Para poder ordenarlos del más nuevo al más viejo luego
+    };
+
+    if (tipo === 'escuela') {
+        nuevoFavorito.idEscuela = id1;
+    } else if (tipo === 'sector') {
+        nuevoFavorito.idSector = id1;
+        nuevoFavorito.idEscuela = id2; // Guardamos la escuela también, es muy útil
+    }
+
+    // 3. Enviamos a Firestore (Usando tus variables globales fbDoc, fbDb, etc.)
+    try {
+        // Apuntamos al documento de tu usuario
+        const refUsuario = window.fbDoc(window.fbDb, 'usuarios', uid);
         
+        // Lo guardamos usando tu arrayUnion para no machacar sus otros datos
+        await window.fbSetDoc(refUsuario, {
+            favoritos: window.fbArrayUnion(nuevoFavorito)
+        }, { merge: true }); // ¡Vital el merge: true!
+
+        alert("¡Añadido a tus favoritos de Roca Norte! ⭐");
+        cerrarMenuFavoritos();
+
+    } catch (error) {
+        console.error("Error al guardar favorito:", error);
+        alert("Hubo un error al guardar. Revisa tu conexión.");
+    }
+}
 </script>
 </body>
 </html>
