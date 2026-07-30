@@ -3436,8 +3436,8 @@ function cerrarMenuFavoritos() {
     document.getElementById('modalFavoritos').style.display = 'none';
 }
 
-      // ==========================================
-// CEREBRO DE FAVORITOS (V3 - Sectores Fix)
+// ==========================================
+// CEREBRO DE FAVORITOS (V4 - Cazafantasmas y Borrado Infalible)
 // ==========================================
 
 async function guardarFavorito(tipo, id1, id2 = null) {
@@ -3451,13 +3451,11 @@ async function guardarFavorito(tipo, id1, id2 = null) {
         return; 
     }
 
-    // Buscamos automáticamente la escuela si guardamos un sector
     let idEscuela = id2;
     let idSector = null;
     if (tipo === 'sector') {
         idSector = id1;
         if (!idEscuela) {
-            // CAMBIO CLAVE: Usamos == en vez de === para evitar problemas de texto/número
             const esc = database.escuelas.find(e => e.sectores && e.sectores.some(s => s.id == idSector));
             if (esc) idEscuela = esc.id;
         }
@@ -3474,14 +3472,12 @@ async function guardarFavorito(tipo, id1, id2 = null) {
             favoritosActuales = docSnap.data().favoritos;
         }
 
-        // REGLA 1: Máximo 5 favoritos
         if (favoritosActuales.length >= 5) {
             alert("¡Ya tienes 5 lugares en favoritos! Borra alguno de tu lista para añadir nuevos.");
             cerrarMenuFavoritos();
             return;
         }
 
-        // REGLA 2: Evitar duplicados (Usando ==)
         const yaExiste = favoritosActuales.find(f => 
             (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela == idEscuela) ||
             (tipo === 'sector' && f.tipo === 'sector' && f.idSector == idSector)
@@ -3509,14 +3505,13 @@ async function guardarFavorito(tipo, id1, id2 = null) {
 
     } catch (error) {
         console.error("Error al guardar favorito:", error);
-        alert("Hubo un error al guardar. Revisa tu conexión.");
+        alert("Hubo un error al guardar.");
     }
 }
 
 
 async function verListaFavoritos() {
     const uid = window.idUsuarioActivo; 
-    
     if (!uid) {
         alert("Inicia sesión para ver tus favoritos.");
         return;
@@ -3539,6 +3534,8 @@ async function verListaFavoritos() {
             html += '<div style="display: flex; flex-direction: column; gap: 12px; padding: 0 10px;">';
 
             misFavoritos.forEach(fav => {
+                let dibujado = false;
+
                 if (fav.tipo === 'escuela') {
                     const escuela = database.escuelas.find(e => e.id == fav.idEscuela);
                     if (escuela) {
@@ -3548,25 +3545,64 @@ async function verListaFavoritos() {
                                 <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Escuela</span><br>
                                 <strong style="font-size: 1.15rem; color: #2c3e50;">${escuela.nombre}</strong>
                             </div>
-                            <div onclick="borrarFavorito('${fav.tipo}', ${escuela.id})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
+                            <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                         </div>`;
+                        dibujado = true;
                     }
                 } else if (fav.tipo === 'sector') {
-                    const escuela = database.escuelas.find(e => e.id == fav.idEscuela);
-                    if (escuela && escuela.sectores) { 
-                        // CAMBIO CLAVE: Usamos == para encontrar el sector sin problemas
-                        const sector = escuela.sectores.find(s => s.id == fav.idSector);
-                        if (sector) {
-                            html += `
-                            <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
-                                <div onclick="verSector(${sector.id})" style="flex-grow: 1; cursor: pointer;">
-                                    <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
-                                    <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
-                                </div>
-                                <div onclick="borrarFavorito('${fav.tipo}', ${sector.id})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
-                            </div>`;
+                    let escuela = database.escuelas.find(e => e.id == fav.idEscuela);
+                    let sector = null;
+
+                    // 1. Búsqueda normal
+                    if (escuela && escuela.sectores) {
+                        sector = escuela.sectores.find(s => s.id == fav.idSector);
+                    }
+                    
+                    // 2. Búsqueda extrema (por si falló el ID de escuela)
+                    if (!sector) {
+                        for (let esc of database.escuelas) {
+                            if (esc.sectores) {
+                                let sec = esc.sectores.find(s => s.id == fav.idSector);
+                                if (sec) {
+                                    escuela = esc;
+                                    sector = sec;
+                                    break;
+                                }
+                            }
                         }
                     }
+
+                    // 3. ¿IDs invertidos por error al guardar?
+                    if (!sector) {
+                        escuela = database.escuelas.find(e => e.id == fav.idSector);
+                        if (escuela && escuela.sectores) {
+                            sector = escuela.sectores.find(s => s.id == fav.idEscuela);
+                        }
+                    }
+
+                    if (escuela && sector) {
+                        html += `
+                        <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
+                            <div onclick="verSector(${sector.id})" style="flex-grow: 1; cursor: pointer;">
+                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
+                                <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
+                            </div>
+                            <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
+                        </div>`;
+                        dibujado = true;
+                    }
+                }
+
+                // 🚨 EL CAZAFANTASMAS: Si después de todo no se pudo dibujar, mostramos la tarjeta de error
+                if (!dibujado) {
+                    html += `
+                    <div style="background: #fff3cd; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #f39c12;">
+                        <div style="flex-grow: 1;">
+                            <span style="font-size: 0.8rem; color: #d35400; text-transform: uppercase; font-weight: bold;">Error de datos</span><br>
+                            <strong style="font-size: 1rem; color: #85929e;">Lugar fantasma (Borrar ➜)</strong>
+                        </div>
+                        <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
+                    </div>`;
                 }
             });
 
@@ -3587,12 +3623,13 @@ async function verListaFavoritos() {
         }
     } catch (error) {
         console.error("Error al cargar favoritos:", error);
-        alert("Hubo un error al cargar tu lista. Revisa la consola.");
+        alert("Hubo un error al cargar tu lista.");
     }
 }
 
 
-async function borrarFavorito(tipo, id) {
+// NUEVA VERSIÓN: Borra usando la FECHA EXACTA, así nunca falla, ni con fantasmas.
+async function borrarFavorito(fecha) {
     if (!confirm("¿Seguro que quieres borrar este lugar de tus favoritos?")) return;
 
     const uid = window.idUsuarioActivo; 
@@ -3605,21 +3642,18 @@ async function borrarFavorito(tipo, id) {
         if (docSnap.exists() && docSnap.data().favoritos) {
             let favoritos = docSnap.data().favoritos;
 
-            let nuevosFavoritos = favoritos.filter(f => {
-                if (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela == id) return false;
-                if (tipo === 'sector' && f.tipo === 'sector' && f.idSector == id) return false;
-                return true; 
-            });
+            // Filtramos para que desaparezca el que tenga esa fecha exacta de creación
+            let nuevosFavoritos = favoritos.filter(f => f.fechaAñadido !== fecha);
 
             await window.fbSetDoc(refUsuario, {
                 favoritos: nuevosFavoritos
             }, { merge: true });
 
-            verListaFavoritos();
+            verListaFavoritos(); // Recargar la lista automáticamente
         }
     } catch (error) {
         console.error("Error al borrar favorito:", error);
-        alert("Hubo un error al borrar. Revisa tu conexión.");
+        alert("Hubo un error al borrar.");
     }
 }
         
