@@ -3484,7 +3484,7 @@ async function guardarFavorito(tipo, id1, id2 = null) {
         alert("Hubo un error al guardar. Revisa tu conexión.");
     }
 }
-        // Función para mostrar la lista de favoritos en pantalla
+       // Función para mostrar la lista de favoritos en pantalla
 async function verListaFavoritos() {
     const uid = window.idUsuarioActivo; 
     
@@ -3524,7 +3524,9 @@ async function verListaFavoritos() {
                     }
                 } else if (fav.tipo === 'sector') {
                     const escuela = database.escuelas.find(e => e.id === fav.idEscuela);
-                    if (escuela) {
+                    
+                    // ---> AQUÍ ESTÁ LA MAGIA QUE EVITA EL ERROR <---
+                    if (escuela && escuela.sectores) { 
                         const sector = escuela.sectores.find(s => s.id === fav.idSector);
                         if (sector) {
                             html += `
