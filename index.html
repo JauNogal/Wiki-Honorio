@@ -3436,7 +3436,11 @@ function cerrarMenuFavoritos() {
     document.getElementById('modalFavoritos').style.display = 'none';
 }
 
-       async function guardarFavorito(tipo, id1, id2 = null) {
+      // ==========================================
+// CEREBRO DE FAVORITOS (V3 - Sectores Fix)
+// ==========================================
+
+async function guardarFavorito(tipo, id1, id2 = null) {
     const uid = window.idUsuarioActivo; 
     
     if (!uid) {
@@ -3453,7 +3457,8 @@ function cerrarMenuFavoritos() {
     if (tipo === 'sector') {
         idSector = id1;
         if (!idEscuela) {
-            const esc = database.escuelas.find(e => e.sectores && e.sectores.some(s => s.id === idSector));
+            // CAMBIO CLAVE: Usamos == en vez de === para evitar problemas de texto/número
+            const esc = database.escuelas.find(e => e.sectores && e.sectores.some(s => s.id == idSector));
             if (esc) idEscuela = esc.id;
         }
     } else {
@@ -3476,10 +3481,10 @@ function cerrarMenuFavoritos() {
             return;
         }
 
-        // REGLA 2: Evitar duplicados
+        // REGLA 2: Evitar duplicados (Usando ==)
         const yaExiste = favoritosActuales.find(f => 
-            (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela === idEscuela) ||
-            (tipo === 'sector' && f.tipo === 'sector' && f.idSector === idSector)
+            (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela == idEscuela) ||
+            (tipo === 'sector' && f.tipo === 'sector' && f.idSector == idSector)
         );
 
         if (yaExiste) {
@@ -3488,7 +3493,6 @@ function cerrarMenuFavoritos() {
             return;
         }
 
-        // Si pasa las reglas, creamos el paquete y lo guardamos
         let nuevoFavorito = { tipo: tipo, fechaAñadido: new Date().getTime() };
         if (tipo === 'escuela') nuevoFavorito.idEscuela = idEscuela;
         if (tipo === 'sector') {
@@ -3508,7 +3512,9 @@ function cerrarMenuFavoritos() {
         alert("Hubo un error al guardar. Revisa tu conexión.");
     }
 }
-      async function verListaFavoritos() {
+
+
+async function verListaFavoritos() {
     const uid = window.idUsuarioActivo; 
     
     if (!uid) {
@@ -3534,7 +3540,7 @@ function cerrarMenuFavoritos() {
 
             misFavoritos.forEach(fav => {
                 if (fav.tipo === 'escuela') {
-                    const escuela = database.escuelas.find(e => e.id === fav.idEscuela);
+                    const escuela = database.escuelas.find(e => e.id == fav.idEscuela);
                     if (escuela) {
                         html += `
                         <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #27ae60;">
@@ -3546,9 +3552,10 @@ function cerrarMenuFavoritos() {
                         </div>`;
                     }
                 } else if (fav.tipo === 'sector') {
-                    const escuela = database.escuelas.find(e => e.id === fav.idEscuela);
+                    const escuela = database.escuelas.find(e => e.id == fav.idEscuela);
                     if (escuela && escuela.sectores) { 
-                        const sector = escuela.sectores.find(s => s.id === fav.idSector);
+                        // CAMBIO CLAVE: Usamos == para encontrar el sector sin problemas
+                        const sector = escuela.sectores.find(s => s.id == fav.idSector);
                         if (sector) {
                             html += `
                             <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
@@ -3583,7 +3590,8 @@ function cerrarMenuFavoritos() {
         alert("Hubo un error al cargar tu lista. Revisa la consola.");
     }
 }
-        // Función para eliminar un favorito de la lista
+
+
 async function borrarFavorito(tipo, id) {
     if (!confirm("¿Seguro que quieres borrar este lugar de tus favoritos?")) return;
 
@@ -3597,19 +3605,16 @@ async function borrarFavorito(tipo, id) {
         if (docSnap.exists() && docSnap.data().favoritos) {
             let favoritos = docSnap.data().favoritos;
 
-            // Filtramos la lista para quedarnos con todos MENOS el que hemos pulsado
             let nuevosFavoritos = favoritos.filter(f => {
-                if (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela === id) return false;
-                if (tipo === 'sector' && f.tipo === 'sector' && f.idSector === id) return false;
+                if (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela == id) return false;
+                if (tipo === 'sector' && f.tipo === 'sector' && f.idSector == id) return false;
                 return true; 
             });
 
-            // Guardamos la nueva lista limpia en Firebase
             await window.fbSetDoc(refUsuario, {
                 favoritos: nuevosFavoritos
             }, { merge: true });
 
-            // Volvemos a pintar la lista automáticamente para que vea que ha desaparecido
             verListaFavoritos();
         }
     } catch (error) {
