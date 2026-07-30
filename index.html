@@ -3483,6 +3483,83 @@ async function guardarFavorito(tipo, id1, id2 = null) {
         alert("Hubo un error al guardar. Revisa tu conexión.");
     }
 }
+        // Función para mostrar la lista de favoritos en pantalla
+async function verListaFavoritos() {
+    const uid = window.idUsuarioActivo; 
+    
+    if (!uid) {
+        alert("Inicia sesión para ver tus favoritos.");
+        return;
+    }
+
+    cerrarMenuFavoritos(); 
+
+    const contenedor = document.getElementById('contenido-dinamico');
+    contenedor.innerHTML = '<div class="section-title" style="margin-bottom: 20px;">Mis Favoritos ⭐</div><div style="text-align: center; padding: 30px; color: #555;">Cargando tus lugares favoritos... 🧗</div>';
+
+    try {
+        const refUsuario = window.fbDoc(window.fbDb, 'usuarios', uid);
+        const docSnap = await window.fbGetDoc(refUsuario); 
+
+        if (docSnap.exists() && docSnap.data().favoritos && docSnap.data().favoritos.length > 0) {
+            let misFavoritos = docSnap.data().favoritos;
+            misFavoritos.sort((a, b) => b.fechaAñadido - a.fechaAñadido);
+
+            let html = '<div class="section-title" style="margin-bottom: 15px;">Mis Favoritos ⭐</div>';
+            html += '<div style="display: flex; flex-direction: column; gap: 12px; padding: 0 10px;">';
+
+            misFavoritos.forEach(fav => {
+                if (fav.tipo === 'escuela') {
+                    const escuela = database.escuelas.find(e => e.id === fav.idEscuela);
+                    if (escuela) {
+                        html += `
+                        <div onclick="seleccionarEscuela(${escuela.id})" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #27ae60;">
+                            <div>
+                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Escuela</span><br>
+                                <strong style="font-size: 1.15rem; color: #2c3e50;">${escuela.nombre}</strong>
+                            </div>
+                            <span style="color: #FFC107; font-size: 1.5rem;">⭐</span>
+                        </div>`;
+                    }
+                } else if (fav.tipo === 'sector') {
+                    const escuela = database.escuelas.find(e => e.id === fav.idEscuela);
+                    if (escuela) {
+                        const sector = escuela.sectores.find(s => s.id === fav.idSector);
+                        if (sector) {
+                            html += `
+                            <div onclick="verSector(${sector.id})" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
+                                <div>
+                                    <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
+                                    <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
+                                </div>
+                                <span style="color: #FFC107; font-size: 1.5rem;">⭐</span>
+                            </div>`;
+                        }
+                    }
+                }
+            });
+
+            html += '</div>';
+            html += `<div style="padding: 20px 10px;"><button onclick="mostrarInicio()" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">← Volver al Inicio</button></div>`;
+            
+            contenedor.innerHTML = html;
+
+        } else {
+            contenedor.innerHTML = `
+                <div class="section-title">Mis Favoritos ⭐</div>
+                <div style="text-align: center; padding: 40px 20px;">
+                    <span style="font-size: 3rem; margin-bottom: 10px; display: block;">🗺️</span>
+                    <p style="color: #555; font-size: 1.1rem; margin-bottom: 20px;">Aún no tienes lugares guardados.</p>
+                    <button onclick="mostrarInicio()" style="padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Ir a explorar</button>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error("Error al cargar favoritos:", error);
+        alert("Hubo un error al cargar tu lista. Revisa la consola.");
+    }
+}
+        
 </script>
 </body>
 </html>
