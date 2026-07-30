@@ -3436,45 +3436,69 @@ function cerrarMenuFavoritos() {
     document.getElementById('modalFavoritos').style.display = 'none';
 }
 
-        // Función para guardar en Firestore (Adaptada a Roca Norte V9)
-async function guardarFavorito(tipo, id1, id2 = null) {
-    // 1. Comprobamos tu variable global de usuario (línea 682)
+       async function guardarFavorito(tipo, id1, id2 = null) {
     const uid = window.idUsuarioActivo; 
     
     if (!uid) {
-        cerrarMenuFavoritos(); // Escondemos la estrellita
-        // Y le sacamos tu modal de login directamente
+        cerrarMenuFavoritos();
         const modalLogin = document.getElementById('modalLogin');
-        if (modalLogin) {
-            modalLogin.style.display = 'flex';
-        } else {
-            alert("Necesitas iniciar sesión en Roca Norte para guardar favoritos.");
+        if (modalLogin) modalLogin.style.display = 'flex';
+        else alert("Necesitas iniciar sesión para guardar favoritos.");
+        return; 
+    }
+
+    // Buscamos automáticamente la escuela si guardamos un sector
+    let idEscuela = id2;
+    let idSector = null;
+    if (tipo === 'sector') {
+        idSector = id1;
+        if (!idEscuela) {
+            const esc = database.escuelas.find(e => e.sectores && e.sectores.some(s => s.id === idSector));
+            if (esc) idEscuela = esc.id;
         }
-        return; // Paramos aquí, no guardamos nada
+    } else {
+        idEscuela = id1;
     }
 
-    // 2. Preparamos el "paquete" de datos
-    let nuevoFavorito = {
-        tipo: tipo,
-        fechaAñadido: new Date().getTime() // Para poder ordenarlos del más nuevo al más viejo luego
-    };
-
-    if (tipo === 'escuela') {
-        nuevoFavorito.idEscuela = id1;
-    } else if (tipo === 'sector') {
-        nuevoFavorito.idSector = id1;
-        nuevoFavorito.idEscuela = id2; // Guardamos la escuela también, es muy útil
-    }
-
-    // 3. Enviamos a Firestore (Usando tus variables globales fbDoc, fbDb, etc.)
     try {
-        // Apuntamos al documento de tu usuario
         const refUsuario = window.fbDoc(window.fbDb, 'usuarios', uid);
-        
-        // Lo guardamos usando tu arrayUnion para no machacar sus otros datos
+        const docSnap = await window.fbGetDoc(refUsuario); 
+        let favoritosActuales = [];
+
+        if (docSnap.exists() && docSnap.data().favoritos) {
+            favoritosActuales = docSnap.data().favoritos;
+        }
+
+        // REGLA 1: Máximo 5 favoritos
+        if (favoritosActuales.length >= 5) {
+            alert("¡Ya tienes 5 lugares en favoritos! Borra alguno de tu lista para añadir nuevos.");
+            cerrarMenuFavoritos();
+            return;
+        }
+
+        // REGLA 2: Evitar duplicados
+        const yaExiste = favoritosActuales.find(f => 
+            (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela === idEscuela) ||
+            (tipo === 'sector' && f.tipo === 'sector' && f.idSector === idSector)
+        );
+
+        if (yaExiste) {
+            alert("Este lugar ya está en tu lista de favoritos.");
+            cerrarMenuFavoritos();
+            return;
+        }
+
+        // Si pasa las reglas, creamos el paquete y lo guardamos
+        let nuevoFavorito = { tipo: tipo, fechaAñadido: new Date().getTime() };
+        if (tipo === 'escuela') nuevoFavorito.idEscuela = idEscuela;
+        if (tipo === 'sector') {
+            nuevoFavorito.idSector = idSector;
+            nuevoFavorito.idEscuela = idEscuela;
+        }
+
         await window.fbSetDoc(refUsuario, {
             favoritos: window.fbArrayUnion(nuevoFavorito)
-        }, { merge: true }); // ¡Vital el merge: true!
+        }, { merge: true }); 
 
         alert("¡Añadido a tus favoritos de Roca Norte! ⭐");
         cerrarMenuFavoritos();
@@ -3484,8 +3508,7 @@ async function guardarFavorito(tipo, id1, id2 = null) {
         alert("Hubo un error al guardar. Revisa tu conexión.");
     }
 }
-       // Función para mostrar la lista de favoritos en pantalla
-async function verListaFavoritos() {
+      async function verListaFavoritos() {
     const uid = window.idUsuarioActivo; 
     
     if (!uid) {
@@ -3514,28 +3537,26 @@ async function verListaFavoritos() {
                     const escuela = database.escuelas.find(e => e.id === fav.idEscuela);
                     if (escuela) {
                         html += `
-                        <div onclick="seleccionarEscuela(${escuela.id})" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #27ae60;">
-                            <div>
+                        <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #27ae60;">
+                            <div onclick="seleccionarEscuela(${escuela.id})" style="flex-grow: 1; cursor: pointer;">
                                 <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Escuela</span><br>
                                 <strong style="font-size: 1.15rem; color: #2c3e50;">${escuela.nombre}</strong>
                             </div>
-                            <span style="color: #FFC107; font-size: 1.5rem;">⭐</span>
+                            <div onclick="borrarFavorito('${fav.tipo}', ${escuela.id})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                         </div>`;
                     }
                 } else if (fav.tipo === 'sector') {
                     const escuela = database.escuelas.find(e => e.id === fav.idEscuela);
-                    
-                    // ---> AQUÍ ESTÁ LA MAGIA QUE EVITA EL ERROR <---
                     if (escuela && escuela.sectores) { 
                         const sector = escuela.sectores.find(s => s.id === fav.idSector);
                         if (sector) {
                             html += `
-                            <div onclick="verSector(${sector.id})" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
-                                <div>
+                            <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
+                                <div onclick="verSector(${sector.id})" style="flex-grow: 1; cursor: pointer;">
                                     <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
                                     <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
                                 </div>
-                                <span style="color: #FFC107; font-size: 1.5rem;">⭐</span>
+                                <div onclick="borrarFavorito('${fav.tipo}', ${sector.id})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                             </div>`;
                         }
                     }
@@ -3560,6 +3581,40 @@ async function verListaFavoritos() {
     } catch (error) {
         console.error("Error al cargar favoritos:", error);
         alert("Hubo un error al cargar tu lista. Revisa la consola.");
+    }
+}
+        // Función para eliminar un favorito de la lista
+async function borrarFavorito(tipo, id) {
+    if (!confirm("¿Seguro que quieres borrar este lugar de tus favoritos?")) return;
+
+    const uid = window.idUsuarioActivo; 
+    if (!uid) return;
+
+    try {
+        const refUsuario = window.fbDoc(window.fbDb, 'usuarios', uid);
+        const docSnap = await window.fbGetDoc(refUsuario); 
+
+        if (docSnap.exists() && docSnap.data().favoritos) {
+            let favoritos = docSnap.data().favoritos;
+
+            // Filtramos la lista para quedarnos con todos MENOS el que hemos pulsado
+            let nuevosFavoritos = favoritos.filter(f => {
+                if (tipo === 'escuela' && f.tipo === 'escuela' && f.idEscuela === id) return false;
+                if (tipo === 'sector' && f.tipo === 'sector' && f.idSector === id) return false;
+                return true; 
+            });
+
+            // Guardamos la nueva lista limpia en Firebase
+            await window.fbSetDoc(refUsuario, {
+                favoritos: nuevosFavoritos
+            }, { merge: true });
+
+            // Volvemos a pintar la lista automáticamente para que vea que ha desaparecido
+            verListaFavoritos();
+        }
+    } catch (error) {
+        console.error("Error al borrar favorito:", error);
+        alert("Hubo un error al borrar. Revisa tu conexión.");
     }
 }
         
