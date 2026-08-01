@@ -3519,7 +3519,6 @@ async function verListaFavoritos() {
     }
 
     cerrarMenuFavoritos(); 
-
     const contenedor = document.getElementById('contenido-dinamico');
     contenedor.innerHTML = '<div class="section-title" style="margin-bottom: 20px;">Mis Favoritos ⭐</div><div style="text-align: center; padding: 30px; color: #555;">Cargando tus lugares favoritos... 🧗</div>';
 
@@ -3551,24 +3550,23 @@ async function verListaFavoritos() {
                         dibujado = true;
                     }
                 } else if (fav.tipo === 'sector') {
+                    // Buscamos en memoria exactamente igual que haces tú en tu código
                     const escuela = database.escuelas.find(e => e.id == fav.idEscuela);
-                    let sector = null;
-
-                    if (escuela && escuela.sectores) {
-                        // LA CLAVE: Buscamos específicamente en la columna id_sector (Columna D de tu Excel)
-                        // Añadimos s.id por si la app alguna vez envía el global, para que no vuelva a fallar jamás.
-                        sector = escuela.sectores.find(s => s.id_sector == fav.idSector || s.id == fav.idSector);
-                    }
+                    const sector = database.sectores.find(s => 
+                        (s.idEscuela == fav.idEscuela && s.idSector == fav.idSector) || 
+                        (s.id_escuela == fav.idEscuela && s.id_sector == fav.idSector)
+                    );
 
                     if (escuela && sector) {
-                        // Rescatamos el ID global para que el botón de ir al sector funcione bien
-                        let idParaBoton = sector.id !== undefined ? sector.id : fav.idSector;
+                        // AQUÍ ESTÁ LA MAGIA: Usamos TU función irDesdeBuscador para que cargue la escuela primero
+                        // Y en el nombre usamos sector.nombreSector (como tienes en la línea 1875)
+                        const nombreMostrar = sector.nombreSector || sector.nombre;
                         
                         html += `
                         <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
-                            <div onclick="verSector(${idParaBoton})" style="flex-grow: 1; cursor: pointer;">
+                            <div onclick="irDesdeBuscador('sector', ${fav.idEscuela}, ${fav.idSector})" style="flex-grow: 1; cursor: pointer;">
                                 <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
-                                <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
+                                <strong style="font-size: 1.15rem; color: #2c3e50;">${nombreMostrar}</strong>
                             </div>
                             <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                         </div>`;
@@ -3580,7 +3578,7 @@ async function verListaFavoritos() {
                     html += `
                     <div style="background: #fff3cd; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #f39c12; margin-bottom: 5px;">
                         <div style="flex-grow: 1;">
-                            <span style="font-size: 0.75rem; color: #d35400; font-weight: bold; text-transform: uppercase;">Datos Rotos</span><br>
+                            <span style="font-size: 0.75rem; color: #d35400; font-weight: bold; text-transform: uppercase;">Error de datos</span><br>
                             <strong style="font-size: 1rem; color: #85929e;">Lugar fantasma (Borrar ➜)</strong>
                         </div>
                         <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
@@ -3608,7 +3606,6 @@ async function verListaFavoritos() {
         alert("Hubo un error al cargar tu lista.");
     }
 }
-
 
 // NUEVA VERSIÓN: Borra usando la FECHA EXACTA, así nunca falla, ni con fantasmas.
 async function borrarFavorito(fecha) {
