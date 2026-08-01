@@ -3553,38 +3553,22 @@ async function verListaFavoritos() {
                 } else if (fav.tipo === 'sector') {
                     let escuela = database.escuelas.find(e => e.id == fav.idEscuela);
                     let sector = null;
+                    let idSectorParaBoton = fav.idSector; // Guardamos el número exacto para el botón
 
-                    // 1. Búsqueda normal
                     if (escuela && escuela.sectores) {
+                        // 1. Buscamos por ID (por si algún día se lo añades a la base de datos)
                         sector = escuela.sectores.find(s => s.id == fav.idSector);
-                    }
-                    
-                    // 2. Búsqueda extrema (por si falló el ID de escuela)
-                    if (!sector) {
-                        for (let esc of database.escuelas) {
-                            if (esc.sectores) {
-                                let sec = esc.sectores.find(s => s.id == fav.idSector);
-                                if (sec) {
-                                    escuela = esc;
-                                    sector = sec;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    // 3. ¿IDs invertidos por error al guardar?
-                    if (!sector) {
-                        escuela = database.escuelas.find(e => e.id == fav.idSector);
-                        if (escuela && escuela.sectores) {
-                            sector = escuela.sectores.find(s => s.id == fav.idEscuela);
+                        
+                        // 2. EL TRUCO: Si no tiene ID, lo buscamos por su posición exacta en la lista
+                        if (!sector && escuela.sectores[fav.idSector]) {
+                            sector = escuela.sectores[fav.idSector];
                         }
                     }
 
                     if (escuela && sector) {
                         html += `
                         <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
-                            <div onclick="verSector(${sector.id})" style="flex-grow: 1; cursor: pointer;">
+                            <div onclick="verSector(${idSectorParaBoton})" style="flex-grow: 1; cursor: pointer;">
                                 <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
                                 <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
                             </div>
@@ -3594,7 +3578,7 @@ async function verListaFavoritos() {
                     }
                 }
 
-                // 🚨 EL CAZAFANTASMAS: Si después de todo no se pudo dibujar, mostramos la tarjeta de error
+                // Si de verdad el lugar no existe, pinta el fantasma
                 if (!dibujado) {
                     html += `
                     <div style="background: #fff3cd; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #f39c12;">
