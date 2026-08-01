@@ -3551,34 +3551,24 @@ async function verListaFavoritos() {
                         dibujado = true;
                     }
                 } else if (fav.tipo === 'sector') {
-                    let escuelaReal = null;
-                    let sectorReal = null;
-                    let idSectorParaBoton = null;
+                    const escuela = database.escuelas.find(e => e.id == fav.idEscuela);
+                    let sector = null;
 
-                    // BUSCADOR FUERZA BRUTA: Busca de todas las formas posibles (del derecho, del revés, por índice...)
-                    for (let esc of database.escuelas) {
-                        if (esc.id == fav.idEscuela || esc.id == fav.idSector) {
-                            if (esc.sectores) {
-                                for (let i = 0; i < esc.sectores.length; i++) {
-                                    let sec = esc.sectores[i];
-                                    if (sec.id == fav.idSector || sec.id == fav.idEscuela || sec.id_sector == fav.idSector || i == fav.idSector || i == fav.idEscuela) {
-                                        escuelaReal = esc;
-                                        sectorReal = sec;
-                                        idSectorParaBoton = sec.id || i; 
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        if (escuelaReal) break;
+                    if (escuela && escuela.sectores) {
+                        // LA CLAVE: Buscamos específicamente en la columna id_sector (Columna D de tu Excel)
+                        // Añadimos s.id por si la app alguna vez envía el global, para que no vuelva a fallar jamás.
+                        sector = escuela.sectores.find(s => s.id_sector == fav.idSector || s.id == fav.idSector);
                     }
 
-                    if (escuelaReal && sectorReal) {
+                    if (escuela && sector) {
+                        // Rescatamos el ID global para que el botón de ir al sector funcione bien
+                        let idParaBoton = sector.id !== undefined ? sector.id : fav.idSector;
+                        
                         html += `
                         <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
-                            <div onclick="verSector(${idSectorParaBoton})" style="flex-grow: 1; cursor: pointer;">
-                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuelaReal.nombre}</span><br>
-                                <strong style="font-size: 1.15rem; color: #2c3e50;">${sectorReal.nombre}</strong>
+                            <div onclick="verSector(${idParaBoton})" style="flex-grow: 1; cursor: pointer;">
+                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
+                                <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
                             </div>
                             <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                         </div>`;
@@ -3586,13 +3576,12 @@ async function verListaFavoritos() {
                     }
                 }
 
-                // Si a pesar de todo no se encuentra, chivamos los IDs exactos en la tarjeta amarilla
                 if (!dibujado) {
                     html += `
                     <div style="background: #fff3cd; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #f39c12; margin-bottom: 5px;">
                         <div style="flex-grow: 1;">
                             <span style="font-size: 0.75rem; color: #d35400; font-weight: bold; text-transform: uppercase;">Datos Rotos</span><br>
-                            <strong style="font-size: 1rem; color: #85929e;">No existe Esc: ${fav.idEscuela} / Sec: ${fav.idSector}</strong>
+                            <strong style="font-size: 1rem; color: #85929e;">Lugar fantasma (Borrar ➜)</strong>
                         </div>
                         <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                     </div>`;
