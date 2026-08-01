@@ -3551,26 +3551,34 @@ async function verListaFavoritos() {
                         dibujado = true;
                     }
                 } else if (fav.tipo === 'sector') {
-                    let escuela = database.escuelas.find(e => e.id == fav.idEscuela);
-                    let sector = null;
-                    let idSectorParaBoton = fav.idSector; // Guardamos el número exacto para el botón
+                    let escuelaReal = null;
+                    let sectorReal = null;
+                    let idSectorParaBoton = null;
 
-                    if (escuela && escuela.sectores) {
-                        // 1. Buscamos por ID (por si algún día se lo añades a la base de datos)
-                        sector = escuela.sectores.find(s => s.id == fav.idSector);
-                        
-                        // 2. EL TRUCO: Si no tiene ID, lo buscamos por su posición exacta en la lista
-                        if (!sector && escuela.sectores[fav.idSector]) {
-                            sector = escuela.sectores[fav.idSector];
+                    // BUSCADOR FUERZA BRUTA: Busca de todas las formas posibles (del derecho, del revés, por índice...)
+                    for (let esc of database.escuelas) {
+                        if (esc.id == fav.idEscuela || esc.id == fav.idSector) {
+                            if (esc.sectores) {
+                                for (let i = 0; i < esc.sectores.length; i++) {
+                                    let sec = esc.sectores[i];
+                                    if (sec.id == fav.idSector || sec.id == fav.idEscuela || sec.id_sector == fav.idSector || i == fav.idSector || i == fav.idEscuela) {
+                                        escuelaReal = esc;
+                                        sectorReal = sec;
+                                        idSectorParaBoton = sec.id || i; 
+                                        break;
+                                    }
+                                }
+                            }
                         }
+                        if (escuelaReal) break;
                     }
 
-                    if (escuela && sector) {
+                    if (escuelaReal && sectorReal) {
                         html += `
                         <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
                             <div onclick="verSector(${idSectorParaBoton})" style="flex-grow: 1; cursor: pointer;">
-                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
-                                <strong style="font-size: 1.15rem; color: #2c3e50;">${sector.nombre}</strong>
+                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuelaReal.nombre}</span><br>
+                                <strong style="font-size: 1.15rem; color: #2c3e50;">${sectorReal.nombre}</strong>
                             </div>
                             <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                         </div>`;
@@ -3578,13 +3586,13 @@ async function verListaFavoritos() {
                     }
                 }
 
-                // Si de verdad el lugar no existe, pinta el fantasma
+                // Si a pesar de todo no se encuentra, chivamos los IDs exactos en la tarjeta amarilla
                 if (!dibujado) {
                     html += `
-                    <div style="background: #fff3cd; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #f39c12;">
+                    <div style="background: #fff3cd; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #f39c12; margin-bottom: 5px;">
                         <div style="flex-grow: 1;">
-                            <span style="font-size: 0.8rem; color: #d35400; text-transform: uppercase; font-weight: bold;">Error de datos</span><br>
-                            <strong style="font-size: 1rem; color: #85929e;">Lugar fantasma (Borrar ➜)</strong>
+                            <span style="font-size: 0.75rem; color: #d35400; font-weight: bold; text-transform: uppercase;">Datos Rotos</span><br>
+                            <strong style="font-size: 1rem; color: #85929e;">No existe Esc: ${fav.idEscuela} / Sec: ${fav.idSector}</strong>
                         </div>
                         <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
                     </div>`;
