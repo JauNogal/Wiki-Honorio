@@ -1764,11 +1764,11 @@ function seleccionarEscuela(id) {
 let html = `
 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
 <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 0;">${textos[idiomaActual].botonEscuelas}</button>
-    <button onclick="abrirMenuFavoritos('escuela', ${escuela.id})" style="border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background-color: #FFC107; padding: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
-<svg width="34" height="34" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 3px;">
-<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-    </button>
+<button onclick="abrirMenuFavoritos('escuela', ${escuela.id})" style="border: none; background: transparent; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#2c3e50" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+</button>
 </div>
 <div class="section-title">${escuela.nombre}</div>
 `;
@@ -1866,11 +1866,11 @@ html += `<p style="color:#777; font-style:italic;">${textos[idiomaActual].sinSec
 let html = `
 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
 <button class="btn-volver" onclick="seleccionarEscuela(${escuelaActualId})" style="margin-bottom: 0;">${textos[idiomaActual].atras}</button>
-<button onclick="abrirMenuFavoritos('sector', ${idSector}, ${escuelaActualId})" style="border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background-color: #FFC107; padding: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.15); line-height: 0;">
-<svg width="34" height="34" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 3px;">
-<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-    </button>
+<button onclick="abrirMenuFavoritos('sector', ${idSector}, ${escuelaActualId})" style="border: none; background: transparent; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#2c3e50" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+</button>
 </div>
 <div class="section-title">${sector.nombreSector}</div>
 `;
