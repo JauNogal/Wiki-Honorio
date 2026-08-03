@@ -176,12 +176,12 @@
     <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; color: #444;">
         <button class="close-modal" onclick="cerrarPerfil()">&times;</button>
         
-       <!-- ========================================== -->
+<!-- ========================================== -->
 <!-- 1. VISTA INVITADO (Cuando NO hay sesión)   -->
 <!-- ========================================== -->
 <div id="vista-invitado" style="text-align: center; margin-bottom: 20px;">
-    <h3 style="margin-bottom: 5px; color: #333;">Únete a Roca Norte</h3>
-    <p style="color: gray; font-size: 0.9rem; margin-bottom: 15px;">Guarda tus encadenes en la nube y no pierdas tu progreso.</p>
+    <h3 id="txt-unete-titulo" style="margin-bottom: 5px; color: #333;">Únete a Roca Norte</h3>
+    <p id="txt-unete-subtitulo" style="color: gray; font-size: 0.9rem; margin-bottom: 15px;">Guarda tus encadenes en la nube y no pierdas tu progreso.</p>
     
     <div style="display: flex; flex-direction: column; gap: 10px;">
         <!-- Botón para Iniciar Sesión (Solo muestra botón Azul) -->
@@ -190,7 +190,7 @@
             document.getElementById('modalPerfilUsuario').style.display='none';
             document.getElementById('btnEntrar').style.display='block';
             document.getElementById('btnCrearCuenta').style.display='none';
-            document.getElementById('txtLoginSubtitulo').innerText='Inicia sesión para guardar tus encadenes y estadísticas.';
+            document.getElementById('txtLoginSubtitulo').innerText = textos[idiomaActual].loginSubtitulo;
             document.getElementById('emailLogin').value='';
             document.getElementById('passLogin').value='';
             document.getElementById('passLogin').type='password';
@@ -198,7 +198,7 @@
             document.getElementById('iconoOjoLogin').classList.add('fa-eye');
             document.getElementById('contenedorMantenerSesion').style.display='flex';
        " style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #2980b9; border-radius: 8px; cursor: pointer; background: white;">
-    <span style="color: #2980b9; font-weight: bold;"><i class="fas fa-sign-in-alt" style="width: 20px;"></i> Ya tengo cuenta</span>
+    <span style="color: #2980b9; font-weight: bold;"><i class="fas fa-sign-in-alt" style="width: 20px;"></i> <span id="txt-ya-tengo">Ya tengo cuenta</span></span>
     <i class="fas fa-chevron-right" style="color: #2980b9; font-size: 0.9rem;"></i>
         </div>
         
@@ -208,7 +208,7 @@
             document.getElementById('modalPerfilUsuario').style.display='none';
             document.getElementById('btnEntrar').style.display='none';
             document.getElementById('btnCrearCuenta').style.display='block';
-            document.getElementById('txtLoginSubtitulo').innerText='Crea una cuenta nueva para empezar a guardar tus encadenes.';
+            document.getElementById('txtLoginSubtitulo').innerText = textos[idiomaActual].loginCrearSubtitulo;
             document.getElementById('emailLogin').value='';
             document.getElementById('passLogin').value='';
             document.getElementById('passLogin').type='password';
@@ -216,7 +216,7 @@
             document.getElementById('iconoOjoLogin').classList.add('fa-eye');
             document.getElementById('contenedorMantenerSesion').style.display='none';
         " style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #2980b9; border-radius: 8px; cursor: pointer; background: white;">
-            <span style="color: #2980b9; font-weight: bold;"><i class="fas fa-user-plus" style="width: 20px;"></i> Crear cuenta nueva</span>
+            <span style="color: #2980b9; font-weight: bold;"><i class="fas fa-user-plus" style="width: 20px;"></i> <span id="txt-crear-nueva">Crear cuenta nueva</span></span>
             <i class="fas fa-chevron-right" style="color: #2980b9; font-size: 0.9rem;"></i>
         </div>
     </div>
@@ -2949,6 +2949,11 @@ const textos = {
         loginEntrar: "Entrar",
         loginCrear: "Crear nueva cuenta",
         loginCerrar: "Cerrar",
+        invitadoTitulo: "Únete a Roca Norte",
+        invitadoSubtitulo: "Guarda tus encadenes en la nube y no pierdas tu progreso.",
+        invitadoYaTengo: "Ya tengo cuenta",
+        invitadoCrear: "Crear cuenta nueva",
+        loginCrearSubtitulo: "Crea una cuenta nueva para empezar a guardar tus encadenes.",
             },
 
 
@@ -3099,6 +3104,11 @@ botonEscuelas: "← Back to crags",
         loginEntrar: "Log in",
         loginCrear: "Create new account",
         loginCerrar: "Close",    
+        invitadoTitulo: "Join Roca Norte",
+        invitadoSubtitulo: "Save your ascents in the cloud and don't lose your progress.",
+        invitadoYaTengo: "I already have an account",
+        invitadoCrear: "Create new account",
+        loginCrearSubtitulo: "Create a new account to start saving your ascents.",
         }
     };
 
@@ -3180,6 +3190,19 @@ botonEscuelas: "← Back to crags",
         if (cargandoEsc) {
             cargandoEsc.textContent = textos[idiomaActual].cargando;
         }
+
+        let txtUneteTitulo = document.getElementById('txt-unete-titulo');
+    if (txtUneteTitulo) txtUneteTitulo.innerText = textos[idiomaActual].invitadoTitulo;
+
+    let txtUneteSubtitulo = document.getElementById('txt-unete-subtitulo');
+    if (txtUneteSubtitulo) txtUneteSubtitulo.innerText = textos[idiomaActual].invitadoSubtitulo;
+
+    let txtYaTengo = document.getElementById('txt-ya-tengo');
+    if (txtYaTengo) txtYaTengo.innerText = textos[idiomaActual].invitadoYaTengo;
+
+    let txtCrearNueva = document.getElementById('txt-crear-nueva');
+    if (txtCrearNueva) txtCrearNueva.innerText = textos[idiomaActual].invitadoCrear;
+        
         // Recargar la escuela actual para aplicar los textos dinámicos al instante
     let contenido = document.getElementById('contenido-dinamico');
     if (typeof escuelaActualId !== 'undefined' && contenido && contenido.innerHTML.includes('mostrarInicio()')) {
