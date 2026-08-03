@@ -941,18 +941,27 @@ window.iniciarSesionUsuario = function() {
             if (tipo === 'escuela') seleccionarEscuela(idEscuela);
             else { seleccionarEscuela(idEscuela); setTimeout(() => { verSector(idSector); }, 50); }
         }
-        
-      function mostrarDiario() {
-   // 1. Ocultamos el mapa de forma segura
+
+        function prepararPantalla() {
+    // 1. Ocultamos el mapa
     let mapa = document.getElementById('map');
     if (mapa) mapa.style.display = 'none';
-    
-    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
+
+    // 2. Apagamos el modal del perfil
     let modalPerfil = document.getElementById('modalPerfilUsuario');
     if (modalPerfil) modalPerfil.style.display = 'none';
-    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
+
+    // 3. Apagamos el menú lateral (por si venimos de hacer clic en él)
+    let menuOpciones = document.getElementById('menuOpciones');
+    if (menuOpciones) menuOpciones.style.display = 'none';
+
+    // 4. Encendemos el lienzo principal
     let contenido = document.getElementById('contenido-dinamico');
     if (contenido) contenido.style.display = 'block';
+}
+        
+  function mostrarDiario() {
+    prepararPantalla();
     let html = `
        <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
             ← ${textos[idiomaActual].volverEscuelas}
@@ -1255,18 +1264,7 @@ window.eliminarViaEncadenada = async function(index) {
     }
 }
 function mostrarEstadisticas() {
-    // 1. Ocultamos el mapa de forma segura
-    let mapa = document.getElementById('map');
-    if (mapa) mapa.style.display = 'none';
-    
-    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
-    let modalPerfil = document.getElementById('modalPerfilUsuario');
-    if (modalPerfil) modalPerfil.style.display = 'none';
-
-    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
-    let contenido = document.getElementById('contenido-dinamico');
-    if (contenido) contenido.style.display = 'block';
-    
+    prepararPantalla();    
     // 2. Preparamos el esqueleto de la nueva pantalla
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
@@ -1350,17 +1348,7 @@ function mostrarEstadisticas() {
     }, 50);
 }
         function mostrarRocodromos() {
-    // 1. Ocultamos el mapa de forma segura
-    let mapa = document.getElementById('map');
-    if (mapa) mapa.style.display = 'none';
-    
-    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
-    let modalPerfil = document.getElementById('modalPerfilUsuario');
-    if (modalPerfil) modalPerfil.style.display = 'none';
-
-    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
-    let contenido = document.getElementById('contenido-dinamico');
-    if (contenido) contenido.style.display = 'block';
+   prepararPantalla();
     // 2. Preparamos el esqueleto de la nueva pantalla
     let html = `
         <button class="btn-volver" onclick="mostrarInicio()" style="margin-bottom: 15px; background: #eef2f5; border: 1px solid #dcdcdc; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #333;">
@@ -2368,20 +2356,7 @@ function eliminarProyectoManual(index) {
        function mostrarContacto() {
     let contenedor = document.getElementById('contenido-dinamico');
     if (!contenedor) return;
-           // 1. Ocultamos el mapa de forma segura
-    let mapa = document.getElementById('map');
-    if (mapa) mapa.style.display = 'none';
-    
-    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
-    let modalPerfil = document.getElementById('modalPerfilUsuario');
-    if (modalPerfil) modalPerfil.style.display = 'none';
-           // Cerramos el menú de opciones al entrar en Contacto
-    let menuLateral = document.getElementById('menuOpciones');
-    if (menuLateral) menuLateral.style.display = 'none';
-
-    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
-    contenedor.style.display = 'block';
-
+         prepararPantalla();
     contenedor.innerHTML = `
         <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
 
@@ -2440,16 +2415,7 @@ ${textos[idiomaActual].contactoP3}
       function mostrarColaboradores() {
     let contenedor = document.getElementById('contenido-dinamico');
     if (!contenedor) return;
-         // 1. Ocultamos el mapa de forma segura
-    let mapa = document.getElementById('map');
-    if (mapa) mapa.style.display = 'none';
-    
-    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
-    let modalPerfil = document.getElementById('modalPerfilUsuario');
-    if (modalPerfil) modalPerfil.style.display = 'none';
-
-    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
-    contenedor.style.display = 'block';
+        prepararPantalla();
 
     contenedor.innerHTML = `
         <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
@@ -2706,16 +2672,7 @@ window.addEventListener('load', () => {
     function mostrarDonaciones() {
         let contenedor = document.getElementById('contenido-dinamico');
         if (!contenedor) return;
-        // 1. Ocultamos el mapa de forma segura
-    let mapa = document.getElementById('map');
-    if (mapa) mapa.style.display = 'none';
-    
-    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
-    let modalPerfil = document.getElementById('modalPerfilUsuario');
-    if (modalPerfil) modalPerfil.style.display = 'none';
-
-    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
-    contenedor.style.display = 'block';
+     prepararPantalla();
 
         contenedor.innerHTML = `
             <div style="max-width: 650px; margin: 0 auto; padding: 15px; font-family: sans-serif;">
@@ -2769,19 +2726,8 @@ window.addEventListener('load', () => {
     function mostrarNovedades() {
         let contenedor = document.getElementById('contenido-dinamico');
         if (!contenedor) return;
-
-        // 1. Ocultamos el mapa de forma segura
-    let mapa = document.getElementById('map');
-    if (mapa) mapa.style.display = 'none';
-    
-    // 2. Apagamos la pantalla de Configuración por si estuviera abierta
-    let modalPerfil = document.getElementById('modalPerfilUsuario');
-    if (modalPerfil) modalPerfil.style.display = 'none';
-
-    // 3. ¡VOLVEMOS A ENCENDER EL CONTENEDOR PRINCIPAL!
-    let contenido = document.getElementById('contenido-dinamico');
-    if (contenido) contenido.style.display = 'block';
-
+        prepararPantalla();
+        
         // GUARDAR EN MEMORIA QUE YA SE HAN VISTO LAS NOVEDADES
         let idMasReciente = listaNovedades[0].id;
         localStorage.setItem('novedadesVistasId', idMasReciente);
