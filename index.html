@@ -240,7 +240,7 @@
     
     <!-- Botón de Cerrar Sesión -->
     <div onclick="cerrarSesionApp()" style="display: flex; justify-content: center; align-items: center; padding: 10px; border: 1px solid #e74c3c; border-radius: 8px; cursor: pointer; background: #fdf5f5; margin-top: 15px;">
-        <span style="color: #e74c3c; font-weight: bold;"><i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i> Cerrar Sesión</span>
+<span style="color: #e74c3c; font-weight: bold;"><i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i> <span id="txt-cerrar-sesion">Cerrar Sesión</span></span>
     </div>
 </div>
 
@@ -643,8 +643,8 @@ let fotoMostrar = document.getElementById('perfilFotoMostrar');
 let fotoDefecto = document.getElementById('perfilFotoDefecto');
 
 // Ponemos un nombre por defecto rápido mientras carga
-if(nombreReal) nombreReal.value = user.displayName || "Escalador";
-
+if(nombreReal) nombreReal.value = user.displayName || textos[idiomaActual].nombreDefecto;
+        
 // Descargamos tu nombre y foto reales de la base de datos
 getDoc(doc(db, "usuarios", uidUsuario)).then((docSnap) => {
     if (docSnap.exists()) {
@@ -810,7 +810,7 @@ window.iniciarSesionUsuario = function() {
             return signInWithEmailAndPassword(auth, email, pass);
         })
         .then((userCredential) => {
-            alert("¡Sesión iniciada correctamente!");
+            alert(textos[idiomaActual].alertaExitoLogin);
             document.getElementById('modalLogin').style.display = 'none';
             document.getElementById('modalPerfilUsuario').style.display = 'block';
             document.getElementById('emailLogin').value = '';
@@ -2957,6 +2957,9 @@ const textos = {
         loginMantenerSesion: "Mantener la sesión iniciada",
         alertaErrorLogin: "Error al iniciar sesión. Comprueba tu correo y contraseña.",
         alertaErrorCrear: "Error al crear la cuenta",
+        alertaExitoLogin: "¡Sesión iniciada correctamente!",
+        perfilCerrarSesion: "Cerrar Sesión",
+        nombreDefecto: "Nombre",
             },
 
 
@@ -3115,6 +3118,9 @@ botonEscuelas: "← Back to crags",
         loginMantenerSesion: "Keep me logged in",
         alertaErrorLogin: "Login error. Please check your email and password.",
         alertaErrorCrear: "Error creating account",
+        alertaExitoLogin: "Login successful!",
+        perfilCerrarSesion: "Log out",
+        nombreDefecto: "Name",
         }
     };
 
@@ -3208,6 +3214,21 @@ botonEscuelas: "← Back to crags",
 
     let txtCrearNueva = document.getElementById('txt-crear-nueva');
     if (txtCrearNueva) txtCrearNueva.innerText = textos[idiomaActual].invitadoCrear;
+
+    let txtMantenerSesion = document.getElementById('txt-mantener-sesion');
+    if (txtMantenerSesion) txtMantenerSesion.innerText = textos[idiomaActual].loginMantenerSesion;
+
+    let txtCerrar = document.getElementById('txt-cerrar-sesion');
+    if (txtCerrar) txtCerrar.innerText = textos[idiomaActual].perfilCerrarSesion;
+        
+    // Traducir el nombre SOLO si es el nombre por defecto
+    let inputNombrePerfil = document.getElementById('perfil-nombre-real'); 
+    if (inputNombrePerfil) {
+        let valor = inputNombrePerfil.value;
+        if (valor === "Nombre" || valor === "Name" || valor === "Escalador" || valor === "Climber") {
+            inputNombrePerfil.value = textos[idiomaActual].nombreDefecto;
+        }
+    }
         
         // Recargar la escuela actual para aplicar los textos dinámicos al instante
     let contenido = document.getElementById('contenido-dinamico');
