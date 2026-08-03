@@ -401,61 +401,7 @@ function abrirPerfil() {
     let contenido = document.getElementById('contenido-dinamico');
     if (contenido) contenido.style.display = 'block';
         }
-
-        function cerrarPerfilFuera(e) {
-            if(e.target.id === 'modalPerfilUsuario') cerrarPerfil();
-        }
-
-        // --- NUEVAS FUNCIONES PARA LA FOTO DE PERFIL ---
-
-// 1. Simula el clic en el input de archivo oculto
-function triggerFotoInput() {
-    document.getElementById('perfilFotoInput').click();
-}
-
-// 2. Lee la foto seleccionada, comprueba el tamaño y la guarda
-function handleProfilePicture(input) {
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-
-        // Validar que la foto no sea gigante (Límite 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('El archivo es demasiado grande. Máximo 5MB.');
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-            const base64Image = e.target.result;
-            // Guardar en la memoria del navegador usando tu función setLocal
-            setLocal('perfil-foto-escalador', base64Image);
-            // Mostrar la foto al instante
-            actualizarFotoPerfilDisplay(base64Image);
-        };
-
-        // Convierte la imagen a texto (base64) para poder guardarla
-        reader.readAsDataURL(file);
-    }
-}
-
-// 3. Decide si mostrar la foto del usuario o el icono por defecto
-function actualizarFotoPerfilDisplay(savedFoto) {
-    const fileFotoMostrar = document.getElementById('perfilFotoMostrar');
-    const fileFotoDefecto = document.getElementById('perfilFotoDefecto');
-
-    if (savedFoto) {
-        fileFotoMostrar.src = savedFoto;
-        fileFotoMostrar.style.display = 'block';
-        fileFotoDefecto.style.display = 'none';
-    } else {
-        fileFotoMostrar.src = '';
-        fileFotoMostrar.style.display = 'none';
-        fileFotoDefecto.style.display = 'block';
-    }
-}
-// --- FIN FUNCIONES FOTO PERFIL ---
-
+     
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('menuOpciones');
             const btnMenu = document.getElementById('btnMenuToggle');
@@ -1099,31 +1045,7 @@ for (let i = anoActual; i >= 1980; i--) {
     }
 }, 50);
 }
-        function agregarViaEncadenada() {
-    let fecha = document.getElementById('encFecha').value;
-    let nombre = document.getElementById('encNombre').value;
-    let grado = document.getElementById('encGrado').value;
-    let intentos = document.getElementById('encIntentos').value;
-
-    if (!nombre) {
-        alert('Por favor, indica al menos el nombre de la vía.');
-        return;
-    }
-
-    // Recuperar la lista de la memoria, añadir la nueva y volver a guardar
-    let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
-    lista.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: intentos });
-    setLocal('astur_vertical_encadenadas', JSON.stringify(lista));
-
-    // Limpiar las casillas para añadir otra rápidamente
-    document.getElementById('encNombre').value = '';
-    document.getElementById('encGrado').value = '';
-    document.getElementById('encIntentos').value = '';
-    
-    // Volver a dibujar la tabla actualizada
-    renderizarViasEncadenadas();
-}
-
+      
 function renderizarViasEncadenadas() {
     let tbody = document.getElementById('tablaEncadenadasBody');
     if (!tbody) return;
@@ -2432,38 +2354,6 @@ function actualizarProyectoManual(index, campo, valor) {
     }
 }
 
-function agregarProyectoManual() {
-    const fechaInput = document.getElementById('projFecha');
-    const nombreInput = document.getElementById('projNombre');
-    const gradoInput = document.getElementById('projGrado');
-    const intentosInput = document.getElementById('projIntentos');
-    
-    if (!nombreInput.value.trim()) {
-        alert('Por favor, introduce al menos el nombre de la vía.');
-        return;
-    }
-    
-    let proyectosRaw = getLocal('proyectos-manuales-lista');
-    let proyectos = [];
-    try { if (proyectosRaw) proyectos = JSON.parse(proyectosRaw); } catch(e) { proyectos = []; }
-    if (!Array.isArray(proyectos)) proyectos = [];
-    
-    proyectos.push({
-        fecha: fechaInput.value.trim() || '-',
-        nombre: nombreInput.value.trim(),
-        grado: gradoInput.value.trim() || '-',
-        intentos: intentosInput.value.trim() || '0'
-    });
-    
-    setLocal('proyectos-manuales-lista', JSON.stringify(proyectos));
-    
-    fechaInput.value = '';
-    nombreInput.value = '';
-    gradoInput.value = '';
-    intentosInput.value = '';
-    
-    pintarProyectosManuales();
-}
 
 function eliminarProyectoManual(index) {
     let proyectosRaw = getLocal('proyectos-manuales-lista');
