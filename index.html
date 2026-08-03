@@ -296,8 +296,8 @@
 </div>
             <div id="contenedorMantenerSesion" style="display: flex; align-items: center; margin-bottom: 20px; text-align: left;">
     <input type="checkbox" id="checkMantenerSesion" checked style="cursor: pointer; width: 16px; height: 16px; margin: 0 8px 0 0;">
-    <label for="checkMantenerSesion" style="font-size: 0.95rem; color: #555; cursor: pointer; user-select: none;">Mantener la sesión iniciada</label>
-</div>
+<label id="txt-mantener-sesion" for="checkMantenerSesion" style="font-size: 0.95rem; color: #555; cursor: pointer; user-select: none;">Mantener la sesión iniciada</label>
+            </div>
             <button id="btnEntrar" onclick="iniciarSesionUsuario()" style="width: 100%; padding: 12px; background: #2980b9; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer; margin-bottom: 12px;">Entrar</button>
             
             <button id="btnCrearCuenta" onclick="registrarNuevoUsuario()" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">Crear nueva cuenta</button>
@@ -787,7 +787,7 @@ window.registrarNuevoUsuario = function() {
             document.getElementById('passLogin').value = '';
         })
         .catch((error) => {
-            alert("Error al crear la cuenta: " + error.message);
+alert(textos[idiomaActual].alertaErrorCrear + ": " + error.message);
         });
 }
 
@@ -826,7 +826,7 @@ window.iniciarSesionUsuario = function() {
         })
         .catch((error) => {
             console.error(error);
-            alert("Error al iniciar sesión. Comprueba tu correo y contraseña.");
+alert(textos[idiomaActual].alertaErrorLogin);
         });
 };
                 enableIndexedDbPersistence(db)
@@ -2954,6 +2954,9 @@ const textos = {
         invitadoYaTengo: "Ya tengo cuenta",
         invitadoCrear: "Crear cuenta nueva",
         loginCrearSubtitulo: "Crea una cuenta nueva para empezar a guardar tus encadenes.",
+        loginMantenerSesion: "Mantener la sesión iniciada",
+        alertaErrorLogin: "Error al iniciar sesión. Comprueba tu correo y contraseña.",
+        alertaErrorCrear: "Error al crear la cuenta",
             },
 
 
@@ -3109,6 +3112,9 @@ botonEscuelas: "← Back to crags",
         invitadoYaTengo: "I already have an account",
         invitadoCrear: "Create new account",
         loginCrearSubtitulo: "Create a new account to start saving your ascents.",
+        loginMantenerSesion: "Keep me logged in",
+        alertaErrorLogin: "Login error. Please check your email and password.",
+        alertaErrorCrear: "Error creating account",
         }
     };
 
