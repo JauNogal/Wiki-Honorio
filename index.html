@@ -2970,6 +2970,7 @@ const textos = {
         etiquetaSectorEn: "SECTOR EN",
         btnVolverInicio: "Volver al Inicio",
         sinLugaresGuardados: "Aún no tienes lugares guardados.",
+        confirmarBorrarFav: "¿Seguro que quieres borrar este lugar de tus favoritos?",
             },
 
 
@@ -3142,6 +3143,7 @@ botonEscuelas: "← Back to crags",
         etiquetaSectorEn: "SECTOR AT",
         btnVolverInicio: "Back to Home",
         sinLugaresGuardados: "You don't have any saved places yet.",
+        confirmarBorrarFav: "Are you sure you want to remove this place from your favorites?",
         }
     };
 
@@ -3516,8 +3518,8 @@ async function verListaFavoritos() {
 
 // NUEVA VERSIÓN: Borra usando la FECHA EXACTA, así nunca falla, ni con fantasmas.
 async function borrarFavorito(fecha) {
-    if (!confirm("¿Seguro que quieres borrar este lugar de tus favoritos?")) return;
-
+if (confirm(textos[idiomaActual].confirmarBorrarFav)) {
+    
     const uid = window.idUsuarioActivo; 
     if (!uid) return;
 
