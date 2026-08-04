@@ -3170,6 +3170,10 @@ botonEscuelas: "← Back to crags",
         let buscador = document.getElementById('buscadorPrincipal');
         if (buscador) buscador.placeholder = textos[idiomaActual].placeholderBuscar;
 
+        // Traducción del título de favoritos
+    let txtFavTitulo = document.getElementById('txt-fav-titulo');
+    if (txtFavTitulo) txtFavTitulo.innerText = textos[idiomaActual].favMenuTitulo;
+        
         // Traducción del modal de Login
     let txtLoginSubtitulo = document.getElementById('txtLoginSubtitulo');
     if (txtLoginSubtitulo) txtLoginSubtitulo.innerText = textos[idiomaActual].loginSubtitulo;
