@@ -270,7 +270,7 @@
 <div id="modalFavoritos" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
     <div style="background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="margin: 0; color: #2c3e50;">Menú Favoritos</h3>
+<h3 id="txt-fav-titulo" style="margin: 0; color: #2c3e50;">Menú Favoritos</h3>
             <span onclick="cerrarMenuFavoritos()" style="font-size: 1.8rem; cursor: pointer; color: #888; line-height: 1;">&times;</span>
         </div>
         
@@ -2959,6 +2959,10 @@ const textos = {
         alertaExitoLogin: "¡Sesión iniciada correctamente!",
         perfilCerrarSesion: "Cerrar Sesión",
         nombreDefecto: "Nombre",
+        favMenuTitulo: "Menú Favoritos",
+        favMenuVerLista: "Ver mi lista completa",
+        favMenuAnadirEscuela: "Añadir Escuela a favoritos",
+        favMenuAnadirSector: "Añadir Sector a favoritos",
             },
 
 
@@ -3120,6 +3124,10 @@ botonEscuelas: "← Back to crags",
         alertaExitoLogin: "Login successful!",
         perfilCerrarSesion: "Log out",
         nombreDefecto: "Name",
+        favMenuTitulo: "Favorites Menu",
+        favMenuVerLista: "View my full list",
+        favMenuAnadirEscuela: "Add Crag to favorites",
+        favMenuAnadirSector: "Add Sector to favorites",
         }
     };
 
@@ -3297,17 +3305,16 @@ function abrirMenuFavoritos(tipo, id1 = null, id2 = null) {
     // Lógica inteligente: ¿Dónde ha pulsado el usuario?
     if (tipo === 'principal') {
         // En el inicio SOLO mostramos el botón de ir a la lista
-        htmlOpciones += `<button onclick="verListaFavoritos()" style="width: 100%; padding: 12px; background: #FFC107; color: #333; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">Ver mi lista de favoritos</button>`;
-    
+htmlOpciones += `<button id="txt-fav-ver-lista" onclick="verListaFavoritos()" style="width: 100%; padding: 12px; background: #FFC107; color: #333; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">Ver mi lista de favoritos</button>`;    
     } else if (tipo === 'escuela') {
         // En una escuela: Botón de añadir la escuela + Botón de ver la lista
-        htmlOpciones += `<button onclick="guardarFavorito('escuela', ${id1})" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">⭐ Añadir Escuela a favoritos</button>`;
-        htmlOpciones += `<button onclick="verListaFavoritos()" style="width: 100%; padding: 12px; background: #f1f2f6; color: #333; border: 1px solid #ccc; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Ver mi lista completa</button>`;
-    
+htmlOpciones += `<button onclick="guardarFavorito('escuela', ${id1})" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">⭐ <span id="txt-fav-anadir">Añadir Escuela a favoritos</span></button>`;
+    htmlOpciones += `<button id="txt-fav-ver-lista" onclick="verListaFavoritos()" style="width: 100%; padding: 12px; background: #f1f2f6; color: #333; border: 1px solid #ccc; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Ver mi lista completa</button>`;
+        
     } else if (tipo === 'sector') {
         // En un sector: Botón de añadir el sector + Botón de ver la lista
-        htmlOpciones += `<button onclick="guardarFavorito('sector', ${id1}, ${id2})" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">⭐ Añadir Sector a favoritos</button>`;
-        htmlOpciones += `<button onclick="verListaFavoritos()" style="width: 100%; padding: 12px; background: #f1f2f6; color: #333; border: 1px solid #ccc; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Ver mi lista completa</button>`;
+        htmlOpciones += `<button onclick="guardarFavorito('sector', ${id1}, ${id2})" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">⭐ <span id="txt-fav-anadir">Añadir Sector a favoritos</span></button>`;
+        htmlOpciones += `<button id="txt-fav-ver-lista" onclick="verListaFavoritos()" style="width: 100%; padding: 12px; background: #f1f2f6; color: #333; border: 1px solid #ccc; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Ver mi lista completa</button>`;
     }
 
     // Inyectamos los botones y encendemos el modal
