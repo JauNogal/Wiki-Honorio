@@ -2963,6 +2963,8 @@ const textos = {
         favMenuVerLista: "Ver mi lista completa",
         favMenuAnadirEscuela: "Añadir Escuela a favoritos",
         favMenuAnadirSector: "Añadir Sector a favoritos",
+        alertaFavAnadido: "¡Añadido a tus favoritos de Roca Norte! ⭐",
+        alertaFavRepetido: "Este lugar ya está en tu lista de favoritos.",
             },
 
 
@@ -3128,6 +3130,8 @@ botonEscuelas: "← Back to crags",
         favMenuVerLista: "View my full list",
         favMenuAnadirEscuela: "Add Crag to favorites",
         favMenuAnadirSector: "Add Sector to favorites",
+        alertaFavAnadido: "Added to your Roca Norte favorites! ⭐",
+        alertaFavRepetido: "This place is already in your favorites list.",
         }
     };
 
@@ -3374,7 +3378,7 @@ async function guardarFavorito(tipo, id1, id2 = null) {
         );
 
         if (yaExiste) {
-            alert("Este lugar ya está en tu lista de favoritos.");
+            alert(textos[idiomaActual].alertaFavRepetido);
             cerrarMenuFavoritos();
             return;
         }
@@ -3390,7 +3394,7 @@ async function guardarFavorito(tipo, id1, id2 = null) {
             favoritos: window.fbArrayUnion(nuevoFavorito)
         }, { merge: true }); 
 
-        alert("¡Añadido a tus favoritos de Roca Norte! ⭐");
+        alert(textos[idiomaActual].alertaFavAnadido);
         cerrarMenuFavoritos();
 
     } catch (error) {
