@@ -2969,6 +2969,7 @@ const textos = {
         etiquetaEscuela: "ESCUELA",
         etiquetaSectorEn: "SECTOR EN",
         btnVolverInicio: "Volver al Inicio",
+        sinLugaresGuardados: "Aún no tienes lugares guardados.",
             },
 
 
@@ -3140,6 +3141,7 @@ botonEscuelas: "← Back to crags",
         etiquetaEscuela: "CRAG",
         etiquetaSectorEn: "SECTOR AT",
         btnVolverInicio: "Back to Home",
+        sinLugaresGuardados: "You don't have any saved places yet.",
         }
     };
 
@@ -3447,7 +3449,7 @@ async function verListaFavoritos() {
                         html += `
                         <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #27ae60;">
                             <div onclick="seleccionarEscuela(${escuela.id})" style="flex-grow: 1; cursor: pointer;">
-                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Escuela</span><br>
+                            <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">${textos[idiomaActual].etiquetaEscuela}</span><br>
                                 <strong style="font-size: 1.15rem; color: #2c3e50;">${escuela.nombre}</strong>
                             </div>
                             <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
@@ -3468,9 +3470,9 @@ async function verListaFavoritos() {
                         const nombreMostrar = sector.nombreSector || sector.nombre;
                         
                         html += `
-                        <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
+                      <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2980b9;">
                             <div onclick="irDesdeBuscador('sector', ${fav.idEscuela}, ${fav.idSector})" style="flex-grow: 1; cursor: pointer;">
-                                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Sector en ${escuela.nombre}</span><br>
+                            <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">${textos[idiomaActual].etiquetaSectorEn} ${escuela.nombre}</span><br>
                                 <strong style="font-size: 1.15rem; color: #2c3e50;">${nombreMostrar}</strong>
                             </div>
                             <div onclick="borrarFavorito(${fav.fechaAñadido})" style="padding: 10px; color: #e74c3c; font-weight: bold; font-size: 1.2rem; cursor: pointer;">✕</div>
@@ -3492,16 +3494,16 @@ async function verListaFavoritos() {
             });
 
             html += '</div>';
-            html += `<div style="padding: 20px 10px;"><button onclick="mostrarInicio()" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">← Volver al Inicio</button></div>`;
+        html += `<div style="padding: 20px 10px;"><button onclick="mostrarInicio()" style="width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1.05rem; cursor: pointer;">← ${textos[idiomaActual].btnVolverInicio}</button></div>`;            
             
             contenedor.innerHTML = html;
 
         } else {
             contenedor.innerHTML = `
-                <div class="section-title">Mis Favoritos ⭐</div>
+            <div class="section-title">${textos[idiomaActual].tituloMisFavs} ⭐</div>
                 <div style="text-align: center; padding: 40px 20px;">
                     <span style="font-size: 3rem; margin-bottom: 10px; display: block;">🗺️</span>
-                    <p style="color: #555; font-size: 1.1rem; margin-bottom: 20px;">Aún no tienes lugares guardados.</p>
+                    <p style="color: #555; font-size: 1.1rem; margin-bottom: 20px;">${textos[idiomaActual].sinLugaresGuardados}</p>
                     <button onclick="mostrarInicio()" style="padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Ir a explorar</button>
                 </div>
             `;
