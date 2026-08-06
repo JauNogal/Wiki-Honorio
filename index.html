@@ -3556,11 +3556,19 @@ if (confirm(textos[idiomaActual].confirmarBorrarFav)) {
 
 // 1. Función principal que se dispara al pulsar "Sí, apuntar"
 async function guardarPropuestaGrado(idVia, gradoPropuesto) {
+    // --- CHIVATOS ---
+    console.log("--- DEBUGGING CONSENSO ---");
+    console.log("ID de vía recibido:", idVia);
+    console.log("Grado propuesto:", gradoPropuesto);
+    
     const uid = window.idUsuarioActivo; 
+    console.log("ID de usuario activo:", uid);
+
     if (!uid) {
         alert("Debes iniciar sesión para proponer un grado.");
         return;
     }
+    // --- FIN CHIVATOS ---
 
     try {
         const refVia = window.fbDoc(window.fbDb, 'vias', String(idVia)); 
