@@ -1839,8 +1839,8 @@ else {
                 <div class="via-grado">${gradoDisplay}</div>
             </div>
             <div class="via-check">
-                <select class="estado-via" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.85rem; width: 100px;">
-                    <option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
+<select class="estado-via" data-id="${via.id}" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.85rem; width: 100px;">
+<option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
                     <option value="a-vista" style="background-color: #3CB371; color: white;" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
                     <option value="a-flash" style="background-color: #00CED1; color: white;" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
                     <option value="en-el-dia" style="background-color: #FFA500; color: white;" ${estadoGuardado === 'en-el-dia' ? 'selected' : ''}>${textos[idiomaActual].estadoEnElDia}</option>
@@ -1865,15 +1865,17 @@ else {
           
             window.llaveColorVia = storageKey;
 
-    // Extraemos el nombre y el grado de la vía seleccionada
+  // Extraemos el nombre, el grado y el ID de la vía seleccionada
     const nombre = elemento.getAttribute('data-nombre') || 'Vía';
     const grado = elemento.getAttribute('data-grado') || '-';
+    const idViaParaFirebase = elemento.getAttribute('data-id'); // <-- NUEVO: Atrapamos el ID
 
     // Si es proyecto, lanza su cuadro. Si es un encadene, lanza el nuevo cuadro.
     if (valor === 'proyecto') {
         lanzarModalProyecto(nombre, grado);
     } else if (valor === 'a-vista' || valor === 'a-flash' || valor === 'en-el-dia' || valor === 'trabajado') {
-lanzarModalEncadenada(nombre, grado, valor, elemento, id);
+        // AQUÍ enviamos el ID al final del todo, tal y como lo necesita la ventana
+        lanzarModalEncadenada(nombre, grado, valor, elemento, idViaParaFirebase);
     }
             // Limpieza automática: Si la vía ya no es un proyecto, la borramos de la base de datos del diario
         if (valor !== 'proyecto') {
