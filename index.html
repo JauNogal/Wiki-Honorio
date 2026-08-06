@@ -866,6 +866,7 @@ alert(textos[idiomaActual].alertaErrorLogin);
                 viasSnapshot.forEach(doc => {
                    let d = doc.data();
         database.vias.push({
+            id: doc.id,
             idEscuela: Number(d.id_escuela),
             idSector: Number(d.id_sector),
             numero: Number(d.id_via || doc.id),
@@ -1839,8 +1840,7 @@ else {
                 <div class="via-grado">${gradoDisplay}</div>
             </div>
             <div class="via-check">
-            ${ console.log("DATOS DE LA VIA:", via) || "" }
-<select class="estado-via" data-id="${via.numero}" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.85rem; width: 100px;">
+<select class="estado-via" data-id="${via.id}" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.85rem; width: 100px;">
 <option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
                     <option value="a-vista" style="background-color: #3CB371; color: white;" ${estadoGuardado === 'a-vista' ? 'selected' : ''}>${textos[idiomaActual].aVista}</option>
                     <option value="a-flash" style="background-color: #00CED1; color: white;" ${estadoGuardado === 'a-flash' ? 'selected' : ''}>${textos[idiomaActual].aFlash}</option>
