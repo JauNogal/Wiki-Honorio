@@ -3382,8 +3382,8 @@ async function guardarFavorito(tipo, id1, id2 = null) {
             favoritosActuales = docSnap.data().favoritos;
         }
 
-        if (favoritosActuales.length >= 5) {
-            alert("¡Ya tienes 5 lugares en favoritos! Borra alguno de tu lista para añadir nuevos.");
+        if (favoritosActuales.length >= 10) {
+            alert("¡Ya tienes 10 lugares en favoritos! Borra alguno de tu lista para añadir nuevos.");
             cerrarMenuFavoritos();
             return;
         }
