@@ -1873,7 +1873,7 @@ else {
     if (valor === 'proyecto') {
         lanzarModalProyecto(nombre, grado);
     } else if (valor === 'a-vista' || valor === 'a-flash' || valor === 'en-el-dia' || valor === 'trabajado') {
-        lanzarModalEncadenada(nombre, grado, valor, elemento);
+lanzarModalEncadenada(nombre, grado, valor, elemento, id);
     }
             // Limpieza automática: Si la vía ya no es un proyecto, la borramos de la base de datos del diario
         if (valor !== 'proyecto') {
@@ -1974,7 +1974,7 @@ function guardarEnDiarioProyectos(nombre, grado) {
     proyectos.push({ fecha: fecha, nombre: nombre, grado: grado, intentos: '0' });
     localStorage.setItem('proyectos-manuales-lista', JSON.stringify(proyectos));
 }
-       function lanzarModalEncadenada(nombre, grado, estilo, elementoSelect) {
+       function lanzarModalEncadenada(nombre, grado, estilo, elementoSelect, idVia) {
            
     // Escala completa de grados de deportiva para poder navegar por ella
     const escalaGrados = ['III', 'IV', 'IV+', 'V', 'V+', '6a', '6a+', '6b', '6b+', '6c', '6c+', '7a', '7a+', '7b', '7b+', '7c', '7c+', '8a', '8a+', '8b', '8b+', '8c', '8c+', '9a', '9a+', '9b', '9b+', '9c'];
@@ -2056,10 +2056,13 @@ function guardarEnDiarioProyectos(nombre, grado) {
     if (cajaIntentos) intentosSeleccionados = cajaIntentos.value;
 
     // Guardamos en tu diario y en la nube (pasándole también los intentos)
-    guardarEnDiarioEncadenadas(nombre, grado, estilo, intentosSeleccionados);
-    guardarEncadeneEnNube(nombre, grado, estilo, intentosSeleccionados);
+        guardarEnDiarioEncadenadas(nombre, grado, estilo, intentosSeleccionados);
+        guardarEncadeneEnNube(nombre, grado, estilo, intentosSeleccionados);
 
-    document.body.removeChild(fondo);
+        // NUEVO: Enviamos la propuesta al sistema de consenso de Firebase
+        guardarPropuestaGrado(idVia, gradoPropuestoFinal);
+
+        document.body.removeChild(fondo);
 };
 }
 // Función que inyecta la vía en la memoria (Versión limpia, con intentos a 0)
