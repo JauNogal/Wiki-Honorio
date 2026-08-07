@@ -3615,25 +3615,39 @@ let elementoGrado = document.getElementById(`texto-grado-${idVia}`);
 // 2. El "Cerebro" matemático: cuenta los votos y decide el ganador
 function calcularGradoGanador(votos, gradoOriginal) {
     let conteo = {};
-    let maxVotos = 0;
-    let gradoGanador = gradoOriginal; 
 
+    // 1. Contamos cuántos votos tiene cada grado
     for (let usuario in votos) {
         let grado = votos[usuario];
         conteo[grado] = (conteo[grado] || 0) + 1;
+    }
 
+    let maxVotos = 0;
+    let candidatos = [];
+
+    // 2. Buscamos cuál es el número máximo de votos y qué grados lo tienen
+    for (let grado in conteo) {
         if (conteo[grado] > maxVotos) {
             maxVotos = conteo[grado];
-            gradoGanador = grado;
-        } 
-        // REGLA DE DESEMPATE: Gana el original de tu guía
-        else if (conteo[grado] === maxVotos && grado === gradoOriginal) {
-            gradoGanador = gradoOriginal;
+            candidatos = [grado];
+        } else if (conteo[grado] === maxVotos) {
+            candidatos.push(grado); // Registramos que hay un empate
         }
     }
-    return gradoGanador;
-}
 
+    // 3. REGLA 1: Para CAMBIAR el grado original, el nuevo necesita al menos 2 votos
+    if (maxVotos < 2 && !candidatos.includes(gradoOriginal)) {
+        return gradoOriginal;
+    }
+
+    // 4. REGLA 2: En caso de empate (ej. dos votos 6b y dos votos 6c), se mantiene el original
+    if (candidatos.length > 1) {
+        return gradoOriginal;
+    }
+
+    // 5. Si hay un único ganador absoluto con 2 o más votos, ¡tenemos nuevo grado!
+    return candidatos[0] || gradoOriginal;
+}
 // 3. El "Árbitro" de colores: Asigna el grupo 1, 2, 3 o 4 según el texto del grado
 function calcularGrupoPorGrado(grado) {
     if (!grado) return 1;
