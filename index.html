@@ -1837,7 +1837,7 @@ else {
 <div class="via-detalles">
                 <div class="via-numero">${via.numero}.</div>
                 <div class="via-nombre">${via.nombreVia}</div>
-                <div class="via-grado">${gradoDisplay}</div>
+                <div class="via-grado" id="texto-grado-${via.id}">${gradoDisplay}</div>
             </div>
             <div class="via-check">
 <select class="estado-via" data-id="${via.id}" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.85rem; width: 100px;">
@@ -3597,7 +3597,12 @@ async function guardarPropuestaGrado(idVia, gradoPropuesto) {
             }, { merge: true });
 
             console.log("¡Voto registrado! Grado:", nuevoGradoConsenso, "| Grupo:", nuevoGrupo);
-            
+
+            // Actualizamos el grado en la pantalla al instante
+let elementoGrado = document.getElementById(`texto-grado-${idVia}`);
+if (elementoGrado) {
+    elementoGrado.innerText = nuevoGradoConsenso;
+}
             // Aquí puedes añadir la línea para cerrar tu ventana modal de votación
             // alert("¡Gracias por tu propuesta! El grado se ha registrado.");
             
