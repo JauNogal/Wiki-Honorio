@@ -3612,7 +3612,7 @@ let elementoGrado = document.getElementById(`texto-grado-${idVia}`);
     }
 }
 
-// 2. El "Cerebro" matemático: cuenta los votos y decide el ganador
+        // 2. El "Cerebro" matemático: cuenta los votos y decide el ganador
 function calcularGradoGanador(votos, gradoOriginal) {
     let conteo = {};
 
@@ -3635,19 +3635,22 @@ function calcularGradoGanador(votos, gradoOriginal) {
         }
     }
 
-    // 3. REGLA 1: Para CAMBIAR el grado original, el nuevo necesita al menos 2 votos
+    // 3. REGLA 1: Para CAMBIAR el grado, el nuevo necesita al menos 2 votos
     if (maxVotos < 2 && !candidatos.includes(gradoOriginal)) {
         return gradoOriginal;
     }
 
-    // 4. REGLA 2: En caso de empate (ej. dos votos 6b y dos votos 6c), se mantiene el original
+    // 4. REGLA 2: En caso de empate, ordenamos de menor a mayor y nos quedamos con el más bajo
     if (candidatos.length > 1) {
-        return gradoOriginal;
+        candidatos.sort(); // Magia: ordena alfabéticamente (ej: 6a, 6a+, 6b, 6c)
+        return candidatos[0]; // Devuelve siempre el grado más bajo del empate
     }
 
-    // 5. Si hay un único ganador absoluto con 2 o más votos, ¡tenemos nuevo grado!
+    // 5. Si hay un único ganador absoluto con 2 o más votos
     return candidatos[0] || gradoOriginal;
 }
+
+
 // 3. El "Árbitro" de colores: Asigna el grupo 1, 2, 3 o 4 según el texto del grado
 function calcularGrupoPorGrado(grado) {
     if (!grado) return 1;
