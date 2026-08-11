@@ -867,6 +867,7 @@ alert(textos[idiomaActual].alertaErrorLogin);
                    let d = doc.data();
         database.vias.push({
             id: doc.id,
+            votosGrado: d.votosGrado || {},
             idEscuela: Number(d.id_escuela),
             idSector: Number(d.id_sector),
             numero: Number(d.id_via || doc.id),
@@ -1831,14 +1832,21 @@ else {
                     // Aplicamos el truco de los números romanos antes de pintar
             let gradoLimpio = (via.grado || "").toString().trim();
             let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
-
+            // Contamos cuántos votos tiene esta vía
+        let numVotos = via.votosGrado ? Object.keys(via.votosGrado).length : 0;
+        
+        // Si tiene votos, preparamos el icono. Si no, lo dejamos vacío.
+        let iconoEstadisticas = numVotos > 0 
+            ? `<i class="fa-solid fa-chart-pie" onclick="abrirEstadisticas('${via.id}')" style="color: #ff9800; margin-right: 6px; font-size: 1.1em; cursor: pointer;"></i>` 
+            : '';
+            
            html += `
 <div class="via-item" style="${ estadoGuardado === 'proyecto' ? 'background-color: #fffce0 !important; border-left: 4px solid #FFD700 !important;' : (estadoGuardado !== '' ? 'background-color: #ffe6eb !important; border-left: 4px solid #FF6347 !important;' : '') }">
 <div class="via-detalles">
                 <div class="via-numero">${via.numero}.</div>
                 <div class="via-nombre">${via.nombreVia}</div>
-                <div class="via-grado" id="texto-grado-${via.id}">${gradoDisplay}</div>
-            </div>
+<div class="via-grado" id="texto-grado-${via.id}">${iconoEstadisticas}${gradoDisplay}</div>
+</div>
             <div class="via-check">
 <select class="estado-via" data-id="${via.id}" data-nombre="${via.nombreVia}" data-grado="${gradoDisplay}" onchange="cambiarColorEstado(this, '${via.idEscuela}', '${via.idSector}', '${via.numero}')" style="padding: 4px; border-radius: 5px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; font-size: 0.85rem; width: 100px;">
 <option value="" style="background-color: #e0e0e0; color: #333;" ${estadoGuardado === '' ? 'selected' : ''}>${textos[idiomaActual].estadoSinHacer}</option>
