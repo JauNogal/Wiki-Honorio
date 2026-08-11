@@ -3577,95 +3577,25 @@ async function guardarPropuestaGrado(idVia, gradoPropuesto) {
 
         if (docSnap.exists()) {
             let datosVia = docSnap.data();
-            
-            let gradoOriginal = datosVia.gradoOriginal || datosVia.grado;
-            let votos = datosVia.votosGrado || {};
-            votos[uid] = gradoPropuesto;
+      // 1. Recuperamos el historial de votos (o creamos un objeto vacío si no hay)
+        let votos = datosVia.votosGrado || {};
+        
+        // 2. Apuntamos el voto de este usuario
+        votos[uid] = gradoPropuesto;
 
-            // Calculamos el nuevo ganador
-            let nuevoGradoConsenso = calcularGradoGanador(votos, gradoOriginal);
-            
-            // Calculamos a qué grupo de color pertenece el nuevo ganador
-            let nuevoGrupo = calcularGrupoPorGrado(nuevoGradoConsenso);
+        // 3. Guardamos SOLAMENTE los votos en Firebase (¡nada de cambiar el grado o el grupo!)
+        await window.fbSetDoc(refVia, {
+            votosGrado: votos
+        }, { merge: true });
 
-            // Guardamos todo en Firebase
-            await window.fbSetDoc(refVia, {
-                gradoOriginal: gradoOriginal, 
-                votosGrado: votos,            
-                grado: nuevoGradoConsenso,    
-                grupo: nuevoGrupo             // <-- ¡AQUÍ ACTUALIZAMOS EL GRUPO AUTOMÁTICAMENTE!
-            }, { merge: true });
-
-            console.log("¡Voto registrado! Grado:", nuevoGradoConsenso, "| Grupo:", nuevoGrupo);
-
-            // Actualizamos el grado en la pantalla al instante
-let elementoGrado = document.getElementById(`texto-grado-${idVia}`);
-            if (elementoGrado) {
-    elementoGrado.innerText = nuevoGradoConsenso;
-}
+        console.log("¡Propuesta guardada en Firebase en secreto! Votos:", votos);      
+                
             // Aquí puedes añadir la línea para cerrar tu ventana modal de votación
             // alert("¡Gracias por tu propuesta! El grado se ha registrado.");
             
         }
     } catch (error) {
         console.error("Error al guardar la propuesta de grado:", error);
-    }
-}
-
-        // 2. El "Cerebro" matemático: cuenta los votos y decide el ganador
-function calcularGradoGanador(votos, gradoOriginal) {
-    let conteo = {};
-
-    // 1. Contamos cuántos votos tiene cada grado
-    for (let usuario in votos) {
-        let grado = votos[usuario];
-        conteo[grado] = (conteo[grado] || 0) + 1;
-    }
-
-    let maxVotos = 0;
-    let candidatos = [];
-
-    // 2. Buscamos cuál es el número máximo de votos y qué grados lo tienen
-    for (let grado in conteo) {
-        if (conteo[grado] > maxVotos) {
-            maxVotos = conteo[grado];
-            candidatos = [grado];
-        } else if (conteo[grado] === maxVotos) {
-            candidatos.push(grado); // Registramos que hay un empate
-        }
-    }
-
-    // 3. REGLA 1: Para CAMBIAR el grado, el nuevo necesita al menos 2 votos
-    if (maxVotos < 2 && !candidatos.includes(gradoOriginal)) {
-        return gradoOriginal;
-    }
-
-    // 4. REGLA 2: En caso de empate, ordenamos de menor a mayor y nos quedamos con el más bajo
-    if (candidatos.length > 1) {
-        candidatos.sort(); // Magia: ordena alfabéticamente (ej: 6a, 6a+, 6b, 6c)
-        return candidatos[0]; // Devuelve siempre el grado más bajo del empate
-    }
-
-    // 5. Si hay un único ganador absoluto con 2 o más votos
-    return candidatos[0] || gradoOriginal;
-}
-
-
-// 3. El "Árbitro" de colores: Asigna el grupo 1, 2, 3 o 4 según el texto del grado
-function calcularGrupoPorGrado(grado) {
-    if (!grado) return 1;
-    
-    // Lo pasamos a minúsculas para evitar fallos (ej: "6A+" -> "6a+")
-    let g = grado.toString().toLowerCase().trim();
-
-    if (g.startsWith('8') || g.startsWith('9')) {
-        return 4; // 8a o mayor (Caja Negra)
-    } else if (g.startsWith('7')) {
-        return 3; // 7a a 7c+ (Caja Roja)
-    } else if (g.startsWith('6')) {
-        return 2; // 6a a 6c+ (Caja Azul)
-    } else {
-        return 1; // Hasta V+ (IV, V, V+, etc.) (Caja Verde)
     }
 }
 
