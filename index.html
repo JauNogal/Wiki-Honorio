@@ -1832,12 +1832,12 @@ else {
                     // Aplicamos el truco de los números romanos antes de pintar
             let gradoLimpio = (via.grado || "").toString().trim();
             let gradoDisplay = /^[0-9]/.test(gradoLimpio) ? gradoLimpio : gradoLimpio.toUpperCase();
-            // Contamos cuántos votos tiene esta vía
+          // Contamos cuántos votos tiene esta vía
         let numVotos = via.votosGrado ? Object.keys(via.votosGrado).length : 0;
         
-        // Si tiene votos, preparamos el icono. Si no, lo dejamos vacío.
+        // Si tiene votos, creamos el "quesito" tricolor con CSS. Si no, vacío.
         let iconoEstadisticas = numVotos > 0 
-            ? `<i class="fa-solid fa-chart-pie" onclick="abrirEstadisticas('${via.id}')" style="color: #ff9800; margin-right: 6px; font-size: 1.1em; cursor: pointer;"></i>` 
+            ? `<span onclick="abrirEstadisticas('${via.id}')" style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: conic-gradient(#3498db 0% 33%, #f1c40f 33% 66%, #e74c3c 66% 100%); border: 1px solid #777; box-shadow: 0 1px 3px rgba(0,0,0,0.3); margin-right: 7px; cursor: pointer; vertical-align: -1px;" title="Ver votos de la comunidad"></span>` 
             : '';
             
            html += `
