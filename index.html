@@ -3607,6 +3607,92 @@ async function guardarPropuestaGrado(idVia, gradoPropuesto) {
     }
 }
 
+        // Abre la ventana y dibuja el gráfico circular
+function abrirEstadisticas(idVia) {
+    let via = database.vias.find(v => String(v.id) === String(idVia));
+    if (!via || !via.votosGrado) return;
+
+    // 1. Contamos votos y totales
+    let conteo = {};
+    let totalVotos = 0;
+    
+    for (let usuario in via.votosGrado) {
+        let grado = via.votosGrado[usuario];
+        conteo[grado] = (conteo[grado] || 0) + 1;
+        totalVotos++;
+    }
+
+    // 2. Ordenamos para que el grado más votado salga primero
+    let gradosOrdenados = Object.keys(conteo).sort((a, b) => conteo[b] - conteo[a]);
+
+    // 3. Colores para los quesitos (Azul, Rojo, Amarillo, Verde, Morado)
+    const paletaColores = ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71', '#9b59b6'];
+    
+    let trazosGrafico = [];
+    let htmlLeyenda = '';
+    let porcentajeAcumulado = 0;
+
+    // 4. Calculamos cada porción
+    gradosOrdenados.forEach((grado, index) => {
+        let cantidad = conteo[grado];
+        let porcentajeReal = (cantidad / totalVotos) * 100;
+        let porcentajeTexto = Math.round(porcentajeReal);
+        let color = paletaColores[index % paletaColores.length];
+
+        // Añadimos el trozo al gráfico
+        trazosGrafico.push(`${color} ${porcentajeAcumulado}% ${porcentajeAcumulado + porcentajeReal}%`);
+        porcentajeAcumulado += porcentajeReal;
+
+        // Añadimos la línea de leyenda
+        htmlLeyenda += `
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 6px 10px; background: #f9f9f9; border-radius: 6px;">
+            <div style="display: flex; align-items: center;">
+                <span style="display: inline-block; width: 14px; height: 14px; background-color: ${color}; border-radius: 50%; margin-right: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></span>
+                <strong style="color: #2c3e50; font-size: 1.1em;">${grado}</strong>
+            </div>
+            <div style="color: #555;">
+                ${cantidad} voto${cantidad > 1 ? 's' : ''} <strong style="color: #2c3e50; margin-left: 15px;">${porcentajeTexto}%</strong>
+            </div>
+        </div>`;
+    });
+
+    let quesitoCSS = trazosGrafico.join(', ');
+
+    // 5. Juntamos el diseño final
+    let htmlContenido = `
+    <p style="margin-top:0; margin-bottom:20px; font-size: 0.95em; color: #7f8c8d; text-align: center;">Total aportaciones: <strong>${totalVotos}</strong></p>
+    
+    <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+        <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(${quesitoCSS}); box-shadow: 0 6px 15px rgba(0,0,0,0.15);"></div>
+    </div>
+
+    <div style="padding: 0 5px;">${htmlLeyenda}</div>`;
+
+    document.getElementById('estadisticas-titulo').innerText = `Consenso: ${via.nombreVia}`;
+    document.getElementById('estadisticas-contenido').innerHTML = htmlContenido;
+    document.getElementById('modal-estadisticas').style.display = 'flex';
+}
+
+// Cierra la ventana
+function cerrarEstadisticas() {
+    document.getElementById('modal-estadisticas').style.display = 'none';
+}
+        
 </script>
 </body>
+    <!-- Modal de Estadísticas de Votos en Quesito -->
+<div id="modal-estadisticas" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+    <div style="background-color: #fff; width: 90%; max-width: 400px; border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+            <h3 id="estadisticas-titulo" style="margin: 0; font-size: 1.1em; color: #2c3e50;">Estadísticas</h3>
+            <span onclick="cerrarEstadisticas()" style="font-size: 1.8em; cursor: pointer; color: #95a5a6; line-height: 1;">&times;</span>
+        </div>
+        
+        <div id="estadisticas-contenido">
+            <!-- JavaScript inyectará el gráfico y la leyenda aquí -->
+        </div>
+        
+    </div>
+</div>
 </html>
