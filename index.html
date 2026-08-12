@@ -3606,44 +3606,55 @@ async function guardarPropuestaGrado(idVia, gradoPropuesto) {
         console.error("Error al guardar la propuesta de grado:", error);
     }
 }
-
-        // Abre la ventana y dibuja el gráfico circular
+// Abre la ventana y dibuja el gráfico circular con etiquetas interiores (Solo Español)
 function abrirEstadisticas(idVia) {
     let via = database.vias.find(v => String(v.id) === String(idVia));
     if (!via || !via.votosGrado) return;
 
-    // 1. Contamos votos y totales
+    // --- 1. CÁLCULO DE VOTOS ---
     let conteo = {};
     let totalVotos = 0;
-    
     for (let usuario in via.votosGrado) {
         let grado = via.votosGrado[usuario];
         conteo[grado] = (conteo[grado] || 0) + 1;
         totalVotos++;
     }
 
-    // 2. Ordenamos para que el grado más votado salga primero
+    // Ordenamos para que el grado más votado salga primero
     let gradosOrdenados = Object.keys(conteo).sort((a, b) => conteo[b] - conteo[a]);
-
-    // 3. Colores para los quesitos (Azul, Rojo, Amarillo, Verde, Morado)
     const paletaColores = ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71', '#9b59b6'];
     
     let trazosGrafico = [];
     let htmlLeyenda = '';
+    let htmlEtiquetasQuesito = ''; // Para los textos dentro del gráfico
     let porcentajeAcumulado = 0;
 
-    // 4. Calculamos cada porción
+    // --- 2. CONSTRUCCIÓN DEL GRÁFICO Y LEYENDA ---
     gradosOrdenados.forEach((grado, index) => {
         let cantidad = conteo[grado];
         let porcentajeReal = (cantidad / totalVotos) * 100;
         let porcentajeTexto = Math.round(porcentajeReal);
         let color = paletaColores[index % paletaColores.length];
 
-        // Añadimos el trozo al gráfico
+        // Añadimos el trozo al fondo del gráfico
         trazosGrafico.push(`${color} ${porcentajeAcumulado}% ${porcentajeAcumulado + porcentajeReal}%`);
+        
+        // Magia para colocar el texto (6a, V...) dentro de su porción exacta
+        let mitadPorcentaje = porcentajeAcumulado + (porcentajeReal / 2);
+        let anguloGrados = (mitadPorcentaje / 100) * 360;
+        
+        // Solo dibujamos la etiqueta si el quesito es suficientemente grande (>5%) para que no se pisen
+        if (porcentajeReal > 5) {
+            htmlEtiquetasQuesito += `
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(${anguloGrados}deg) translateY(-42px) rotate(-${anguloGrados}deg); color: white; font-weight: bold; font-size: 0.9em; text-shadow: 1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8); pointer-events: none; z-index: 10;">
+                ${grado}
+            </div>`;
+        }
+
         porcentajeAcumulado += porcentajeReal;
 
-        // Añadimos la línea de leyenda
+        // Construimos la línea de leyenda
+        let textoVoto = cantidad > 1 ? 'votos' : 'voto';
         htmlLeyenda += `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 6px 10px; background: #f9f9f9; border-radius: 6px;">
             <div style="display: flex; align-items: center;">
@@ -3651,31 +3662,28 @@ function abrirEstadisticas(idVia) {
                 <strong style="color: #2c3e50; font-size: 1.1em;">${grado}</strong>
             </div>
             <div style="color: #555;">
-                ${cantidad} voto${cantidad > 1 ? 's' : ''} <strong style="color: #2c3e50; margin-left: 15px;">${porcentajeTexto}%</strong>
+                ${cantidad} ${textoVoto} <strong style="color: #2c3e50; margin-left: 15px;">${porcentajeTexto}%</strong>
             </div>
         </div>`;
     });
 
     let quesitoCSS = trazosGrafico.join(', ');
 
-    // 5. Juntamos el diseño final
+    // --- 3. ENSAMBLAJE FINAL ---
     let htmlContenido = `
-    <p style="margin-top:0; margin-bottom:20px; font-size: 0.95em; color: #7f8c8d; text-align: center;">Total aportaciones: <strong>${totalVotos}</strong></p>
+    <p style="margin-top:0; margin-bottom:20px; font-size: 0.95em; color: #7f8c8d; text-align: center;">Nº de ascensiones: <strong>${totalVotos}</strong></p>
     
     <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-        <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(${quesitoCSS}); box-shadow: 0 6px 15px rgba(0,0,0,0.15);"></div>
+        <div style="position: relative; width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(${quesitoCSS}); box-shadow: 0 6px 15px rgba(0,0,0,0.15);">
+            ${htmlEtiquetasQuesito}
+        </div>
     </div>
 
     <div style="padding: 0 5px;">${htmlLeyenda}</div>`;
 
-    document.getElementById('estadisticas-titulo').innerText = `Consenso: ${via.nombreVia}`;
+    document.getElementById('estadisticas-titulo').innerText = `Grado sugerido: ${via.nombreVia}`;
     document.getElementById('estadisticas-contenido').innerHTML = htmlContenido;
     document.getElementById('modal-estadisticas').style.display = 'flex';
-}
-
-// Cierra la ventana
-function cerrarEstadisticas() {
-    document.getElementById('modal-estadisticas').style.display = 'none';
 }
         
 </script>
