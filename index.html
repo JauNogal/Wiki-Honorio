@@ -3694,9 +3694,20 @@ function abrirEstadisticas(idVia) {
     document.getElementById('estadisticas-contenido').innerHTML = htmlContenido;
     document.getElementById('modal-estadisticas').style.display = 'flex';
 }
+     // Función para cerrar la ventana de estadísticas al pulsar la X
+function cerrarEstadisticas() {
+    document.getElementById('modal-estadisticas').style.display = 'none';
+}
+
+// Extra: Cerrar la ventana también si el usuario toca el fondo oscuro
+window.addEventListener('click', function(event) {
+    let modal = document.getElementById('modal-estadisticas');
+    if (event.target === modal) {
+        cerrarEstadisticas();
+    }
+});
         
 </script>
-</body>
     <!-- Modal de Estadísticas de Votos en Quesito -->
 <div id="modal-estadisticas" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
     <div style="background-color: #fff; width: 90%; max-width: 400px; border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
@@ -3712,4 +3723,6 @@ function abrirEstadisticas(idVia) {
         
     </div>
 </div>
+    
+</body>
 </html>
