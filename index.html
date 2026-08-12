@@ -1838,11 +1838,11 @@ else {
         // Preparamos el contenido: Botón interactivo si hay votos, o texto plano si no los hay.
         let contenidoGrado = '';
         if (numVotos > 0) {
-            // MODO BOTÓN: Toda la cajita (quesito + grado) es clickable
+            // MODO BOTÓN: El quesito y el grado son clickables, totalmente integrados sin fondo extra
             contenidoGrado = `
-                <div onclick="abrirEstadisticas('${via.id}')" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center; background-color: #f0f4f9; padding: 2px 8px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);" title="Ver estadísticas">
+                <div onclick="abrirEstadisticas('${via.id}')" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center;" title="Ver estadísticas">
                     <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: conic-gradient(#3498db 0% 33%, #f1c40f 33% 66%, #e74c3c 66% 100%); border: 1px solid #777; box-shadow: 0 1px 2px rgba(0,0,0,0.2); margin-right: 6px;"></span>
-                    <span style="font-weight: bold; color: #1a252f;">${gradoDisplay}</span>
+                    <span>${gradoDisplay}</span>
                 </div>`;
         } else {
             // MODO TEXTO NORMAL: No hay votos, solo mostramos el grado sin acciones
