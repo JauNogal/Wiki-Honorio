@@ -3615,8 +3615,24 @@ if (confirm(textos[idiomaActual].confirmarBorrarFav)) {
 // SISTEMA DE GRADOS POR CONSENSO
 // =====================================================================
 
+ // Función intermediaria que atrapa el clic y muestra el aviso de consenso
+function guardarPropuestaGrado(idVia, gradoPropuesto) {
+    // 1. Comprobamos si hay usuario ANTES de mostrarle el aviso
+    const uid = window.idUsuarioActivo;
+    if (!uid) {
+        alert("Debes iniciar sesión para proponer un grado.");
+        return;
+    }
+
+    // 2. Si está logueado, lanzamos el modal de consenso. 
+    // Cuando pulse "Entendido", la ventana modal llamará automáticamente a tu función de Firestore
+    mostrarAvisoConsenso(function() {
+        guardarPropuestaEnFirestore(idVia, gradoPropuesto);
+    });
+}       
+        
 // 1. Función principal que se dispara al pulsar "Sí, apuntar"
-async function guardarPropuestaGrado(idVia, gradoPropuesto) {
+async function guardarPropuestaEnFirestore(idVia, gradoPropuesto) {
     // --- CHIVATOS ---
     console.log("--- DEBUGGING CONSENSO ---");
     console.log("ID de vía recibido:", idVia);
@@ -3625,9 +3641,6 @@ async function guardarPropuestaGrado(idVia, gradoPropuesto) {
     const uid = window.idUsuarioActivo; 
     console.log("ID de usuario activo:", uid);
 
-    if (!uid) {
-        alert("Debes iniciar sesión para proponer un grado.");
-        return;
     }
     // --- FIN CHIVATOS ---
 
