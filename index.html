@@ -3623,12 +3623,13 @@ async function guardarPropuestaGrado(idVia, gradoPropuesto) {
         console.error("Error al guardar la propuesta de grado:", error);
     }
 }
-// Abre la ventana y dibuja el gráfico circular con etiquetas interiores (Solo Español)
+        
+// Abre la ventana y dibuja el gráfico circular leyendo de tu MOTOR DE IDIOMAS GLOBAL
 function abrirEstadisticas(idVia) {
     let via = database.vias.find(v => String(v.id) === String(idVia));
     if (!via || !via.votosGrado) return;
 
-    // --- 1. CÁLCULO DE VOTOS ---
+    // 1. CÁLCULO DE VOTOS
     let conteo = {};
     let totalVotos = 0;
     for (let usuario in via.votosGrado) {
@@ -3643,24 +3644,26 @@ function abrirEstadisticas(idVia) {
     
     let trazosGrafico = [];
     let htmlLeyenda = '';
-    let htmlEtiquetasQuesito = ''; // Para los textos dentro del gráfico
+    let htmlEtiquetasQuesito = ''; 
     let porcentajeAcumulado = 0;
 
-    // --- 2. CONSTRUCCIÓN DEL GRÁFICO Y LEYENDA ---
+    // --- CONEXIÓN A TU MOTOR DE IDIOMAS ---
+    // Usamos el idioma actual para traer las traducciones de tu diccionario global
+    let t = textos[idiomaActual];
+
+    // 2. CONSTRUCCIÓN DEL GRÁFICO Y LEYENDA
     gradosOrdenados.forEach((grado, index) => {
         let cantidad = conteo[grado];
         let porcentajeReal = (cantidad / totalVotos) * 100;
         let porcentajeTexto = Math.round(porcentajeReal);
         let color = paletaColores[index % paletaColores.length];
 
-        // Añadimos el trozo al fondo del gráfico
         trazosGrafico.push(`${color} ${porcentajeAcumulado}% ${porcentajeAcumulado + porcentajeReal}%`);
         
-        // Magia para colocar el texto (6a, V...) dentro de su porción exacta
         let mitadPorcentaje = porcentajeAcumulado + (porcentajeReal / 2);
         let anguloGrados = (mitadPorcentaje / 100) * 360;
         
-        // Solo dibujamos la etiqueta si el quesito es suficientemente grande (>5%) para que no se pisen
+        // Solo dibujamos la etiqueta si el quesito es suficientemente grande (>5%)
         if (porcentajeReal > 5) {
             htmlEtiquetasQuesito += `
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(${anguloGrados}deg) translateY(-42px) rotate(-${anguloGrados}deg); color: white; font-weight: bold; font-size: 0.9em; text-shadow: 1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8); pointer-events: none; z-index: 10;">
@@ -3670,8 +3673,8 @@ function abrirEstadisticas(idVia) {
 
         porcentajeAcumulado += porcentajeReal;
 
-        // Construimos la línea de leyenda
-        let textoVoto = cantidad > 1 ? 'votos' : 'voto';
+        // Construimos la línea usando las traducciones (t.votos o t.voto)
+        let textoVoto = cantidad > 1 ? t.votos : t.voto;
         htmlLeyenda += `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 6px 10px; background: #f9f9f9; border-radius: 6px;">
             <div style="display: flex; align-items: center;">
@@ -3686,9 +3689,9 @@ function abrirEstadisticas(idVia) {
 
     let quesitoCSS = trazosGrafico.join(', ');
 
-    // --- 3. ENSAMBLAJE FINAL ---
+    // 3. ENSAMBLAJE FINAL (Usando t.numAscensiones y t.gradoSugerido)
     let htmlContenido = `
-    <p style="margin-top:0; margin-bottom:20px; font-size: 0.95em; color: #7f8c8d; text-align: center;">Nº de ascensiones: <strong>${totalVotos}</strong></p>
+    <p style="margin-top:0; margin-bottom:20px; font-size: 0.95em; color: #7f8c8d; text-align: center;">${t.numAscensiones}<strong>${totalVotos}</strong></p>
     
     <div style="display: flex; justify-content: center; margin-bottom: 30px;">
         <div style="position: relative; width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(${quesitoCSS}); box-shadow: 0 6px 15px rgba(0,0,0,0.15);">
@@ -3698,10 +3701,12 @@ function abrirEstadisticas(idVia) {
 
     <div style="padding: 0 5px;">${htmlLeyenda}</div>`;
 
-    document.getElementById('estadisticas-titulo').innerText = `Grado sugerido: ${via.nombreVia}`;
+    document.getElementById('estadisticas-titulo').innerText = `${t.gradoSugerido}${via.nombreVia}`;
     document.getElementById('estadisticas-contenido').innerHTML = htmlContenido;
     document.getElementById('modal-estadisticas').style.display = 'flex';
 }
+
+   
      // Función para cerrar la ventana de estadísticas al pulsar la X
 function cerrarEstadisticas() {
     document.getElementById('modal-estadisticas').style.display = 'none';
