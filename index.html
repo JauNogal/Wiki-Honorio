@@ -950,12 +950,19 @@ alert(textos[idiomaActual].alertaErrorLogin);
         }
 
         function irDesdeBuscador(tipo, idEscuela, idSector) {
-            document.getElementById('buscadorPrincipal').value = '';
-            document.getElementById('resultadosBusqueda').style.display = 'none';
-            if (tipo === 'escuela') seleccionarEscuela(idEscuela);
-            else { seleccionarEscuela(idEscuela); setTimeout(() => { verSector(idSector); }, 50); }
-        }
+    document.getElementById('buscadorPrincipal').value = '';
+    document.getElementById('resultadosBusqueda').style.display = 'none';
+    
+    // NUEVO: Forzamos a la app a cerrar perfiles y volver a la vista principal
+    mostrarInicio(); 
 
+    if (tipo === 'escuela') {
+        seleccionarEscuela(idEscuela);
+    } else { 
+        seleccionarEscuela(idEscuela); 
+        setTimeout(() => { verSector(idSector); }, 50); 
+    }
+}
         function prepararPantalla() {
     // 1. Ocultamos el mapa
     let mapa = document.getElementById('map');
