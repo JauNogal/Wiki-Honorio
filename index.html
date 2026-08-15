@@ -3014,6 +3014,7 @@ const textos = {
         tipoSector: "sector",
         tipoVia: "vía",
         botonExplorar: "Ir a explorar",
+        limiteFavoritos: "¡Ya tienes 10 lugares en favoritos! Borra alguno de tu lista para añadir nuevos.",
             },
 
 
@@ -3195,6 +3196,7 @@ botonEscuelas: "← Back to crags",
         tiposector: "sector",
         tipoVia: "route",
         botonExplorar: "Go explore",    
+        limiteFavoritos: "You already have 10 favorite places! Delete some from your list to add new ones.",
         }
     };
 
@@ -3434,7 +3436,7 @@ async function guardarFavorito(tipo, id1, id2 = null) {
         }
 
         if (favoritosActuales.length >= 10) {
-            alert("¡Ya tienes 10 lugares en favoritos! Borra alguno de tu lista para añadir nuevos.");
+    alert(textos[idiomaActual].limiteFavoritos);
             cerrarMenuFavoritos();
             return;
         }
