@@ -3013,6 +3013,7 @@ const textos = {
         tipoEscuela: "escuela",
         tipoSector: "sector",
         tipoVia: "vía",
+        botonExplorar: "Ir a explorar",
             },
 
 
@@ -3193,6 +3194,7 @@ botonEscuelas: "← Back to crags",
         tipoEscuela: "crag", 
         tiposector: "sector",
         tipoVia: "route",
+        botonExplorar: "Go explore",    
         }
     };
 
@@ -3478,8 +3480,8 @@ async function verListaFavoritos() {
 
     cerrarMenuFavoritos(); 
     const contenedor = document.getElementById('contenido-dinamico');
-    contenedor.innerHTML = '<div class="section-title" style="margin-bottom: 20px;">Mis Favoritos ⭐</div><div style="text-align: center; padding: 30px; color: #555;">Cargando tus lugares favoritos... 🧗</div>';
-
+    contenedor.innerHTML = `<div class="section-title" style="margin-bottom: 20px;">${textos[idiomaActual].tituloFavoritos} ⭐</div><div style="text-align: center; padding: 30px; color: #555;">Cargando tus lugares favoritos... 🧗‍♂️</div>`;
+    
     try {
         const refUsuario = window.fbDoc(window.fbDb, 'usuarios', uid);
         const docSnap = await window.fbGetDoc(refUsuario); 
@@ -3555,8 +3557,8 @@ async function verListaFavoritos() {
                 <div style="text-align: center; padding: 40px 20px;">
                     <span style="font-size: 3rem; margin-bottom: 10px; display: block;">🗺️</span>
                     <p style="color: #555; font-size: 1.1rem; margin-bottom: 20px;">${textos[idiomaActual].sinLugaresGuardados}</p>
-                    <button onclick="mostrarInicio()" style="padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Ir a explorar</button>
-                </div>
+        <button onclick="mostrarInicio()" style="padding: 12px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">${textos[idiomaActual].botonExplorar}</button>
+        </div>
             `;
         }
     } catch (error) {
