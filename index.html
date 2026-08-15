@@ -3492,7 +3492,7 @@ async function verListaFavoritos() {
             let misFavoritos = docSnap.data().favoritos;
             misFavoritos.sort((a, b) => b.fechaAñadido - a.fechaAñadido);
 
-            let html = '<div class="section-title" style="margin-bottom: 15px;">Mis Favoritos ⭐</div>';
+            let html = `<div class="section-title" style="margin-bottom: 15px;">${textos[idiomaActual].tituloFavoritos} ⭐</div>`;
             html += '<div style="display: flex; flex-direction: column; gap: 12px; padding: 0 10px;">';
 
             misFavoritos.forEach(fav => {
