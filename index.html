@@ -927,13 +927,25 @@ alert(textos[idiomaActual].alertaErrorLogin);
                 database.sectores.forEach(s => { const n = s.nombreSector || s.nombre; if (n && n.toLowerCase().includes(input)) resultados.push({ tipo: 'sector', textoVisible: n, idEscuela: s.idEscuela, idSector: s.idSector }); });
                 database.vias.forEach(v => { const n = v.nombreVia || v.nombre; if (n && n.toLowerCase().includes(input)) resultados.push({ tipo: 'vía', textoVisible: n, idEscuela: v.idEscuela, idSector: v.idSector }); });
 
-                if (resultados.length > 0) {
-                    let html = '';
-                    resultados.forEach(res => { html += `<div style="padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; color: #333;" onclick="irDesdeBuscador('${res.tipo}', ${res.idEscuela}, ${res.idSector})"><b>${res.textoVisible}</b> <span style="color:#999;font-size:0.85em;">(${res.tipo})</span></div>`; });
-                    cajaResultados.innerHTML = html; cajaResultados.style.display = 'block';
-                } else {
-                    cajaResultados.innerHTML = `<div style="padding:12px;color:#999;text-align:center;">Sin resultados</div>`; cajaResultados.style.display = 'block';
-                }
+              if (resultados.length > 0) {
+            let html = '';
+            let t = textos[idiomaActual]; // Conectamos con el motor de idiomas
+            
+            resultados.forEach(res => { 
+                // Comprobamos qué tipo es y cogemos su traducción exacta del diccionario
+                let textoTraducido = '';
+                if (res.tipo === 'escuela') textoTraducido = t.tipoEscuela;
+                if (res.tipo === 'sector') textoTraducido = t.tipoSector;
+                if (res.tipo === 'vía') textoTraducido = t.tipoVia;
+                
+                // Imprimimos el textoTraducido dentro del paréntesis
+                html += `<div style="padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; color: #333;" onclick="irDesdeBuscador('${res.tipo}', ${res.idEscuela}, ${res.idSector})"><b>${res.textoVisible}</b> <span style="color:#999;font-size:0.85em;">(${textoTraducido})</span></div>`; 
+            });
+            cajaResultados.innerHTML = html; cajaResultados.style.display = 'block';
+        } else {
+            // Aquí en un futuro puedes cambiar el "Sin resultados" por t.sinResultados si lo añades a tu diccionario
+            cajaResultados.innerHTML = `<div style="padding:12px;color:#999;text-align:center;">Sin resultados</div>`; cajaResultados.style.display = 'block';
+        }
             } catch(e) { console.error(e); }
         }
 
@@ -2998,6 +3010,9 @@ const textos = {
         numAscensiones: "Nº de ascensiones: ",
         voto: "voto",
         votos: "votos",
+        tipoEscuela: "escuela",
+        tipoSector: "sector",
+        tipoVia: "vía",
             },
 
 
@@ -3175,6 +3190,9 @@ botonEscuelas: "← Back to crags",
         numAscensiones: "Number of ascents: ",
         voto: "vote",
         votos: "votes",
+        tipoEscuela: "crag", 
+        tiposector: "sector",
+        tipoVia: "route",
         }
     };
 
