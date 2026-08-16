@@ -1198,8 +1198,8 @@ function actualizarViaEncadenada(index, campo, valor) {
 window.eliminarViaEncadenada = async function(index) {
     console.log("🔫 1. Has pulsado la X para borrar la vía índice:", index);
     
-    if(confirm('¿Seguro que quieres borrar esta vía de tu lista de encadenes?')) {
-        console.log("🗑️ 2. Confirmado. Borrando de la memoria local...");
+if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
+    console.log("🗑️ 2. Confirmado. Borrando de la memoria local...");
         
         let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
         const viaABorrar = lista[index];
@@ -3025,6 +3025,7 @@ const textos = {
         avisoConsenso: "Tu propuesta de grado se almacenará junto con las de otros escaladores con el objetivo de alcanzar, entre todos, un consenso sobre la dificultad de la vía. Gracias por ser lo más honesto posible.",
         noMostrarNuevo: "No volver a mostrar este mensaje",
         entendido: "Entendido",
+        confirmarBorrarVia: "¿Seguro que quieres borrar esta vía de tu lista de encadenes?",
             },
 
 
@@ -3210,6 +3211,7 @@ botonEscuelas: "← Back to crags",
         avisoConsenso: "Your grade proposal will be stored alongside those of other climbers to collectively reach a consensus on the route's difficulty. Thank you for being as honest as possible.",
         noMostrarNuevo: "Don't show this message again",
         entendido: "Got it",
+        confirmarBorrarVia: "Are you sure you want to delete this route from your send list?",
         }
     };
 
