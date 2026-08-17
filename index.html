@@ -1203,13 +1203,17 @@ if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
         
         let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
         const viaABorrar = lista[index];
-    borrarVotoDeFirestore(viaABorrar.id);
         
-        if (viaABorrar) {
-            // 1. Si de casualidad tiene la llave guardada, la borramos (tu idea original)
-            if (viaABorrar.llaveColor) {
-                removeLocal(viaABorrar.llaveColor);
-            }
+       if (viaABorrar) {
+        // NUEVO: Escudo de seguridad. Solo busca en Firestore si la vía tiene un ID real
+        if (viaABorrar.id) {
+            borrarVotoDeFirestore(viaABorrar.id);
+        }
+
+        // 1. Si de casualidad tiene la llave guardada, la borramos (tu idea original)
+        if (viaABorrar.llaveColor) {
+            removeLocal(viaABorrar.llaveColor);
+        }
             
             // 2. Escáner a prueba de balas: buscamos su estado en la memoria y lo reseteamos
             if (viaABorrar.nombre) {
