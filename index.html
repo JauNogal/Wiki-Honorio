@@ -3651,6 +3651,14 @@ async function guardarPropuestaEnFirestore(idVia, gradoPropuesto) {
 
             // 3. Enviamos los datos directamente a Firestore
             await window.fbSetDoc(refVia, { votosGrado: votos }, { merge: true });
+            
+            // --- NUEVO: ACTUALIZAMOS LA MEMORIA LOCAL PARA LA GRÁFICA ---
+            let viaLocal = database.vias.find(v => String(v.id) === String(idVia));
+            if (viaLocal) {
+                if (!viaLocal.votosGrado) viaLocal.votosGrado = {};
+                viaLocal.votosGrado[uid] = gradoPropuesto;
+            }
+            // ------------------------------------------------------------
             console.log("¡Voto guardado con éxito en Firestore!", votos);
 
             // NUEVO: Lanzamos un aviso visual para confirmar que se ha guardado
