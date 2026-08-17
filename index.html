@@ -1203,6 +1203,7 @@ if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
         
         let lista = JSON.parse(getLocal('astur_vertical_encadenadas')) || [];
         const viaABorrar = lista[index];
+    borrarVotoDeFirestore(viaABorrar.id);
         
         if (viaABorrar) {
             // 1. Si de casualidad tiene la llave guardada, la borramos (tu idea original)
