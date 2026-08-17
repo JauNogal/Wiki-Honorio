@@ -3633,41 +3633,35 @@ window.guardarPropuestaGrado = function(idVia, gradoPropuesto) {
         
 // 1. Función principal que se dispara al pulsar "Sí, apuntar"
 async function guardarPropuestaEnFirestore(idVia, gradoPropuesto) {
-    // --- CHIVATOS ---
-    console.log("--- DEBUGGING CONSENSO ---");
-    console.log("ID de vía recibido:", idVia);
-    console.log("Grado propuesto:", gradoPropuesto);
-    
-    const uid = window.idUsuarioActivo; 
-    console.log("ID de usuario activo:", uid);
-
-    // --- FIN CHIVATOS ---
+    console.log("--- INICIANDO GUARDADO DE CONSENSO ---");
+    const uid = window.idUsuarioActivo;
 
     try {
-        const refVia = window.fbDoc(window.fbDb, 'vias', String(idVia)); 
+        const refVia = window.fbDoc(window.fbDb, 'vias', String(idVia));
         const docSnap = await window.fbGetDoc(refVia);
 
         if (docSnap.exists()) {
             let datosVia = docSnap.data();
-      // 1. Recuperamos el historial de votos (o creamos un objeto vacío si no hay)
-        let votos = datosVia.votosGrado || {};
-        
-        // 2. Apuntamos el voto de este usuario
-        votos[uid] = gradoPropuesto;
-
-        // 3. Guardamos SOLAMENTE los votos en Firebase (¡nada de cambiar el grado o el grupo!)
-        await window.fbSetDoc(refVia, {
-            votosGrado: votos
-        }, { merge: true });
-
-        console.log("¡Propuesta guardada en Firebase en secreto! Votos:", votos);      
-                
-            // Aquí puedes añadir la línea para cerrar tu ventana modal de votación
-            // alert("¡Gracias por tu propuesta! El grado se ha registrado.");
             
+            // 1. Recuperamos el historial o creamos uno nuevo
+            let votos = datosVia.votosGrado || {};
+            
+            // 2. Apuntamos el voto a nombre de este usuario (sobreescribe si ya votó)
+            votos[uid] = gradoPropuesto;
+
+            // 3. Enviamos los datos directamente a Firestore
+            await window.fbSetDoc(refVia, { votosGrado: votos }, { merge: true });
+            console.log("¡Voto guardado con éxito en Firestore!", votos);
+
+            // NUEVO: Lanzamos un aviso visual para confirmar que se ha guardado
+            alert("¡Gracias! Tu propuesta de grado se ha registrado correctamente.");
+            
+        } else {
+            console.error("Error: No se encontró la vía en la base de datos.");
         }
     } catch (error) {
-        console.error("Error al guardar la propuesta de grado:", error);
+        console.error("Error al guardar en Firestore:", error);
+        alert("Hubo un error al subir tu propuesta. Revisa tu conexión.");
     }
 }
         
