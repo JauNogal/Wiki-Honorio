@@ -1205,9 +1205,18 @@ if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
         const viaABorrar = lista[index];
         
        if (viaABorrar) {
-        // NUEVO: Escudo de seguridad. Solo busca en Firestore si la vía tiene un ID real
-        if (viaABorrar.id) {
-            borrarVotoDeFirestore(viaABorrar.id);
+      // NUEVO: Buscamos el ID cruzando el nombre del diario con tu base de datos global
+        let idParaBorrar = viaABorrar.id; 
+        if (!idParaBorrar && viaABorrar.nombre) {
+            let viaEnBaseDatos = database.vias.find(v => v.nombre === viaABorrar.nombre);
+            if (viaEnBaseDatos) {
+                idParaBorrar = viaEnBaseDatos.id;
+            }
+        }
+
+        // Si hemos logrado encontrar su ID real, eliminamos su voto de consenso
+        if (idParaBorrar) {
+            borrarVotoDeFirestore(idParaBorrar);
         }
 
         // 1. Si de casualidad tiene la llave guardada, la borramos (tu idea original)
