@@ -1206,36 +1206,24 @@ if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
         
        if (viaABorrar) {
 
-      // NUEVO: Buscador Definitivo (busca todas las variantes posibles)
-        let idParaBorrar = viaABorrar.id || viaABorrar.idVia || viaABorrar.id_via; 
+    // Buscamos el ID cruzando tu diario con la propiedad correcta de la BD: 'nombreVia'
+        let idParaBorrar = viaABorrar.id; 
         
         if (!idParaBorrar && viaABorrar.nombre) {
-            let nombreLimpio = viaABorrar.nombre.trim().toLowerCase();
+            let nombreDiario = viaABorrar.nombre.trim().toLowerCase();
             
-            // Por si la base de datos se llama distinto o está en otro sitio
-            let listaViasGlobal = database.vias || window.vias || [];
-            
-            if (listaViasGlobal.length > 0) {
-                let viaEnBaseDatos = listaViasGlobal.find(v => {
-                    let nombreDeEstaVia = String(v.nombre || v.n || "").toLowerCase();
-                    return nombreDeEstaVia === nombreLimpio || nombreDeEstaVia.includes(nombreLimpio);
-                });
+            let viaEnBaseDatos = database.vias.find(v => 
+                v.nombreVia && v.nombreVia.trim().toLowerCase() === nombreDiario
+            );
 
-                if (viaEnBaseDatos) {
-                    idParaBorrar = viaEnBaseDatos.id;
-                }
+            if (viaEnBaseDatos) {
+                idParaBorrar = viaEnBaseDatos.id;
             }
         }
-        
-        // CHIVATO DEFINITIVO: Imprimimos la vía entera para ver sus tripas
-        console.log("🔍 Tripas de la vía a borrar:", viaABorrar);
-        console.log("¡Cazador de IDs! Resultado final ID:", idParaBorrar);
 
-        // Si hemos logrado encontrar su ID real, eliminamos su voto
+        // Si tenemos el ID, borramos el voto
         if (idParaBorrar) {
             borrarVotoDeFirestore(idParaBorrar);
-        } else {
-            console.warn("⚠️ No se pudo borrar el voto en las estadísticas por falta de ID.");
         }
 
         // 1. Si de casualidad tiene la llave guardada, la borramos (tu idea original)
