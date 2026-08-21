@@ -1206,29 +1206,36 @@ if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
         
        if (viaABorrar) {
 
-         // NUEVO: Buscador ultra-potente para cazar el ID
-        let idParaBorrar = viaABorrar.id; 
+      // NUEVO: Buscador Definitivo (busca todas las variantes posibles)
+        let idParaBorrar = viaABorrar.id || viaABorrar.idVia || viaABorrar.id_via; 
         
         if (!idParaBorrar && viaABorrar.nombre) {
             let nombreLimpio = viaABorrar.nombre.trim().toLowerCase();
             
-            // Escaneamos múltiples posibles nombres de propiedad (nombre, n, name, titulo)
-            let viaEnBaseDatos = database.vias.find(v => {
-                let nombreDeEstaVia = String(v.nombre || v.n || v.name || v.titulo || "").toLowerCase();
-                // Comparamos o vemos si al menos contiene la palabra
-                return nombreDeEstaVia === nombreLimpio || nombreDeEstaVia.includes(nombreLimpio);
-            });
+            // Por si la base de datos se llama distinto o está en otro sitio
+            let listaViasGlobal = database.vias || window.vias || [];
+            
+            if (listaViasGlobal.length > 0) {
+                let viaEnBaseDatos = listaViasGlobal.find(v => {
+                    let nombreDeEstaVia = String(v.nombre || v.n || "").toLowerCase();
+                    return nombreDeEstaVia === nombreLimpio || nombreDeEstaVia.includes(nombreLimpio);
+                });
 
-            if (viaEnBaseDatos) {
-                idParaBorrar = viaEnBaseDatos.id;
+                if (viaEnBaseDatos) {
+                    idParaBorrar = viaEnBaseDatos.id;
+                }
             }
         }
         
-        console.log("¡Cazador de IDs! Resultado ID:", idParaBorrar, "para la vía:", viaABorrar.nombre);
+        // CHIVATO DEFINITIVO: Imprimimos la vía entera para ver sus tripas
+        console.log("🔍 Tripas de la vía a borrar:", viaABorrar);
+        console.log("¡Cazador de IDs! Resultado final ID:", idParaBorrar);
 
         // Si hemos logrado encontrar su ID real, eliminamos su voto
         if (idParaBorrar) {
             borrarVotoDeFirestore(idParaBorrar);
+        } else {
+            console.warn("⚠️ No se pudo borrar el voto en las estadísticas por falta de ID.");
         }
 
         // 1. Si de casualidad tiene la llave guardada, la borramos (tu idea original)
