@@ -1205,16 +1205,20 @@ if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
         const viaABorrar = lista[index];
         
        if (viaABorrar) {
-      // NUEVO: Buscamos el ID cruzando el nombre del diario con tu base de datos global
+
+           // NUEVO: Buscamos el ID ignorando mayúsculas y espacios invisibles
         let idParaBorrar = viaABorrar.id; 
         if (!idParaBorrar && viaABorrar.nombre) {
-            let viaEnBaseDatos = database.vias.find(v => v.nombre === viaABorrar.nombre);
+            let nombreLimpio = viaABorrar.nombre.trim().toLowerCase();
+            let viaEnBaseDatos = database.vias.find(v => v.nombre && v.nombre.trim().toLowerCase() === nombreLimpio);
             if (viaEnBaseDatos) {
                 idParaBorrar = viaEnBaseDatos.id;
             }
         }
+        
+        console.log("Intentando borrar voto de la vía ID:", idParaBorrar, "Nombre:", viaABorrar.nombre);
 
-        // Si hemos logrado encontrar su ID real, eliminamos su voto de consenso
+        // Si hemos logrado encontrar su ID real, eliminamos su voto
         if (idParaBorrar) {
             borrarVotoDeFirestore(idParaBorrar);
         }
@@ -3823,6 +3827,41 @@ window.addEventListener('click', function(event) {
         cerrarEstadisticas();
     }
 });
+
+       // Función para eliminar el voto de consenso al borrar un encadene
+async function borrarVotoDeFirestore(idVia) {
+    const uid = window.idUsuarioActivo;
+    if (!uid) return;
+
+    // 1. Borrado INSTANTÁNEO en memoria local (para que la gráfica se actualice ya mismo)
+    let viaLocal = database.vias.find(v => String(v.id) === String(idVia));
+    if (viaLocal && viaLocal.votosGrado) {
+        delete viaLocal.votosGrado[uid];
+        console.log("✅ Voto eliminado de la memoria local al instante.");
+    }
+
+    // 2. Borrado seguro en Firestore (Nube)
+    try {
+        const refVia = window.fbDoc(window.fbDb, 'vias', String(idVia));
+        const docSnap = await window.fbGetDoc(refVia);
+
+        if (docSnap.exists()) {
+            let datosVia = docSnap.data();
+            if (datosVia.votosGrado && datosVia.votosGrado[uid]) {
+                let votos = datosVia.votosGrado;
+                delete votos[uid]; 
+                await window.fbSetDoc(refVia, { votosGrado: votos }, { merge: true });
+                console.log("✅ Voto eliminado de Firestore correctamente.");
+            }
+        }
+    } catch (error) {
+        console.error("❌ Error al borrar el voto de consenso en la nube:", error);
+    }
+}
+
+</script>
+
+<!-- Modal de Estadísticas de Votos en Quesito -->
         
 </script>
     <!-- Modal de Estadísticas de Votos en Quesito -->
