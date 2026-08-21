@@ -1206,17 +1206,25 @@ if(confirm(textos[idiomaActual].confirmarBorrarVia)) {
         
        if (viaABorrar) {
 
-           // NUEVO: Buscamos el ID ignorando mayúsculas y espacios invisibles
+         // NUEVO: Buscador ultra-potente para cazar el ID
         let idParaBorrar = viaABorrar.id; 
+        
         if (!idParaBorrar && viaABorrar.nombre) {
             let nombreLimpio = viaABorrar.nombre.trim().toLowerCase();
-            let viaEnBaseDatos = database.vias.find(v => v.nombre && v.nombre.trim().toLowerCase() === nombreLimpio);
+            
+            // Escaneamos múltiples posibles nombres de propiedad (nombre, n, name, titulo)
+            let viaEnBaseDatos = database.vias.find(v => {
+                let nombreDeEstaVia = String(v.nombre || v.n || v.name || v.titulo || "").toLowerCase();
+                // Comparamos o vemos si al menos contiene la palabra
+                return nombreDeEstaVia === nombreLimpio || nombreDeEstaVia.includes(nombreLimpio);
+            });
+
             if (viaEnBaseDatos) {
                 idParaBorrar = viaEnBaseDatos.id;
             }
         }
         
-        console.log("Intentando borrar voto de la vía ID:", idParaBorrar, "Nombre:", viaABorrar.nombre);
+        console.log("¡Cazador de IDs! Resultado ID:", idParaBorrar, "para la vía:", viaABorrar.nombre);
 
         // Si hemos logrado encontrar su ID real, eliminamos su voto
         if (idParaBorrar) {
